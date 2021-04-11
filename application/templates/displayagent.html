@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+    <!-- Buyer Search Form -->
+    <div class="content-section">
+      <form method="POST" action="{{ url_for('home') }}">
+        <fieldset class="form-group">
+
+          <legend>Search Agent</legend>
+
+          <div class="form-group">
+            {{ form.id.label }}
+            {% if form.id.errors %}
+              {{ form.id(class='form-control is-invalid') }}
+              <div class="invalid-feedback">
+                {% for error in form.id.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.id(class='form-control') }}
+            {% endif %} 
+          </div>
+
+          <div class="form-group">
+            {{ form.name.label }}
+            {% if form.name.errors %}
+              {{ form.name(class='form-control is-invalid') }}
+              <div class="invalid-feedback">
+                {% for error in form.name.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.name(class='form-control') }}
+            {% endif %} 
+          </div>
+
+          <div class="form-group">
+            {{ form.search(class='btn btn-sm btn-outline-dark') }}
+          </div>
+
+        </fieldset>
+    </form>
+  </div>
+
+  {% for agent in agents %}
+    <div class="row pl-5">
+      
+	  <legend>
+        <strong>Agent ID {{agent.id}}:</strong>
+      </legend>
+
+      <p>
+        Agent Name: {{ agent.name }}</br>
+        Agent CNIC: {{ agent.cnic }}</br>
+        {% if agent.comments %}
+          Comments: {{ agent.comments }}</br>
+        {% endif %}
+      </p>
+    </div>
+        
+    <div class="row pl-5 pb-4 border-bottom border-secondary"> 
+      {% if not current_user.rank %}
+          
+        <button class="btn btn-outline-danger btn-sm"><a href="{{ url_for('deleteagent', agent_id=agent.id) }}">Delete Agent</button>
+
+      {% endif %}
+        
+        <button class="btn btn-outline-secondary btn-sm  ml-2"><a href="{{ url_for('editagent', agent_id=agent.id) }}">Edit Agent Info</a></button>
+        
+    </div>
+    <br><br>
+        
+    {% endfor %}
+
+{% endblock %}

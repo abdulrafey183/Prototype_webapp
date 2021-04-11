@@ -2,9 +2,11 @@ from flask import Blueprint, redirect, render_template, flash, request, session,
 from flask import current_app as app
 from flask_login import login_required, logout_user, current_user, login_user
 from flask_sqlalchemy import sqlalchemy
+import os
+from PIL import Image
 
-from .forms import LoginForm, AddBuyerForm, AddDealForm, SearchBuyerForm, DeleteBuyerForm, EditBuyerForm, AddNotesForm, AddNormalUserForm
-from .model import db, User, Buyer, Deal, Plot, Transaction, Notes
+from .forms import LoginForm, AddDealForm, SearchBuyerForm, SearchAgentForm, DeleteBuyerForm, AddandEditForm, AddNotesForm, AddNormalUserForm
+from .model import db, User, Buyer, Deal, Plot, Transaction, Notes, CommissionAgent
 from .middleware import Middleware
 from . import login_manager
 from . import admin
@@ -20,6 +22,7 @@ POST         = "POST"
 @app.route("/", methods=[GET])
 @app.route("/home", methods=[GET])
 def home():
+    print(url_for('static', filename='img'))
     return render_template('home.html')
 
 
@@ -93,7 +96,6 @@ def allnotes():
     return render_template('allnotes.html', notes=notes)
 
 
-
 @app.route("/map", methods=[GET])
 @login_required
 def map():
@@ -123,7 +125,196 @@ def displaybuyers():
     return render_template('displaybuyers.html', buyers=buyers, form=form, delete_form=delete_form)
 
 
-@app.route("/delete/buyers/<buyer_id>", methods=[POST, GET])
+@app.route("/display/agents")
+@login_required
+def displayagents():
+
+    form = SearchAgentForm()
+    #delete_form = DeleteBuyerForm()
+
+    agents = CommissionAgent.query.all()
+    return render_template('displayagent.html', agents=agents, form=form)
+
+
+@app.route("/add/buyer", methods=[GET, POST])
+@login_required
+def addbuyer():
+
+    addbuyer = True
+    form = AddandEditForm()
+
+    if form.validate_on_submit():
+        try:
+
+            # if cnic image is not uploaded
+            if not form.cnic_front.data or not form.cnic_back.data:
+                flash("ERROR: CNIC Image Missing!", "danger")
+                return render_template('addbuyerandagent.html', addagent=addagent, form=form)
+
+            # path to folder for saving cnic images
+            cnic = form.cnic.data
+            cnic_file_path = app.root_path + '\\static\\img\\cnic\\buyers\\' + str(cnic)
+
+            # saving cnic images
+            form.cnic_front.data.save(cnic_file_path + 'front.jpg')
+            form.cnic_back.data.save(cnic_file_path  +'back.jpg')
+            
+            # creating buyer object
+            buyer = Buyer(
+                name       = form.name.data,
+                cnic       = form.cnic.data,
+                phone      = form.phone.data,
+                email      = form.email.data,
+                address    = form.address.data,
+                cnic_front = cnic_file_path + 'front.jpg',
+                cnic_back  = cnic_file_path + 'back.jpg',
+                comments   = form.comments.data if form.comments.data else db.null()
+            )
+
+            db.session.add(buyer)
+            db.session.commit()
+
+            flash(f"Buyer with id '{buyer.id}' created", 'success')
+            return redirect(url_for('profile'))
+
+        except sqlalchemy.exc.IntegrityError:
+            flash("ERROR: A buyer with this CNIC already exists!", "danger")
+            return render_template('addbuyerandagent.html', addbuyer=addbuyer, form=form)         
+            
+    return render_template('addbuyerandagent.html', addbuyer=addbuyer, form=form)
+
+
+@app.route("/add/agent", methods=[GET, POST])
+@login_required
+def addagent():
+
+    addagent = True
+    form = AddandEditForm()
+    
+    if form.validate_on_submit():        
+        try:
+
+            # if cnic image is not uploaded
+            if not form.cnic_front.data or not form.cnic_back.data:
+                flash("ERROR: CNIC Image Missing!", "danger")
+                return render_template('addbuyerandagent.html', addbuyer=addbuyer, form=form)
+
+            # path to folder for storing cnic images
+            cnic = form.cnic.data
+            cnic_file_path = app.root_path + '\\static\\img\\cnic\\agents\\' + str(cnic)
+
+            # saving cnic images
+            form.cnic_front.data.save(cnic_file_path + 'front.jpg')
+            form.cnic_back.data.save(cnic_file_path  +'back.jpg')
+            
+            # creating agent object
+            agent = CommissionAgent(
+                name            = form.name.data,
+                cnic            = form.cnic.data,
+                phone           = form.phone.data,
+                email           = form.email.data,
+                cnic_front      = cnic_file_path + 'front.jpg',
+                cnic_back       = cnic_file_path + 'back.jpg',
+                commission_rate = form.commission_rate.data,
+                comments        = form.comments.data if form.comments.data else db.null()
+            )
+
+            db.session.add(agent)
+            db.session.commit()
+
+            flash(f"Agent with id '{agent.id}' created", 'success')
+            return redirect(url_for('profile'))
+
+        except sqlalchemy.exc.IntegrityError:
+            flash("ERROR: A Agent with this CNIC already exists!", "danger")
+            return render_template('addbuyerandagent.html', addagent=addagent, form=form)
+
+    return render_template('addbuyerandagent.html', addagent=addagent, form=form)
+
+
+@app.route("/edit/buyer/<buyer_id>", methods=[POST, GET])
+@login_required
+def editbuyer(buyer_id):
+    
+    editbuyer = True
+    form  = AddandEditForm()
+
+    buyer = Buyer.query.filter_by(id=buyer_id).first()
+
+    # if no record of buyer with entered id is found
+    if buyer is None:
+        flash(f'No such buyer exists!', 'danger')
+        return redirect(url_for("displaybuyers"))
+    
+    if form.validate_on_submit():
+
+        try:
+            db.session.query(Buyer).filter_by(
+                                id=buyer_id
+                                ).update({ 
+                                    'name'       : form.name.data,
+                                    'cnic'       : form.cnic.data,
+                                    'phone'      : form.phone.data,
+                                    'email'      : form.email.data,
+                                    'address'    : form.address.data,
+                                    'comments'   : form.comments.data if form.comments.data else db.null()
+            })
+
+            db.session.commit()
+            flash(f"Buyer Info with id '{buyer.id}' Updated", 'success')
+            return redirect(url_for('displaybuyers'))
+
+        except sqlalchemy.orm.exc.NoResultFound:
+            flash("ERROR: A buyer with this CNIC already exists!", "danger")
+            return render_template('editbuyerandagent.html', editbuyer=editbuyer, entity=buyer, form=form)   
+
+    else:       
+        form.comments.data   = buyer.comments
+        return render_template('editbuyerandagent.html',  editbuyer=editbuyer, entity=buyer, form=form)
+
+
+@app.route("/edit/agent/<agent_id>", methods=[POST, GET])
+@login_required
+def editagent(agent_id):
+    
+    editagent = True
+    form  = AddandEditForm()
+
+    agent = CommissionAgent.query.filter_by(id=agent_id).first()
+
+    # if no record of buyer with entered id is found
+    if agent is None:
+        flash(f'No such agent exists!', 'danger')
+        return redirect(url_for("displayagents"))
+
+    if form.validate_on_submit():
+
+        try:
+            db.session.query(CommissionAgent).filter_by(
+                                id=agent_id
+                                ).update({ 
+                                    'name'           : form.name.data,
+                                    'cnic'           : form.cnic.data,
+                                    'phone'          : form.phone.data,
+                                    'email'          : form.email.data,
+                                    'commission_rate': form.commission_rate.data,
+                                    'comments' : form.comments.data if form.comments.data else db.null()
+            })
+
+            db.session.commit()
+            flash(f"Agent Info with id '{agent.id}' Updated", 'success')
+            return redirect(url_for('displayagents'))
+
+        except sqlalchemy.orm.exc.NoResultFound:
+            flash("ERROR: A agent with this CNIC already exists!", "danger")
+            return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form)   
+
+    else:
+        form.comments.data = agent.comments
+        return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form)
+
+
+@app.route("/delete/buyer/<buyer_id>", methods=[POST, GET])
 @login_required
 def deletebuyer(buyer_id):
 
@@ -132,6 +323,7 @@ def deletebuyer(buyer_id):
 
     buyer = Buyer.query.filter_by(id=buyer_id).first()
 
+    # if no record of buyer with entered id is found
     if buyer is None:
         flash(f'No such buyer exists!', 'danger')
         return redirect(url_for("displaybuyers"))
@@ -143,43 +335,25 @@ def deletebuyer(buyer_id):
     return redirect(url_for('displaybuyers'))
 
 
-@app.route("/edit/buyer/<buyer_id>", methods=[POST, GET])
+@app.route("/delete/agent/<agent_id>", methods=[POST, GET])
 @login_required
-def editbuyer(buyer_id):
-    
-    form  = EditBuyerForm()
-    buyer = Buyer.query.filter_by(id=buyer_id).first()
+def deleteagent(agent_id):
 
-    if buyer is None:
-        flash(f'No such buyer exists!', 'danger')
-        return redirect(url_for("displaybuyers"))
+    #Checking Authorization
+    Middleware.authorizeSuperUser(current_user)
 
-    if form.validate_on_submit():
+    agent = CommissionAgent.query.filter_by(id=agent_id).first()
 
-        try:
-            name     = form.name.data
-            cnic     = form.cnic.data
-            comments = form.comments.data
+    # if no record of buyer with entered id is found
+    if agent is None:
+        flash(f'No such agent exists!', 'danger')
+        return redirect(url_for("displayagents"))
 
-            db.session.query(Buyer).filter_by(
-                                id=buyer_id
-                                ).update({ 
-                                    'name':name,
-                                    'cnic':cnic,
-                                    'comments':comments
-            })
+    db.session.delete(agent)
+    db.session.commit()
 
-            db.session.commit()
-            flash(f"Buyer Info with id '{buyer.id}' Updated", 'success')
-            return redirect(url_for('displaybuyers'))
-
-        except sqlalchemy.orm.exc.NoResultFound:
-            flash("ERROR: A buyer with this CNIC already exists!", "danger")
-            return render_template('editbuyer.html', form=form, buyer=buyer)   
-
-    else:
-        form.comments.data = buyer.comments
-        return render_template('editbuyer.html', form=form, buyer=buyer)
+    flash('Agent Record Deleted!', 'danger')
+    return redirect(url_for('displayagents'))
 
 
 @app.route("/plot/<plot_id>")
@@ -193,32 +367,6 @@ def plotinfo(plot_id):
         
     return render_template('plotinfo.html', plot=plot)
 
-
-@app.route("/add/buyer", methods=[GET, POST])
-@login_required
-def addbuyer():
-
-    form = AddBuyerForm()
-    if form.validate_on_submit():        
-        try:
-            buyer = Buyer(
-                #id       = form.id.data,
-                name     = form.name.data,
-                cnic     = form.cnic.data,
-                comments = form.comments.data if form.comments.data else db.null()
-            )
-
-            db.session.add(buyer)
-            db.session.commit()
-
-            flash(f"Buyer with id '{buyer.id}' created", 'success')
-            return redirect(url_for('profile'))
-
-        except sqlalchemy.exc.IntegrityError:
-            flash("ERROR: A buyer with this CNIC already exists!", "danger")
-            return render_template('addbuyer.html', form=form)         
-            
-    return render_template('addbuyer.html',  form=form)
 
 @app.route("/add/deal", methods=[GET, POST])
 @login_required

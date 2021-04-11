@@ -2,7 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_admin import Admin
-
 from flask_admin.base import MenuLink
 
 from .adminviews import AdminPanel, ProtectedModelView
@@ -20,7 +19,7 @@ def create_app():
 
     #setting config variables from DevelopmentConfig class in config file
     app.config.from_object('config.DevelopmentConfig')
-
+    
     #Initiaizaing Plugins
     db.__init__(app)
     login_manager.__init__(app)
@@ -43,7 +42,6 @@ def create_app():
         #Creating tables in the database
         #db.drop_all()
         #db.create_all()
-
         #print(app.config)
 
         return app   

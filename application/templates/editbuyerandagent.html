@@ -1,0 +1,148 @@
+{% extends 'layout.html' %}
+ 
+{% block content %}
+  <div class="content-section">
+    <form method="POST" action="{{ url_for('editbuyer', buyer_id=entity.id) }}">
+        {{ form.csrf_token }}
+	  <fieldset class="form-group">
+
+        <legend id="title">Edit Buyer</legend>
+		  <div class="form-group">
+        	{{ form.name.label }}
+        	{% if form.name.errors %}
+        	  {{ form.name(class='form-control is-invalid') }}
+          	  <div class="invalid-feedback">
+                {% for error in form.name.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+          	  </div>
+          	{% else %}
+              {{ form.name(class='form-control', value=entity.name) }}
+            {% endif %}
+ 
+      	  </div>
+
+      <div class="form-group">
+          {{ form.phone.label }}
+      
+          {% if form.phone.errors %}
+            {{ form.phone(class='form-control is-invalid') }}
+              <div class="invalid-feedback">
+                {% for error in form.phone.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.phone(class='form-control', value=entity.phone) }}
+            {% endif %}
+ 
+          </div>
+
+      <div class="form-group">
+          {{ form.email.label }}
+      
+          {% if form.email.errors %}
+            {{ form.email(class='form-control is-invalid') }}
+              <div class="invalid-feedback">
+                {% for error in form.email.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.email(class='form-control', value=entity.email) }}
+            {% endif %}
+ 
+          </div>
+
+      {% if editbuyer %}
+      <div class="form-group">
+          {{ form.address.label }}
+          {% if form.address.errors %}
+            {{ form.address(class='form-control is-invalid') }}
+              <div class="invalid-feedback">
+                {% for error in form.address.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.address(class='form-control', value=entity.address) }}
+            {% endif %}
+ 
+          </div>
+      {% endif %}
+
+      <div class="form-group">
+          {{ form.cnic.label }}
+      
+          {% if form.cnic.errors %}
+            {{ form.cnic(class='form-control is-invalid') }}
+              <div class="invalid-feedback">
+                {% for error in form.cnic.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.cnic(placeholder="Enter numbers only", class='form-control', value=entity.cnic) }}
+            {% endif %}
+ 
+          </div>
+
+      {% if editagent %}
+          <div class="form-group">
+          {{ form.commission_rate.label }}
+      
+          {% if form.commission_rate.errors %}1`
+            {{ form.commission_rate(class='form-control is-invalid') }}
+              <div class="invalid-feedback">
+                {% for error in form.commission_rate.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.commission_rate(class='form-control', value=entity.commission_rate) }}
+            {% endif %} 
+          </div>
+      {% endif %}
+
+		  <div class="form-group">
+        	{{ form.comments.label }}
+     	
+        	{% if form.comments.errors %}
+        	  {{ form.comments(class='form-control is-invalid') }}
+          	  <div class="invalid-feedback">
+                {% for error in form.comments.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+          	  </div>
+          	{% else %}
+                {{ form.comments(placeholder="Leave empty if no comments", class='form-control') }}
+            {% endif %}
+ 
+      	  </div>
+
+	      <button type="submit" class="btn btn-outline-dark">Submit</button>
+
+	  </fieldset>
+	</form>
+  </div>
+
+  <script type="text/javascript">
+
+      var action = "";
+      var legend = "";
+
+      {% if editbuyer %}
+        action = "{{ url_for('editbuyer',  buyer_id=entity.id) }}";
+        legend = "Edit Buyer";
+      {% elif editagent %}
+        action = "{{ url_for('editagent', agent_id=entity.id) }}";
+        legend = "Edit Agent";
+      {% else %}
+        action = "{{ url_for('profile')}}";
+      {% endif %}
+
+      document.getElementsByTagName("form")[0].setAttribute("action", action);    
+      document.getElementById("title").innerHTML = legend;
+      
+  </script>
+{% endblock %}

@@ -1,10 +1,19 @@
 from flask_wtf import FlaskForm
 from flask import Markup
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, TextAreaField, HiddenField
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, TextAreaField, HiddenField, ValidationError
 from wtforms.validators import DataRequired, Length, number_range
+from flask_wtf.file import FileField, FileRequired, FileAllowed
+import re
 
 from .model import db
 
+
+# custom Validators
+def validate_phone_and_cnic(form, field):
+		if not re.match(r'^([\s\d]+)$', field.data):
+			raise ValidationError('Enter Numbers Only!')
+
+			
 #Login Form 
 class LoginForm(FlaskForm):
 	
@@ -12,24 +21,19 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=100)])
     submit   = SubmitField('Login')
 
-#Add Buyer Form
-class AddBuyerForm(FlaskForm):
+class AddandEditForm(FlaskForm):
 
-	#id 	 = IntegerField('Buyer ID', validators=[DataRequired()])
-	name 	 = StringField('Name', validators=[DataRequired(), Length(min=1, max=75)])
-	cnic 	 = IntegerField('CNIC', validators=[DataRequired(), number_range(min=1)])
-	comments = TextAreaField('Comments', validators=[])
-	submit 	 = SubmitField('Create Buyer')
+	name 	     = StringField('Name', validators=[DataRequired(), Length(min=1, max=75)])
+	cnic 	     = StringField('CNIC', validators=[DataRequired(), Length(min=13, max=13), validate_phone_and_cnic])
+	phone        = StringField('Phone', validators=[DataRequired(), Length(min=11, max=11), validate_phone_and_cnic])
+	address      = StringField('Address', validators=[])
+	email        = StringField('Email', validators=[DataRequired(), Length(max=100)])
+	cnic_front   = FileField('CNIC Front', validators=[])
+	cnic_back    = FileField('CNIC Back', validators=[])
+	comments     = TextAreaField('Comments', validators=[])
+	commission_rate = FloatField('Commission Rate')
 
-
-#Edit Buyer Info Form
-class EditBuyerForm(FlaskForm):
-	name 	 = StringField('Name', validators=[DataRequired(), Length(min=1, max=75)])
-	cnic 	 = IntegerField('CNIC', validators=[DataRequired(), number_range(min=1)])
-	comments = TextAreaField('Comments', validators=[])
-	submit 	 = SubmitField('Edit Buyer')
-
-	
+                            
 #Search Buyer Form
 class SearchBuyerForm(FlaskForm):
 
@@ -37,12 +41,16 @@ class SearchBuyerForm(FlaskForm):
 	name   = StringField('Name')
 	search = SubmitField('Search Buyer')
 
+class SearchAgentForm(FlaskForm):
+	id     = IntegerField('Agent ID')
+	name   = StringField('Name')
+	search = SubmitField('Search Agent')
 
 #Delete Buyer Form
 class DeleteBuyerForm(FlaskForm):
 
-	id = HiddenField('buyer_id')
-	delete = SubmitField('Delete Buyer')
+	id     = HiddenField('buyer_id')
+	delete = SubmitField('Delete Buyer')       
 
 #Add Deal Form 
 class AddDealForm(FlaskForm):
@@ -71,5 +79,3 @@ class AddNormalUserForm(FlaskForm):
 	email    = StringField('Email',      validators=[DataRequired(), Length(min=1, max=75)])
 	password = PasswordField('Password', validators=[Length(max=100)], default='12345')
 	create 	 = SubmitField('Create User')
-
-
