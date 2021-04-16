@@ -1,163 +1,166 @@
 {% extends 'layout.html' %}
  
 {% block content %}
-
-  <div class="content-section">
-    
-          <form method="POST" action="" enctype="multipart/form-data">
-            {{ form.csrf_token }}
-          <fieldset class="form-group">
-          
-          <legend id="title">Heading
+<!-- new -->
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-12 col-md-6">    
+      <form method="POST" action="" enctype="multipart/form-data" class="form-style">
+        <fieldset class="form-group">
+          {{ form.csrf_token }}
+          <legend class="text-orange-1 text-center" id="title">Heading
           </legend>
-
-		  <div class="form-group">
-        	{{ form.name.label }}
-        	{% if form.name.errors %}
-        	  {{ form.name(class='form-control is-invalid') }}
+          <p class="text-dark-3 text-center">Add new buyer</p>
+          <br>
+    		  <div class="form-group">
+            	{{ form.name.label }}
+              
+            	{% if form.name.errors %}
+            	{{ form.name(class='form-control is-invalid') }}
           	  <div class="invalid-feedback">
                 {% for error in form.name.errors %}
-                  <span>{{ error }}</span>
+                <span>{{ error }}</span>
                 {% endfor %}
           	  </div>
-          	{% else %}
+              {% else %}
               {{ form.name(class='form-control') }}
-          {% endif %}
-      </div>
+              {% endif %}
+          </div>
 
-      <div class="form-group">
-          {{ form.phone.label(class='phone-label') }}
-          {% if form.phone.errors %}
-            {{ form.phone(class='form-control is-invalid') }}
+          <div class="form-group">
+              {{ form.phone.label(class='phone-label') }}
+
+              {% if form.phone.errors %}
+              {{ form.phone(class='form-control is-invalid') }}
               <div class="invalid-feedback">
                 {% for error in form.phone.errors %}
-                  <span>{{ error }}</span>
+                <span>{{ error }}</span>
                 {% endfor %}
               </div>
-            {% else %}
-              {{ form.phone(class='form-control') }}
-            {% endif %}
- 
-          </div>
+                {% else %}
+                {{ form.phone(class='form-control') }}
+                {% endif %}     
+            </div>
 
-      <div class="form-group">
-          {{ form.email.label }}
-          {% if form.email.errors %}
-            {{ form.email(class='form-control is-invalid') }}
+            <div class="form-group">
+              {{ form.email.label }}
+
+              {% if form.email.errors %}
+              {{ form.email(class='form-control is-invalid') }}
               <div class="invalid-feedback">
                 {% for error in form.email.errors %}
-                  <span>{{ error }}</span>
+                <span>{{ error }}</span>
                 {% endfor %}
               </div>
-            {% else %}
-              {{ form.email(class='form-control') }}
-          {% endif %}
-      </div>
+                {% else %}
+                {{ form.email(class='form-control') }}
+                {% endif %}
+            </div>
 
-      {% if addbuyer %}
-      <div class="form-group">
-          {{ form.address.label }}
-          {% if form.address.errors %}
-            {{ form.address(class='form-control is-invalid') }}
+            {% if addbuyer %}
+            <div class="form-group">
+                {{ form.address.label }}
+
+                {% if form.address.errors %}
+                {{ form.address(class='form-control is-invalid') }}
               <div class="invalid-feedback">
                 {% for error in form.address.errors %}
-                  <span>{{ error }}</span>
+                <span>{{ error }}</span>
                 {% endfor %}
               </div>
-            {% else %}
-              {{ form.address(class='form-control') }}
+                {% else %}
+                {{ form.address(class='form-control') }}
+                {% endif %}       
+            </div>
             {% endif %}
- 
-          </div>
-      {% endif %}
 	      
-		  <div class="form-group">
-        	{{ form.cnic.label(class='cnic-label') }}     	
-        	{% if form.cnic.errors %}
-        	  {{ form.cnic(class='form-control is-invalid') }}
-          	  <div class="invalid-feedback">
+      		  <div class="form-group">
+              	{{ form.cnic.label(class='cnic-label') }}
+
+                {% if form.cnic.errors %}
+              	{{ form.cnic(class='form-control is-invalid') }}
+              <div class="invalid-feedback">
                 {% for error in form.cnic.errors %}
-                  <span>{{ error }}</span>
+                <span>{{ error }}</span>
                 {% endfor %}
-          	  </div>
-          	{% else %}
-              {{ form.cnic(placeholder="Enter numbers only", class='form-control') }}
-            {% endif %}
- 
-      </div>
+              </div>
+                {% else %}
+                {{ form.cnic(placeholder="Enter numbers only", class='form-control') }}
+                {% endif %}       
+            </div>
 
-      <div class="form-group">
-          {{ form.cnic_front.label }}
-      
-          {% if form.cnic_front.errors %}
-            {{ form.cnic_front }}
-              <div class="invalid-feedback">
+            <div class="form-group">
+                {{ form.cnic_front.label }}  
+
+                {% if form.cnic_front.errors %}
+                {{ form.cnic_front(class="form-control-file") }}
+              <div>
                 {% for error in form.cnic_front.errors %}
-                  <span>{{ error }}</span>
+                <span class="text-danger">{{ error }}</span>
                 {% endfor %}
               </div>
-            {% else %}
-              {{ form.cnic_front }}
-            {% endif %}
- 
-          </div>
+                  {% else %}
+                  {{ form.cnic_front(class="form-control-file") }}
+                  {% endif %}       
+              </div>
 
-      <div class="form-group">
-          {{ form.cnic_back.label }}
-      
-          {% if form.cnic_back.errors %}
-            {{ form.cnic_back }}
-              <div class="invalid-feedback">
+            <div class="form-group">
+                {{ form.cnic_back.label }} 
+
+                {% if form.cnic_back.errors %}
+                {{ form.cnic_back(class="form-control-file") }}
+              <div>
                 {% for error in form.cnic_back.errors %}
-                  <span>{{ error }}</span>
+                <span class="text-danger">{{ error }}</span>
                 {% endfor %}
               </div>
-            {% else %}
-              {{ form.cnic_back }}
-            {% endif %}
- 
-          </div>
+                {% else %}
+                {{ form.cnic_back(class="form-control-file") }}
+                {% endif %}
+            </div>
 
-      {% if addagent %}
-      <div class="form-group">
-      {{ form.commission_rate.label }}
-  
-      {% if form.commission_rate.errors %}1`
-        {{ form.commission_rate(class='form-control is-invalid') }}
-          <div class="invalid-feedback">
-            {% for error in form.commission_rate.errors %}
-              <span>{{ error }}</span>
-            {% endfor %}
-          </div>
-        {% else %}
-          {{ form.commission_rate(class='form-control') }}
-        {% endif %}
+            {% if addagent %}
+            <div class="form-group">
+            {{ form.commission_rate.label }}
 
-      </div>
-      {% endif %}
-
-		  <div class="form-group">
-        	{{ form.comments.label }}
-     	
-        	{% if form.comments.errors %}
-        	  {{ form.comments(class='form-control is-invalid') }}
-          	  <div class="invalid-feedback">
-                {% for error in form.comments.errors %}
-                  <span>{{ error }}</span>
+            {% if form.commission_rate.errors %}
+            {{ form.commission_rate(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+                {% for error in form.commission_rate.errors %}
+                <span>{{ error }}</span>
                 {% endfor %}
-          	  </div>
-          	{% else %}
-              {{ form.comments(placeholder="Leave empty if no comments", class='form-control') }}
+            </div>
+                {% else %}
+                {{ form.commission_rate(class='form-control') }}
+                {% endif %}
+            </div>
             {% endif %}
- 
+
+		        <div class="form-group">
+        	  {{ form.comments.label }}
+     	
+        	  {% if form.comments.errors %}
+        	  {{ form.comments(class='form-control is-invalid') }}
+          	<div class="invalid-feedback">
+                {% for error in form.comments.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+          	</div>
+          	   {% else %}
+              {{ form.comments(placeholder="Leave empty if no comments", class='form-control') }}
+              {% endif %}
+            </div>
+
+            <div class="form-group btn-center">
+            <button type="submit" class="btn btn-outline-dark">Submit</button>
+            </div>
+	        </fieldset>
+	      </form>
       </div>
-
-      <button type="submit" class="btn btn-outline-dark">Submit</button>
-	      
-
-	  </fieldset>
-	</form>
+      <div class="col-md-3"></div>
   </div>
+</div>
 
   <script type="text/javascript">
 

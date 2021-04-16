@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<!-- new -->
+<div class="container my-5">
+	<div class="row">
+		<div class="col-md-3"></div>
+		<div class="col-12 col-md-6">
+			<form method="POST" action="{{ url_for('editplotprice', plot_id=plot.id) }}" class="form-style">
+				<fieldset class="form-group">
+					{{ form.csrf_token }}
+					<legend class="text-orange-1 text-center">Edit Plot Price</legend>
+					<p class="text-dark-3 text-center">Edit price of the plot</p>
+					<br>
+					{{ form.address.label }}
+					{{ form.address(class='form-control', disabled='true') }}
+					<br>
+					<div class="form-group">
+						{{ form.price.label }}
+						{% if form.price.errors %}
+						{{ form.price(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.price.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{% if plot.price %}
+						{{ form.price(class='form-control', value=plot.price) }}
+						{% else %}
+						{{ form.price(class='form-control', placeholder='Set Plot Price') }}
+						{% endif %}
+						{% endif %}
+					</div>
+					<br>
+					<div class="form-group btn-center">
+						{{ form.set(class='btn btn-outline-dark') }}
+					</div>
+				</fieldset>
+			</form>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
+<!-- new -->
+{% endblock %}

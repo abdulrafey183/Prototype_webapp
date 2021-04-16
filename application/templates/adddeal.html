@@ -1,110 +1,116 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-  <div class="content-section">
-    <form method="POST" action="{{ url_for('adddeal') }}">
-	    <fieldset class="form-group">
+<!-- new -->
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-12 col-md-6">
+      <form method="POST" action="{{ url_for('adddeal') }}" class="form-style">
+        <fieldset class="form-group">
+          {{ form.csrf_token }}
+          <legend class="text-orange-1 text-center">Add Deal</legend>
+          <p class="text-dark-3 text-center">Add new deal</p>
+          <br>
+          <div class="form-group">
+            {{ form.buyer_id.label }}
 
-		  {{ form.csrf_token }}
-        <legend>Add Deal</legend>
-
-		  <div class="form-group">
-        {{ form.buyer_id.label }}
-
-        {% if form.buyer_id.errors %}
-          {{ form.buyer_id(class='form-control is-invalid') }}
-         	  <div class="invalid-feedback">
+            {% if form.buyer_id.errors %}
+            {{ form.buyer_id(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
               {% for error in form.buyer_id.errors %}
-                <span>{{ error }}</span>
-              {% endfor %}
-         	  </div>
-        {% else %}
-         {{ form.buyer_id(class='form-control') }}
-        {% endif %} 
-      </div>
-	      
-		  <div class="form-group">
-        {{ form.plot_id.label }}
-     	
-        {% if form.plot_id.errors %}
-          {{ form.plot_id(class='form-control is-invalid') }}
-         	  <div class="invalid-feedback">
-              {% for error in form.plot_id.errors %}
-                <span>{{ error }}</span>
-              {% endfor %}
-         	  </div>
-        {% else %}
-          {{ form.plot_id(class='form-control') }}
-        {% endif %} 
-      </div>
-
-		  <div class="form-group">
-        {{ form.first_amount_recieved.label }}
-     	
-        {% if form.first_amount_recieved.errors %}
-          {{ form.first_amount_recieved(class='form-control is-invalid') }}
-         	  <div class="invalid-feedback">
-              {% for error in form.first_amount_recieved.errors %}
-                <span>{{ error }}</span>
-              {% endfor %}
-         	  </div>
-        {% else %}
-          {{ form.first_amount_recieved(placeholder="Enter numbers only", class='form-control') }}
-        {% endif %} 
-      </div>
-
-		  <div class="form-group">
-        {{ form.amount_per_installment.label }}
-     	
-        {% if form.amount_per_installment.errors %}
-          {{ form.amount_per_installment(class='form-control is-invalid') }}
-         	  <div class="invalid-feedback">
-              {% for error in form.amount_per_installment.errors %}
-                <span>{{ error }}</span>
+              <span>{{ error }}</span>
               {% endfor %}
             </div>
-        {% else %}
-          {{ form.amount_per_installment(placeholder="Enter numbers only", class='form-control') }}
-        {% endif %} 
-      </div>
+            {% else %}
+            {{ form.buyer_id(class='form-control') }}
+            {% endif %}
+            </div>
 
-		  <div class="form-group">
-        {{ form.installment_frequency.label }}
-     	
-        {% if form.installment_frequency.errors %}
-          {{ form.installment_frequency(class='form-control is-invalid') }}
-          <div class="invalid-feedback">
-            {% for error in form.installment_frequency.errors %}
+          <div class="form-group">
+            {{ form.plot_id.label }}
+
+            {% if form.plot_id.errors %}
+            {{ form.plot_id(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.plot_id.errors %}
               <span>{{ error }}</span>
-            {% endfor %}
-          </div>
-        {% else %}
-          {{ form.installment_frequency(placeholder="Enter numbers only",class='form-control') }}
-        {% endif %} 
-      </div>
-
-		  <div class="form-group">
-        {{ form.comments.label }}
-     	
-       	{% if form.comments.errors %}
-      	  {{ form.comments(placeholder="tttt", class='form-control is-invalid') }}
-         	  <div class="invalid-feedback">
-              {% for error in form.comments.errors %}
-                <span>{{ error }}</span>
               {% endfor %}
-         	  </div>
-        {% else %}
-          {{ form.comments(placeholder="Leave Empty if no comments", class='form-control') }}
-        {% endif %} 
-      </div>
+            </div>
+            {% else %}
+            {{ form.plot_id(class='form-control') }}
+            {% endif %}
+          </div>
 
-	    <div class="form-group">
-	      {{ form.submit(class='btn btn-outline-dark') }}
-	    </div>
+          <div class="form-group">
+            {{ form.first_amount_recieved.label }}
 
-	  </fieldset>
-	</form>
+            {% if form.first_amount_recieved.errors %}
+            {{ form.first_amount_recieved(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.first_amount_recieved.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %}
+            {{ form.first_amount_recieved(placeholder="Enter numbers only", class='form-control') }}
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.amount_per_installment.label }}
+
+            {% if form.amount_per_installment.errors %}
+            {{ form.amount_per_installment(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.amount_per_installment.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %}
+            {{ form.amount_per_installment(placeholder="Enter numbers only", class='form-control') }}
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.installment_frequency.label }}
+
+            {% if form.installment_frequency.errors %}
+            {{ form.installment_frequency(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.installment_frequency.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %}
+            {{ form.installment_frequency(placeholder="Enter numbers only",class='form-control') }}
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.comments.label }}
+
+            {% if form.comments.errors %}
+            {{ form.comments(placeholder="tttt", class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.comments.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %}
+            {{ form.comments(placeholder="Leave Empty if no comments", class='form-control') }}
+            {% endif %}
+          </div>
+          <br>
+          <div class="form-group btn-center">
+            {{ form.submit(class='btn btn-outline-dark') }}
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
 </div>
-
+<!-- new -->
 
 {% endblock %}

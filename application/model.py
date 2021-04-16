@@ -1,13 +1,15 @@
+from enum import unique
 from flask_login import UserMixin
 from . import db
 
 class User(db.Model, UserMixin):
     #Attribute Columns
     id       = db.Column(db.Integer,     primary_key=True) 
-    email    = db.Column(db.String(75),  unique=True) 
-    username = db.Column(db.String(50),  nullable=False) 
-    password = db.Column(db.String(100), nullable=False) 
-    rank     = db.Column(db.Integer,     nullable=False)
+
+    email    = db.Column(db.String(75) , nullable= False, unique= True) 
+    username = db.Column(db.String(50) , nullable= False) 
+    password = db.Column(db.String(100), nullable= False) 
+    rank     = db.Column(db.Integer    , nullable= False)
 
     #Relationships:
     notes = db.relationship("Notes", backref="user_object", lazy=True)
@@ -26,6 +28,8 @@ class User(db.Model, UserMixin):
         #return self
     	#return f'"<User {self.id}>"'         #"<User {}>".format(self.id)
     	return f'Email: {self.email}, Username: {self.username}, Password: {self.password}'
+
+
 
 class Buyer(db.Model):
     __tablename__ = 'buyer'
@@ -67,16 +71,32 @@ class Plot(db.Model):
     __tablename__ = 'plot'
 
     #Attribute Columns:
-    id       = db.Column(db.Integer, primary_key=True)
-    adddress = db.Column(db.String(100), nullable=False)
-    price    = db.Column(db.Integer, nullable=False)
-    size     = db.Column(db.String(20), nullable=False)
-    status   = db.Column(db.String(20), nullable=False)
-    comments = db.Column(db.Text, nullable=True, default=None)
+    id       = db.Column(db.Integer,     primary_key=True)
+
+    type     = db.Column(db.String(100), nullable=False)
+    address  = db.Column(db.String(100), nullable=False)
+    status   = db.Column(db.String(20),  nullable=False)
+    price    = db.Column(db.Integer,     nullable=True)
+    size     = db.Column(db.String(20),  nullable=False)    
+    comments = db.Column(db.Text,        nullable=True, default=None)
 
     #Relationships:
     #This attribute would return the deal obect this plot is associated to
     deal = db.relationship("Deal", backref='plot_object', uselist=False)
+
+    @property
+    def serialize(self):
+       """Return object data in easily serializable format"""
+       return {
+               'id'       : self.id,               
+               'type'     : self.type,
+               'address'  : self.address,
+               'status'   : self.status,
+               'price'    : self.price,
+               'size'     : self.size,
+               'comments' : self.comments,
+               'deal'     : self.deal.serialize if self.deal else None
+              }
 
 
 class Deal(db.Model):
@@ -98,15 +118,28 @@ class Deal(db.Model):
     #Relationships:
     transactions = db.relationship("Transaction", backref="deal_object", lazy=True)
 
+    @property
+    def serialize(self):
+       """Return object data in easily serializable format"""
+       return {
+               'id'                     : self.id,               
+               'status'                 : self.status,
+               'signing_date'           : self.signing_date,
+               'amount_per_installment' : self.amount_per_installment,
+               'installment_frequency'  : self.installment_frequency,
+               'comments'               : self.comments,
+              }
+
 
 class Transaction(db.Model):
     __tablename__ = 'transaction'
 
     #Attribute Columns:
-    id        = db.Column(db.Integer, primary_key=True)
-    amount    = db.Column(db.Integer, nullable=False)
-    date_time = db.Column(db.DateTime, nullable=False)
-    comments  = db.Column(db.Text, nullable=True, default=None)
+    id        = db.Column(db.Integer , primary_key=True)
+    
+    amount    = db.Column(db.Integer , nullable= False)
+    date_time = db.Column(db.DateTime, nullable= False)
+    comments  = db.Column(db.Text    , nullable= True, default=None)
 
     #ForeginKey Columns:
     deal_id = db.Column(db.Integer, db.ForeignKey('deal.id'), nullable=False)
@@ -117,14 +150,23 @@ class Notes(db.Model):
     __tablename__ = 'notes'
 
     #Attribute Columns:
-    id        = db.Column(db.Integer, primary_key=True)
-    title     = db.Column(db.String(50), nullable=False, default='Title')
-    content    = db.Column(db.Text, nullable=True, default=None)
-    date_time = db.Column(db.DateTime, nullable=False)
+    id        = db.Column(db.Integer   , primary_key=True)
+
+    title     = db.Column(db.String(50), nullable= False, default= 'Title')
+    content   = db.Column(db.Text      , nullable= True , default= None)
+    date_time = db.Column(db.DateTime  , nullable= False)
 
     #ForeginKey Columns:
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    
+
+
+class Expenditure(db.Model):
+    __tablename__ = 'expenditure'
+
+    #Attribute Columns:
+    id   = db.Column(db.Integer,     primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+     
     
 
 

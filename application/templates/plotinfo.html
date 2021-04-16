@@ -1,20 +1,76 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-
-	<h1>Plot Info:</h1>
-    <p>
-    Plot ID: {{ plot.id }}</br>
-    Plot Address: {{ plot.adddress }}</br>
-    Plot Price: {{ plot.price }}</br>
-    Plot Size: {{ plot.size }}</br>
-    Status: {{ plot.status }}</br>
-    {% if plot.comments %}
-      Comments: {{ plot.comments }}</br>
-    {% endif %}
-    {% if plot.deal %}
-      Plot's Deal: {{ plot.deal.id }}</br>
-    {% endif %}
-    </p>
-
+<!-- new -->
+<section class="my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-9">
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th scope="col" colspan="2">
+                <h1 class="text-orange-1 text-center">Plot Information</h1>
+                <p class="text-dark-3 text-center">All the plot's information is listed here</p>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="text-dark-3">
+              <th scope="row">ID</th>
+              <td>{{plot.id}}</td>
+            </tr>
+            <tr class="text-dark-3">
+              <th scope="row">Address</th>
+              <td>{{plot.address}}</td>
+            </tr>
+            {% if not plot.price %}
+            <tr class="text-dark-3">
+              <th scope="row">Price</th>
+              <td>
+                <span style="color: red;">Not Set</span>
+                {% if not current_user.rank %}
+                (<a href="{{ url_for('editplotprice', plot_id=plot.id) }}">Set Plot Price</a>)
+              </td>
+            </tr>
+            {% endif %}
+            {% else %}
+            <tr class="text-dark-3">
+              <th scope="row">Price</th>
+              <td>
+                {{ plot.price }}
+                {% if not current_user.rank %}
+                (<a href="{{ url_for('editplotprice', plot_id=plot.id) }}">Edit Plot Price</a>)
+                {% endif %}
+              </td>
+            </tr>
+            {% endif %}
+            <tr class="text-dark-3">
+              <th scope="row">Size</th>
+              <td>{{plot.size}}</td>
+            </tr>
+            <tr class="text-dark-3">
+              <th scope="row">Status</th>
+              <td>{{plot.status}}</td>
+            </tr>
+            {% if plot.comments %}
+            <tr class="text-dark-3">
+              <th scope="row">Comments</th>
+              <td>{{plot.comments}}</td>
+            </tr>
+            {% endif %}
+            {% if plot.deal %}
+            <tr class="text-dark-3">
+              <th scope="row">Deal</th>
+              <td>{{plot.deal.id}}</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col-12 col-md-3 notes-icon"><i class="fas fa-map-marker-alt"></i></div>
+    </div>
+  </div>
+</section>
+<!-- new -->
 {% endblock %}

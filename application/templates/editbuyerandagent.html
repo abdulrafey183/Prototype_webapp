@@ -1,42 +1,45 @@
 {% extends 'layout.html' %}
  
 {% block content %}
-  <div class="content-section">
-    <form method="POST" action="{{ url_for('editbuyer', buyer_id=entity.id) }}">
-        {{ form.csrf_token }}
-	  <fieldset class="form-group">
+<!-- new -->
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-12 col-md-6">
+        <form method="POST" action="{{ url_for('editbuyer', buyer_id=entity.id) }}" class="form-style">
+	         <fieldset class="form-group">
+              {{ form.csrf_token }}
+              <legend class="text-orange-1 text-center"id="title">Edit Buyer</legend>
+              <p id="sub-title" class="text-dark-3 text-center">Edit buyer information</p>
+              <br>
+		          <div class="form-group">
+                	{{ form.name.label }}
+                	{% if form.name.errors %}
+                	{{ form.name(class='form-control is-invalid') }}
+          	      <div class="invalid-feedback">
+                    {% for error in form.name.errors %}
+                      <span>{{ error }}</span>
+                    {% endfor %}
+          	      </div>
+          	      {% else %}
+                  {{ form.name(class='form-control', value=entity.name) }}
+                  {% endif %}
+      	      </div>
 
-        <legend id="title">Edit Buyer</legend>
-		  <div class="form-group">
-        	{{ form.name.label }}
-        	{% if form.name.errors %}
-        	  {{ form.name(class='form-control is-invalid') }}
-          	  <div class="invalid-feedback">
-                {% for error in form.name.errors %}
-                  <span>{{ error }}</span>
-                {% endfor %}
-          	  </div>
-          	{% else %}
-              {{ form.name(class='form-control', value=entity.name) }}
-            {% endif %}
- 
-      	  </div>
-
-      <div class="form-group">
-          {{ form.phone.label }}
-      
-          {% if form.phone.errors %}
-            {{ form.phone(class='form-control is-invalid') }}
-              <div class="invalid-feedback">
-                {% for error in form.phone.errors %}
-                  <span>{{ error }}</span>
-                {% endfor %}
-              </div>
-            {% else %}
-              {{ form.phone(class='form-control', value=entity.phone) }}
-            {% endif %}
- 
-          </div>
+              <div class="form-group">
+                  {{ form.phone.label }}              
+                  {% if form.phone.errors %}
+                  {{ form.phone(class='form-control is-invalid') }}
+                  <div class="invalid-feedback">
+                    {% for error in form.phone.errors %}
+                      <span>{{ error }}</span>
+                    {% endfor %}
+                  </div>
+                    {% else %}
+                      {{ form.phone(class='form-control', value=entity.phone) }}
+                    {% endif %}
+         
+                  </div>
 
       <div class="form-group">
           {{ form.email.label }}
@@ -134,15 +137,18 @@
       {% if editbuyer %}
         action = "{{ url_for('editbuyer',  buyer_id=entity.id) }}";
         legend = "Edit Buyer";
+        text   = "Edit Buyer Information";
       {% elif editagent %}
         action = "{{ url_for('editagent', agent_id=entity.id) }}";
         legend = "Edit Agent";
+        text   = "Edit Agent Information";
       {% else %}
         action = "{{ url_for('profile')}}";
       {% endif %}
 
       document.getElementsByTagName("form")[0].setAttribute("action", action);    
       document.getElementById("title").innerHTML = legend;
+      document.getElementById("sub-title").innerHTML = text;
       
   </script>
 {% endblock %}

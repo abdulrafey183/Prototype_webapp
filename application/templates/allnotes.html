@@ -2,18 +2,35 @@
 
 {% block content %}
 
-
-  <h1>Your Notes:</h1>
-  <ol>
-  {% for note in notes %} 
-    <li>
-	  <h5>
-     <a href="{{ url_for('noteinfo', note_id=note.id) }}"
-        class="noteLink">{{ note.title }}</a>
-    </h5>
-    </li>
-        
-    {% endfor %}
-    <ol>
+<!-- new -->
+<section class="my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-9">
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th scope="col" colspan="2">
+                <h1 class="text-orange-1 text-center">Notes</h1>
+                <p class="text-dark-3 text-center">All notes are listed below</p>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for note in notes %}
+            <tr>
+              <th scope="row"></th>
+              <td><a href="{{ url_for('noteinfo', note_id=note.id) }}" class="noteLink">{{ note.title }}</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col-12 col-md-3 notes-icon"><i class="far fa-edit"></i></div>
+    </div>
+  </div>
+</section>
+<!-- new -->
 
 {% endblock %}

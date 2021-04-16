@@ -1,13 +1,45 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-
-	<h1>Your Note:</h1>
-    <legend>{{ note.title }}</legend>
-    <p>{{ note.content}}</p>
-
-    <button class="btn btn-outline-danger btn-sm" action="/home">Delete Note</button>
-    <button class="btn btn-outline-secondary btn-sm  ml-2" action="/home">Edit Note</button>
-
+<!-- new -->
+<section class="my-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-9">
+                <table class="table mt-4">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="2">
+                                <h1 class="text-orange-1 text-center">Note</h1>
+                                <p class="text-dark-3 text-center">The details of the note are listed here</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="text-dark-3">
+                            <th scope="row">Title</th>
+                            <td>{{note.title}}</td>
+                        </tr>
+                        <tr class="text-dark-3">
+                            <th scope="row">Content</th>
+                            <td>{{note.content}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Edit / Delete</th>
+                            <td>
+                                <button class="btn btn-outline-secondary btn-sm" action="/home"><i
+                                        class="fas fa-pen-square"></i></button>
+                                <button class="btn btn-outline-danger btn-sm ml-2" action="/home"><i
+                                        class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-12 col-md-3 notes-icon"><i class="far fa-edit"></i></div>
+        </div>
+    </div>
+</section>
+<!-- new -->
 
 {% endblock %}

@@ -11,11 +11,13 @@ INSERT INTO user VALUES (3, "manager@example.com", "Manager 1", "pop", 1);
 INSERT INTO buyer VALUES (1, "Hadi Ali", 12345,  null);
 INSERT INTO buyer VALUES (2, "Haider Ali", 12346,  null);
 
-INSERT INTO plot VALUES (1, "first", 2000000, "7 marla",  "not sold", "nothing");
-INSERT INTO plot VALUES (2, "second", 100000, "2 marla",  "not sold", "nothing");
-INSERT INTO plot VALUES (3, "third", 300000, "5 marla",  "not sold", "nothing");
-INSERT INTO plot VALUES (4, "fourth", 500000, "5 marla",  "not sold", "nothing");
-INSERT INTO plot VALUES (5, "fifth", 2000000, "7 marla",  "not sold", "nothing");
+INSERT INTO plot("id", "type", "address", "status", "size") VALUES (1, "residential", "first",  "not sold", "7 marla");
+INSERT INTO plot("id", "type", "address", "status", "size") VALUES (2, "residential", "second", "not sold", "2 marla");
+INSERT INTO plot("id", "type", "address", "status", "size") VALUES (3, "residential", "third",  "not sold", "5 marla");
+INSERT INTO plot("id", "type", "address", "status", "size") VALUES (4, "residential", "fourth", "not sold", "5 marla");
+INSERT INTO plot("id", "type", "address", "status", "size") VALUES (5, "residential", "fifth",  "not sold", "7 marla");
+INSERT INTO plot("id", "type", "address", "status", "size") VALUES (4, "residential", "sixth",  "not sold", "5 marla");
+INSERT INTO plot("id", "type", "address", "status", "size") VALUES (5, "residential", "seventh","not sold", "7 marla");
 
 -- Deleting SQL
 DELETE FROM user WHERE id=2;

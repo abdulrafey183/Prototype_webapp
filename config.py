@@ -13,7 +13,7 @@ class DevelopmentConfig(Config):
     ENV                     = environ.get('FlaskPrototypeDevEnv')
     DEBUG                   = True
     TESTING                 = True
-    SQLALCHEMY_DATABASE_URI = environ.get('FlaskPrototypeDevDB')
+    SQLALCHEMY_DATABASE_URI = environ.get('FlaskPrototypeDevDB')  #'mysql://root:root@localhost/build_guild' 
 
     
 class ProductionConfig(Config):

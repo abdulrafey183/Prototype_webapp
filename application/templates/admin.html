@@ -1,27 +1,90 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<!-- new -->
+<section class="service-area" id="services">
+  <div class="container">
+    <div class="row mt-5">
+      <div class="col-12">
+        <div class="section-title text-center">
+          <h2 class="text-orange-1">Admin Panel</h2>
+          <p class="text-dark-3">View and manage databases</p>
+        </div>
+      </div>
+    </div>
+    <br><br>
+    <div class="row">
+      <div class="col-12 col-md-6 col-xl-4">
+        <a href="/admin/user">
+          <div class="service-wrap text-center">
+            <div class="service-icon">
+              <i class="fas fa-user"></i>
+            </div>
+            <h3>Users</h3>
+            <p>Create and manage users</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-12 col-md-6 col-xl-4">
+        <a href="/admin/buyer">
+          <div class="service-wrap text-center">
+            <div class="service-icon">
+              <i class="fas fa-user-tie"></i>
+            </div>
+            <h3>Buyers</h3>
+            <p>Add and manage buyers information</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-12 col-md-6 col-xl-4">
+        <a href="/admin/deal">
+          <div class="service-wrap text-center">
+            <div class="service-icon">
+              <i class="far fa-handshake"></i>
+            </div>
+            <h3>Deals</h3>
+            <p>View and manage deals information</p>
+          </div>
+        </a>
+      </div>
 
-	<h1>Username: {{current_user.username}}</h1></br>
-    <legend>Admin Panel - Databases:</legend>
+      <div class="col-12 col-md-6 col-xl-4">
+        <a href="/admin/plot">
+          <div class="service-wrap text-center">
+            <div class="service-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <h3>Plots</h3>
+            <p>Add, update, view or delete plots information</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-12 col-md-6 col-xl-4">
+        <a href="/admin/transaction">
+          <div class="service-wrap text-center">
+            <div class="service-icon">
+              <i class="far fa-credit-card"></i>
+            </div>
+            <h3>Transactions</h3>
+            <p>View and handle transactions</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-12 col-md-6 col-xl-4">
+        <a href="/admin/notes">
+          <div class="service-wrap text-center">
+            <div class="service-icon">
+              <i class="far fa-edit"></i>
+            </div>
+            <h3>Notes</h3>
+            <p>Manage your important notes</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+<br><br>
+<!-- new -->
 
-  	<ul>
-  		<a href="/admin/user">Users</a>
-  	</ul>
-    <ul>
-      <a href="/admin/buyer">Buyers</a>
-    </ul>
-    <ul>
-  		<a href="/admin/deal">Deals</a>
-  	</ul>
-    <ul>
-      <a href="/admin/plot">Plots</a>
-    </ul>
-    <ul>
-  		<a href="/admin/transaction">Transactions</a>
-  	</ul>
-    <ul>
-      <a href="/admin/notes">Notes</a>
-    </ul>
-    
 {% endblock %}

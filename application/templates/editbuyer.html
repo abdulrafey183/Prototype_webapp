@@ -1,0 +1,135 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<!-- new -->
+<div class="container my-5">
+	<div class="row">
+		<div class="col-md-3"></div>
+		<div class="col-12 col-md-6">
+			<form method="POST" action="{{ url_for('editbuyer', buyer_id=buyer.id) }}" class="form-style">
+				<fieldset class="form-group">
+					{{ form.csrf_token }}
+					<legend class="text-orange-1 text-center">Edit Buyer</legend>
+					<p class="text-dark-3 text-center">Edit buyer information</p>
+					<br>
+					<div class="form-group">
+						{{ form.name.label }}
+						{% if form.name.errors %}
+						{{ form.name(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.name.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ form.name(class='form-control', value=buyer.name) }}
+						{% endif %}
+
+					</div>
+
+					<div class="form-group">
+						{{ form.cnic.label }}
+
+						{% if form.cnic.errors %}
+						{{ form.cnic(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.cnic.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ form.cnic(placeholder="Enter numbers only", class='form-control', value=buyer.cnic) }}
+						{% endif %}
+
+					</div>
+
+					<div class="form-group">
+						{{ form.comments.label }}
+
+						{% if form.comments.errors %}
+						{{ form.comments(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.comments.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ form.comments(placeholder="Leave empty if no comments", class='form-control') }}
+						{% endif %}
+
+					</div>
+					<br>
+					<div class="form-group btn-center">
+						{{ form.submit(class='btn btn-outline-dark') }}
+					</div>
+				</fieldset>
+			</form>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
+<!-- new -->
+<!-- <div class="content-section">
+	<form method="POST" action="{{ url_for('editbuyer', buyer_id=buyer.id) }}">
+		<fieldset class="form-group">
+
+			{{ form.csrf_token }}
+			<legend>Edit Buyer</legend>
+
+			<div class="form-group">
+				{{ form.name.label }}
+				{% if form.name.errors %}
+				{{ form.name(class='form-control is-invalid') }}
+				<div class="invalid-feedback">
+					{% for error in form.name.errors %}
+					<span>{{ error }}</span>
+					{% endfor %}
+				</div>
+				{% else %}
+				{{ form.name(class='form-control', value=buyer.name) }}
+				{% endif %}
+
+			</div>
+
+			<div class="form-group">
+				{{ form.cnic.label }}
+
+				{% if form.cnic.errors %}
+				{{ form.cnic(class='form-control is-invalid') }}
+				<div class="invalid-feedback">
+					{% for error in form.cnic.errors %}
+					<span>{{ error }}</span>
+					{% endfor %}
+				</div>
+				{% else %}
+				{{ form.cnic(placeholder="Enter numbers only", class='form-control', value=buyer.cnic) }}
+				{% endif %}
+
+			</div>
+
+			<div class="form-group">
+				{{ form.comments.label }}
+
+				{% if form.comments.errors %}
+				{{ form.comments(class='form-control is-invalid') }}
+				<div class="invalid-feedback">
+					{% for error in form.comments.errors %}
+					<span>{{ error }}</span>
+					{% endfor %}
+				</div>
+				{% else %}
+				{{ form.comments(placeholder="Leave empty if no comments", class='form-control') }}
+				{% endif %}
+
+			</div>
+
+			<div class="form-group">
+				{{ form.submit(class='btn btn-outline-dark') }}
+			</div>
+
+		</fieldset>
+	</form>
+</div> -->
+
+
+{% endblock %}

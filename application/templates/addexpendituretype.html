@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<!-- new -->
+<div class="container my-5">
+	<div class="row">
+		<div class="col-md-3"></div>
+		<div class="col-12 col-md-6">
+			<form method="POST" action="{{ url_for('addexpendituretype') }}" class="form-style">
+				<fieldset class="form-group">
+					{{ form.csrf_token }}
+					<legend class="text-orange-1 text-center">Add Expenditure</legend>
+					<p class="text-dark-3 text-center">Add new type of expenditure</p>
+					<br>
+					<div class="form-group">
+						{{ form.name.label }}
+						{% if form.name.errors %}
+						{{ form.name(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.name.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ form.name(class='form-control') }}
+						{% endif %}
+					</div>
+					<br>
+					<div class="form-group btn-center">
+						{{ form.add(class='btn btn-outline-dark') }}
+					</div>
+				</fieldset>
+			</form>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
+<!-- new -->
+
+{% endblock %}

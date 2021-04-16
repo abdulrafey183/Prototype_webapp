@@ -2,30 +2,27 @@
 
 {% block content %}
 
- <img id="plan1" src = "/static/img/PLAN-1.png" width="850px" height="1300px" align="middle" usemap="#map"/>  
+<img id="plan1" src="/static/img/PLAN-1.png" class="map-style" usemap="#map" />
 
- 	<map name="map">
- 		{% for i in range(438, 678, 34) %}
+<!-- NOTE: All of the coordinates are divided by 2 when comapred to the actual PNG image,
+             because the PNG image is resized by 0.5x to fit on the screen -->
 
-        	<area shape = "rect" 
-            	  coords = "{{i}},1070,{{i+34}},1135"            
-            	  href = "{{ url_for('plotinfo', plot_id=((i-438)//34)+1) }}"
-                  name = {{((i-438)//34)+1}}
-            	  target = "_blank"
-         	/>
+<map name="map">
+	{% for i in range(438, 678, 34) %}
+	<area shape="rect" coords="{{i}},1070,{{i+34}},1135" href="{{ url_for('plotinfo', plot_id=((i-438)//34)+1) }}"
+		name={{((i-438)//34)+1}} target="_blank" />
+	{% endfor %}
 
-    	{% endfor %} 
-		{% for i in range(228, 399, 34) %}
+	{% for i in range(228, 399, 34) %}
+	<area shape="rect" coords="{{i}},1070,{{i+34}},1135" href=/plot/{{90-((i-228)//34)}} target="_blank" />
 
-        	<area shape = "rect" 
-            	  coords = "{{i}},1070,{{i+34}},1135"            
-            	  href = /plot/{{90-((i-228)//34)}}	
-            	  target = "_blank"
-         	/>
+	{% endfor %}
 
-   		{% endfor %} 
+	{% for i in range(440, 805, 15) %}
+	<area shape="rect" coords="{{i}},1135,{{i+15}},{{1135+50}}"
+		href="{{ url_for('plotinfo', plot_id=((i-440)//15)+11) }}" name={{((i-440)//15)+1}} target="_blank" />
+	{% endfor %}
 
-    </map>
-
+</map>
 
 {% endblock %}
