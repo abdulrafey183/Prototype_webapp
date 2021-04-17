@@ -17,7 +17,7 @@
 	</div>
 
 	<!-- Div to display Plots --> 
-	<div id="plot-div" style="display: none">
+	<div id="plot-div">
 
 	<div class="row pl-4 my-3">
 		<div class="col-2">
@@ -51,13 +51,8 @@
 	</div>
 
 	<!-- ETs -->
-	{% if active == "ETs" %}
-	<div id="ETs-div" style="display: block;">
-		{% else %}
-		<div id="ETs-div" style="display: none;">
-			{% endif %}
-			{% for ET in ETs %}
-			{% endfor %}
+	<div id="ET-div" style="display: block;">
+		<div id="ET-div" style="display: none;">
 		</div>
 	</div>
 

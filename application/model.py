@@ -79,6 +79,19 @@ class CommissionAgent(db.Model):
     #This attribute returns a list of deals that  are associated to a particular agent, when called
     deals = db.relationship("Deal", backref='working_agent_object', lazy=True)
 
+    @property
+    def serialize(self):
+       """Return object data in easily serializable format"""
+       return {
+               'id'              : self.id,               
+               'name'            : self.name,
+               'cnic'            : self.cnic,
+               'phone'           : self.phone,
+               'email'           : self.email,
+               'commission_rate' : self.commission_rate,
+               'comments'        : self.comments,
+              }
+
 class Plot(db.Model):
     __tablename__ = 'plot'
 

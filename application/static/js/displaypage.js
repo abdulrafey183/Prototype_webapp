@@ -3,7 +3,6 @@ let tabs = ["buyer", "plot", "CA", "ET", "deal"];
 
 
 function clicked(name){
-	
 	//Turning on the cliked div
 	document.getElementById(name+"-div").style.display = 'block';
 
@@ -72,6 +71,8 @@ function make_CA_card(CA){
 				"Commission Agent Name: "  + CA.name  + "</br>" +
 				"Commission Agent CNIC: "  + CA.cnic  + "</br>" +				
 			  "</p>";
+
+	return str;
 }
 
 function make_ET_card(ET){
@@ -95,7 +96,6 @@ function inject_div(name, list){
 }
 
 function getall(name){
-	console.log("yes");
 	clicked((name || "buyer"));
 	$.post('/rest/'+name+'/all', function(data){
 		inject_div(name, data.json_list);
