@@ -44,9 +44,9 @@ function make_plot_card(plot){
 function make_buyer_card(buyer){
 
 	let str = "<p>" +
-				"Buyer ID: "    + buyer.id    + "</br>" +
-				"Buyer Name: "  + buyer.name  + "</br>" +
-				"Buyer CNIC: "  + buyer.cnic  + "</br>" +
+				"<a href='/buyer/"  + buyer.id    + "'>Buyer ID: " + buyer.id + "</a></br>" +
+				"Buyer Name: "  	+ buyer.name  + "</br>" +
+				"Buyer CNIC: "  	+ buyer.cnic  + "</br>" +
 			  "</p>";
 
 	return str;
@@ -67,7 +67,7 @@ function make_deal_card(deal){
 function make_CA_card(CA){
 
 	let str = "<p>" +
-				"Commission Agent ID: "    + CA.id + "</br>" +
+				"<a href='/agent/" 		   + CA.id   + "'>Commission Agent ID: " + CA.id + "</a></br>" +
 				"Commission Agent Name: "  + CA.name  + "</br>" +
 				"Commission Agent CNIC: "  + CA.cnic  + "</br>" +				
 			  "</p>";
