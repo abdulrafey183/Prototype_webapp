@@ -115,7 +115,7 @@
     <div class="col-12">
       {% for category, message in get_flashed_messages(with_categories=true) %}
       {% if message %}
-      <div class="alert alert-{{ category }}">
+      <div class="alert alert-{{ category }} text-center">
         {{ message }}
       </div>
       {% endif %}

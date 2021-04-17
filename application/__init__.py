@@ -1,8 +1,8 @@
-from flask              import Flask
+from flask              import Flask, url_for
 from flask_sqlalchemy   import SQLAlchemy
 from flask_login        import LoginManager
 from flask_admin        import Admin
-from flask_cors         import CORS
+#from flask_cors         import CORS
 
 from flask_admin.base   import MenuLink
 
@@ -29,7 +29,7 @@ def create_app():
     login_manager.__init__(app)
     admin.init_app(app, index_view=AdminPanel(name= 'Admin Panel'))
     #cors.__init__(app)
-    cors          = CORS(app, support_credentials=True)
+    #cors          = CORS(app, support_credentials=True)
 
     with app.app_context():
 
@@ -60,6 +60,8 @@ def create_app():
         #db.drop_all()
         #db.create_all()
         #print(app.config)
-        from . import routes
 
+        #Adding Routes
+        from . import routes
+        
         return app   

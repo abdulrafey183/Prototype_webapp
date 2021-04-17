@@ -46,8 +46,20 @@ class Buyer(db.Model):
     comments     = db.Column(db.Text, default=db.null(), nullable=True)
 
     #Relationships:
-    #This attribute would return the deal obect this buyer is associated to
+    #This attribute would return the deal objects this buyer is associated to
     deals = db.relationship("Deal", backref='buyer_object', lazy=True)
+
+    @property
+    def serialize(self):
+       """Return object data in easily serializable format"""
+       return {
+               'id'       : self.id,               
+               'name'     : self.name,
+               'cnic'     : self.cnic,
+               'comments' : self.comments,
+               'deals'    : [deal.serialize for deal in self.deals]
+              }
+    
 
 class CommissionAgent(db.Model):
     __tablename__ = 'commissionagent'
@@ -103,17 +115,17 @@ class Deal(db.Model):
     __tablename__ = 'deal'
 
     #Attribute Columns:
-    id                     = db.Column(db.Integer, primary_key=True)
-    status                 = db.Column(db.String(20), nullable=False)
-    signing_date           = db.Column(db.String(20), nullable=False)
-    amount_per_installment = db.Column(db.Integer, nullable=False)
-    installment_frequency  = db.Column(db.String(20), nullable=False)
-    comments               = db.Column(db.Text, nullable=True, default=db.null())
+    id                     = db.Column(db.Integer,      primary_key=True)
+    status                 = db.Column(db.String(20),   nullable=False)
+    signing_date           = db.Column(db.String(20),   nullable=False)
+    amount_per_installment = db.Column(db.Integer,      nullable=False)
+    installment_frequency  = db.Column(db.String(20),   nullable=False)
+    comments               = db.Column(db.Text,         nullable=True, default=db.null())
 
     #ForeginKey Columns:
     working_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.id'), nullable=True, default=None)
-    buyer_id         = db.Column(db.Integer, db.ForeignKey('buyer.id'), nullable=True, default=None)
-    plot_id          = db.Column(db.Integer, db.ForeignKey('plot.id'), nullable=False, unique=True)
+    buyer_id         = db.Column(db.Integer, db.ForeignKey('buyer.id'),           nullable=True, default=None)
+    plot_id          = db.Column(db.Integer, db.ForeignKey('plot.id'),            nullable=False, unique=True)
 
     #Relationships:
     transactions = db.relationship("Transaction", backref="deal_object", lazy=True)
@@ -127,7 +139,10 @@ class Deal(db.Model):
                'signing_date'           : self.signing_date,
                'amount_per_installment' : self.amount_per_installment,
                'installment_frequency'  : self.installment_frequency,
-               'comments'               : self.comments,
+               'working_agent_id'       : self.working_agent_id if self.working_agent_id else None,
+               'buyer_id'               : self.buyer_id,
+               'plot_id'                : self.plot_id,
+               'comments'               : self.comments
               }
 
 
@@ -142,8 +157,8 @@ class Transaction(db.Model):
     comments  = db.Column(db.Text    , nullable= True, default=None)
 
     #ForeginKey Columns:
-    deal_id = db.Column(db.Integer, db.ForeignKey('deal.id'), nullable=False)
-    #expense_id = Foreginkey reference to Expense table
+    deal_id         = db.Column(db.Integer, db.ForeignKey('deal.id'))
+    expenditure_id  = db.Column(db.Integer, db.ForeignKey('expenditure.id'))
 
 
 class Notes(db.Model):
@@ -166,6 +181,17 @@ class Expenditure(db.Model):
     #Attribute Columns:
     id   = db.Column(db.Integer,     primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+
+    #Relationships:
+    transactions = db.relationship("Transaction", backref="expenditure_object", lazy=True)
+
+    @property
+    def serialize(self):
+      return {
+              "id"   : self.id,
+              "name" : self.name
+             }
+    
      
     
 

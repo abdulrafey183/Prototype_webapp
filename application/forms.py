@@ -112,5 +112,15 @@ class SearchForm(FlaskForm):
 #Filter Plot by Status Form
 class FilterPlotForm(FlaskForm):
 
-	status = SelectField('Filter By:', choices=[('sold','Sold'), ('not sold','Not Sold'), ('in a deal','In a Deal'), ('all', 'All')])
+	status = SelectField('Filter By:', choices=[('all', 'All'), ('sold','Sold'), ('not sold','Not Sold'), ('in a deal','In a Deal')])
 	filter = SubmitField('Filter')
+
+
+#Add Transaction Form
+class AddTransactionForm(FlaskForm):
+	
+	deal_id  = HiddenField('deal_id')
+	exp_id   = HiddenField('exp_id')
+	amount   = IntegerField('Amount', validators=[DataRequired(), number_range(min=0)])
+	comments = TextAreaField('Comments')
+	add      = SubmitField('Enter Payment')
