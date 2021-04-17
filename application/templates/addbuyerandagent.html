@@ -11,7 +11,7 @@
           {{ form.csrf_token }}
           <legend class="text-orange-1 text-center" id="title">Heading
           </legend>
-          <p class="text-dark-3 text-center">Add new buyer</p>
+          <p id="sub-text" class="text-dark-3 text-center">Add new buyer</p>
           <br>
     		  <div class="form-group">
             	{{ form.name.label }}
@@ -170,15 +170,18 @@
       {% if addbuyer %}
         action = "{{ url_for('addbuyer') }}";
         legend = "Add Buyer";
+        text   = "Add new Commission Agent";
       {% elif addagent %}
         action = "{{ url_for('addagent') }}";
         legend = "Add Agent";
+        text   = "Add new Commission Agent";
       {% else %}
         action = "{{ url_for('profile')}}";
       {% endif %}
 
       document.getElementsByTagName("form")[0].setAttribute("action", action);    
       document.getElementById("title").innerHTML = legend;
+      document.getElementById("sub-text").innerHTML = text;
       
   </script>
 {% endblock %}

@@ -1,5 +1,4 @@
 from flask              import Blueprint, redirect, render_template, flash, request, session, url_for, abort, jsonify
-from flask              import current_app as app
 from flask_login        import login_required, logout_user, current_user, login_user
 from flask_sqlalchemy   import sqlalchemy
 
@@ -119,15 +118,6 @@ def display():
     return render_template('display.html', active=active, filterPlotForm=filterPlotForm)
 
 
-# @app.route("/display/buyers")
-# @login_required
-# def displaybuyers():
-#     form = SearchBuyerForm()
-#     delete_form = DeleteBuyerForm()
-
-#     buyers = Buyer.query.all()
-#     return render_template('displaybuyers.html', buyers=buyers, form=form, delete_form=delete_form)
-
 @app.route("/display/agents")
 @login_required
 def displayagents():
@@ -187,7 +177,7 @@ def addbuyer():
     return render_template('addbuyerandagent.html', addbuyer=addbuyer, form=form)
 '''
 
-@app.route("/add/agent", methods=[GET, POST])
+'''@app.route("/add/agent", methods=[GET, POST])
 @login_required
 def addagent():
     print("add agent")
@@ -233,7 +223,7 @@ def addagent():
             return render_template('addbuyerandagent.html', addagent=addagent, form=form)
 
     return render_template('addbuyerandagent.html', addagent=addagent, form=form)
-
+'''
 
 @app.route('/edit/buyer/<buyer_id>', methods=[POST, GET])
 @login_required
@@ -412,14 +402,68 @@ def editplotprice(plot_id):
 @login_required
 def addbuyer():
 
-    form = AddBuyerForm()
-    if form.validate_on_submit():    
-        if addbuyer_(form.name.data, form.cnic.data, form.comments.data):
+    addbuyer = True 
+    form = AddandEditForm()
+    if form.validate_on_submit():
+
+        front = savecnic(form.cnic_front.data, form.cnic.data, 'front')
+        back  = savecnic(form.cnic_back.data, form.cnic.data, 'back')
+
+        # if cnic image is not uploaded
+        if not front or not back:
+            return render_template('addbuyerandagent.html', addbuyer=addbuyer, form=form)
+
+        buyer = {
+                'name'            :form.name.data,
+                'cnic'            : form.cnic.data,
+                'phone'           : form.phone.data,
+                'email'           : form.email.data,
+                'address'         : form.address.data,
+                'cnic_front'      : front,
+                'cnic_back'       : back,
+                'comments'        : form.comments.data if form.comments.data else db.null()
+            }
+
+        if addbuyer_(buyer):
             return redirect(url_for('profile')) 
         else:
-            return render_template('addbuyer.html', form=form) 
+            return render_template('addbuyerandagent.html', form=form) 
 
-    return render_template('addbuyer.html',  form=form)
+    return render_template('addbuyerandagent.html',  form=form, addbuyer=addbuyer)
+
+
+@app.route('/add/agent', methods=[GET, POST])
+@login_required
+def addagent():
+
+    addagent = True 
+    form = AddandEditForm()
+    if form.validate_on_submit():   
+
+        front = savecnic(form.cnic_front.data, form.cnic.data, 'front')
+        back  = savecnic(form.cnic_back.data, form.cnic.data, 'back')
+
+        # if cnic image is not uploaded
+        if not front or not back:
+            return render_template('addbuyerandagent.html', addagent=addagent, form=form)
+
+        agent = {
+                'name'            :form.name.data,
+                'cnic'            : form.cnic.data,
+                'phone'           : form.phone.data,
+                'email'           : form.email.data,
+                'cnic_front'      : front,
+                'cnic_back'       : back,
+                'commission_rate' : form.commission_rate.data,
+                'comments'        : form.comments.data if form.comments.data else db.null()
+            }
+
+        if addagent_(agent):
+            return redirect(url_for('profile')) 
+        else:
+            return render_template('addbuyerandagent.html', form=form) 
+
+    return render_template('addbuyerandagent.html',  form=form, addagent=addagent)
 
 
 @app.route('/add/deal', methods=[GET, POST])

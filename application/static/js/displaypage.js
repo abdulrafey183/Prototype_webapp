@@ -95,7 +95,7 @@ function inject_div(name, list){
 }
 
 function getall(name){
-	
+	console.log("yes");
 	clicked((name || "buyer"));
 	$.post('/rest/'+name+'/all', function(data){
 		inject_div(name, data.json_list);
