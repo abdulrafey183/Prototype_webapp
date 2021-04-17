@@ -6,10 +6,23 @@ VALUES
     (3, "munshi@example.com", "Manager 1"    , "pop", 1)
 ;
 
-INSERT INTO buyer 
-VALUES 
-    (1, "Hadi Ali"  , 12345,  null),
-    (2, "Haider Ali", 12346,  null)
+-- INSERT INTO buyer 
+-- VALUES 
+--     (1, "Hadi Ali"  , 12345,  null),
+--     (2, "Haider Ali", 12346,  null)
+-- ;
+
+
+INSERT INTO `buyer`
+VALUES
+    (1, 'Laraib Arjamand', '3840188588576', '03018109400', 'laraib@example.com', 'Bhera','path1', 
+    'path2', null),
+    (2, 'Bushra Arjamand', '3840188588572', '03004264935', 'bushra@example.com', 'Bhera','path1', 
+    'path2', null),
+    (3, 'Hooria Arjamand', '3840188588579', '03015702001', 'hooria@example.com', 'Bhera','path1', 
+    'path2', null),
+    (4, 'Asma Arjamand', '3840188588571', '03018109401', 'asma@example.com', 'Bhera','path1', 
+    'path2', null)
 ;
 
 INSERT INTO plot 

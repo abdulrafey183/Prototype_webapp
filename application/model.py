@@ -35,15 +35,15 @@ class Buyer(db.Model):
     __tablename__ = 'buyer'
 
     #Attribute Columns
-    id           = db.Column(db.Integer, primary_key=True)
-    name         = db.Column(db.String(75), nullable=False)
-    cnic         = db.Column(db.String(16), nullable=False, unique=True)
-    phone        = db.Column(db.String(11), nullable=False, unique=True)
+    id           = db.Column(db.Integer,     primary_key=True)
+    name         = db.Column(db.String(75),  nullable=False)
+    cnic         = db.Column(db.String(16),  nullable=False, unique=True)
+    phone        = db.Column(db.String(11),  nullable=False, unique=True)
     email        = db.Column(db.String(100), nullable=False, unique=True)
     address      = db.Column(db.String(100), nullable=False)
     cnic_front   = db.Column(db.String(500), nullable=False)
     cnic_back    = db.Column(db.String(500), nullable=False)
-    comments     = db.Column(db.Text, default=db.null(), nullable=True)
+    comments     = db.Column(db.Text,        nullable=True,  default=db.null())
 
     #Relationships:
     #This attribute would return the deal objects this buyer is associated to
