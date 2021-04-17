@@ -44,9 +44,9 @@ function make_plot_card(plot){
 function make_buyer_card(buyer){
 
 	let str = "<p>" +
-				"Buyer ID: "    + buyer.id    + "</br>" +
-				"Buyer Name: "  + buyer.name  + "</br>" +
-				"Buyer CNIC: "  + buyer.cnic  + "</br>" +
+				"<a href='/buyer/" + buyer.id    + "'>Buyer ID: "  + buyer.id    + "</a></br>" +
+				"Buyer Name: "  	+ buyer.name  + "</br>" +
+				"Buyer CNIC: "  	+ buyer.cnic  + "</br>" +
 			  "</p>";
 
 	return str;

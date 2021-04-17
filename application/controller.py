@@ -72,16 +72,3 @@ def addagent_(agent):
 		flash('ERROR: An Agent with this CNIC already exists!', 'danger')
 		return False
 
-
-def savecnic(cnicfile, cnic, side):
-
-	if not cnicfile:
-		flash("ERROR: CNIC Image Missing!", "danger")
-		return False
-
-	# path to folder for storing cnic images
-	cnic_file_path = app.root_path + '\\static\\img\\cnic\\agents\\' + str(cnic) + side + '.jpg'
-
-	cnicfile.save(cnic_file_path)
-	return cnic_file_path
-

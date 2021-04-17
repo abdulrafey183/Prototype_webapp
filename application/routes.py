@@ -3,6 +3,7 @@ from flask_login        import login_required, logout_user, current_user, login_
 from flask_sqlalchemy   import sqlalchemy
 
 from .controller        import *
+from .utility           import *
 from .forms             import * # LoginForm, AddBuyerForm, AddDealForm, SearchBuyerForm, DeleteBuyerForm, EditBuyerForm, AddNotesForm, AddNormalUserForm, SearchForm, 
 #from .model             import * # db, User, Buyer, Deal, Plot, Transaction, Notes
 from .middleware        import Middleware
