@@ -11,47 +11,47 @@
           <thead>
             <tr>
               <th scope="col" colspan="2">
-                <h1 class="text-orange-1 text-center">Buyer Information</h1>
-                <p class="text-dark-3 text-center">All the buyer's information is listed here</p>
+                <h1 id="title" class="text-orange-1 text-center">Buyer Information</h1>
+                <p id="sub-title" class="text-dark-3 text-center">All the buyer's information is listed here</p>
               </th>
             </tr>
           </thead>
           <tbody>
             <tr class="text-dark-3">
               <th scope="row">ID</th>
-              <td>{{buyer.id}}</td>
+              <td>{{entity.id}}</td>
             </tr>
             <tr class="text-dark-3">
               <th scope="row">Name</th>
-              <td>{{buyer.name}}</td>
+              <td>{{entity.name}}</td>
             </tr>
             <tr class="text-dark-3">
               <th scope="row">CNIC</th>
-              <td>{{buyer.cnic}}</td>
+              <td>{{entity.cnic}}</td>
             </tr>
             <tr class="text-dark-3">
               <th scope="row">Phone</th>
-              <td>{{buyer.phone}}</td>
+              <td>{{entity.phone}}</td>
             </tr>
             <tr class="text-dark-3">
               <th scope="row">Email</th>
-              <td>{{buyer.email}}</td>
+              <td>{{entity.email}}</td>
             </tr>
             <tr class="text-dark-3">
               <th scope="row">Address</th>
-              <td>{{buyer.address}}</td>
+              <td>{{entity.address}}</td>
             </tr>
             <tr class="text-dark-3">
               <th scope="row">Comments</th>
-              {% if buyer.comments %}
-              <td>{{buyer.comments}}</td>
+              {% if entity.comments %}
+              <td>{{entity.comments}}</td>
               {% endif %}
-              {% if buyer.deals %}
+              {% if entity.deals %}
             </tr>
             <tr class="text-dark-3">
               <th scope="row">Deals</th>
               <td>
-                {% for deal in buyer.deals %}
+                {% for deal in entity.deals %}
                 {{ deal.id }}
                 <br>
                 {% endfor %}
@@ -66,5 +66,23 @@
   </div>
 </section>
 <!-- new -->
+<script type="text/javascript">
 
+  var title = "";
+  var subtitle = "";
+
+  {% if buyerinfo %}
+    title = "Buyer Information";
+    subtitle = "All the buyer's information is listed here";
+  {% elif agentinfo %}
+    title = "Agent Information";
+    subtitle = "All the agent's information is listed here";
+  {% else %}
+    title = "{{ url_for('profile') }}";
+  {% endif %}
+
+  document.getElementById("title").innerHTML = title;
+  document.getElementById("sub-title").innerHTML = subtitle;
+
+</script>
 {% endblock %}
