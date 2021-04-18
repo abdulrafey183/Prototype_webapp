@@ -12,6 +12,7 @@ VALUES
     (2, "Haider Ali", 12346,  null)
 ;
 
+
 INSERT INTO plot 
     (`id`, `type`, `address`, `status`, `size`)
 VALUES 

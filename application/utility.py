@@ -1,3 +1,5 @@
+from flask              import current_app as app
+
 def savecnic(cnicfile, cnic, side):
 
 	''' 

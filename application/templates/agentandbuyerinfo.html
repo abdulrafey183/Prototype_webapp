@@ -37,14 +37,18 @@
               <th scope="row">Email</th>
               <td>{{entity.email}}</td>
             </tr>
+            {% if buyerinfo %}
             <tr class="text-dark-3">
               <th scope="row">Address</th>
               <td>{{entity.address}}</td>
             </tr>
+            {% endif %}
             <tr class="text-dark-3">
               <th scope="row">Comments</th>
               {% if entity.comments %}
               <td>{{entity.comments}}</td>
+              {% else %}
+              <td>No Comments</td>
               {% endif %}
               {% if entity.deals %}
             </tr>
@@ -62,6 +66,7 @@
         </table>
       </div>
       <div class="col-12 col-md-3 notes-icon"><i class="fas fa-user-tie"></i></div>
+      
     </div>
   </div>
 </section>
