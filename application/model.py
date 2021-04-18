@@ -131,13 +131,13 @@ class Deal(db.Model):
     id                     = db.Column(db.Integer,      primary_key=True)
     status                 = db.Column(db.String(20),   nullable=False)
     signing_date           = db.Column(db.String(20),   nullable=False)
-    amount_per_installment = db.Column(db.Integer,      nullable=False)
-    installment_frequency  = db.Column(db.String(20),   nullable=False)
+    amount_per_installment = db.Column(db.Integer,      nullable=True)
+    installment_frequency  = db.Column(db.String(20),   nullable=True)
     comments               = db.Column(db.Text,         nullable=True, default=db.null())
 
     #ForeginKey Columns:
-    working_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.id'), nullable=True, default=None)
-    buyer_id         = db.Column(db.Integer, db.ForeignKey('buyer.id'),           nullable=True, default=None)
+    working_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.id'), nullable=True,  default=None)
+    buyer_id         = db.Column(db.Integer, db.ForeignKey('buyer.id'),           nullable=True,  default=None)
     plot_id          = db.Column(db.Integer, db.ForeignKey('plot.id'),            nullable=False, unique=True)
 
     #Relationships:

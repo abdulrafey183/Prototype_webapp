@@ -25,23 +25,48 @@ VALUES
     'path2', null)
 ;
 
+
+INSERT INTO `commissionagent`
+    (`id`, `name`, `cnic`, `phone`, `email`, `cnic_front`, `cnic_back`, `commission_rate`, `comments`)
+VALUES 
+    (1, 'Abdul Rafey', '1234567890123', '03207047670', 'arafey@example.com', 'img/1234567890123.jpg', 'img/1234567890123.jpg', 0.4, null),
+    (2, 'Abdul Ahad', '1234567890122',  '03207047671', 'ahad@example.com',   'img/1234567890122.jpg', 'img/1234567890122.jpg', 0.4, null);
+
+
 INSERT INTO plot 
     (`id`, `type`, `address`, `status`, `size`)
 VALUES 
-    (1 , "residential", "first"   , "not sold", "7"),
-    (2 , "residential", "second"  , "not sold", "2"),
-    (3 , "residential", "third"   , "not sold", "5"),
-    (4 , "residential", "fouth"   , "not sold", "5"),
-    (5 , "residential", "fifth"   , "not sold", "7"),
-    (6 , "residential", "sixth"   , "not sold", "5"),
-    (7 , "residential", "seventh" , "not sold", "7"),
-    (11, "commercial" , "eleven"  , "not sold", "5"),
-    (12, "commercial" , "twelve"  , "not sold", "5"),
-    (13, "commercial" , "thirteen", "not sold", "5"),
-    (14, "commercial" , "fourteen", "not sold", "5"),
-    (15, "commercial" , "fifteen" , "not sold", "5"),
-    (16, "commercial" , "sixteen" , "not sold", "5")
+    (1 , "residential", "first"   , "in a deal", "7"),
+    (2 , "residential", "second"  , "in a deal", "2"),
+    (3 , "residential", "third"   , "in a deal", "5"),
+    (4 , "residential", "fouth"   , "in a deal", "5"),
+    (5 , "residential", "fifth"   , "in a deal", "7"),
+    (6 , "residential", "sixth"   , "in a deal", "5"),
+    (7 , "residential", "seventh" , "not sold",  "7"),
+    (11, "commercial" , "eleven"  , "in a deal", "5"),
+    (12, "commercial" , "twelve"  , "in a deal", "5"),
+    (13, "commercial" , "thirteen", "in a deal", "5"),
+    (14, "commercial" , "fourteen", "in a deal", "5"),
+    (15, "commercial" , "fifteen" , "in a deal", "5"),
+    (16, "commercial" , "sixteen" , "not sold",  "5")
 ;
+
+
+INSERT INTO `deal`
+VALUES
+    (1, 'on going', '10/03/2021 23:40:17',  NULL, NULL, NULL, NULL, 1, 1),
+    (2, 'on going', '15/03/2021 23:40:17',  NULL, NULL, NULL, NULL, 1, 2),
+    (3, 'on going', '20/03/2021 23:40:17',  NULL, NULL, NULL, NULL, 1, 11),
+    (4, 'on going', '25/03/2021 23:40:17',  NULL, NULL, NULL, NULL, 2, 3),
+    (5, 'on going', '30/03/2021 23:40:17',  NULL, NULL, NULL, NULL, 2, 4),
+    (6, 'on going', '10/03/2021 23:40:17',  NULL, NULL, NULL, NULL, 2, 12),
+    (7, 'on going', '15/03/2021 23:40:17',  NULL, NULL, NULL, NULL, 3, 5),
+    (8, 'on going', '20/03/2021 23:40:17',  NULL, NULL, NULL, NULL, 3, 6),
+    (9, 'on going', '25/03/2021 23:40:17',  NULL, NULL, NULL, NULL, 4, 15),
+    (10, 'on going', '30/03/2021 23:40:17', NULL, NULL, NULL, NULL, 4, 13),
+    (11, 'on going', '10/03/2021 23:40:17', NULL, NULL, NULL, NULL, 4, 14)
+;
+   
 
 
 
