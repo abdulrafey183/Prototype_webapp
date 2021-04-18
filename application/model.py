@@ -35,15 +35,15 @@ class Buyer(db.Model):
     __tablename__ = 'buyer'
 
     #Attribute Columns
-    id           = db.Column(db.Integer, primary_key=True)
-    name         = db.Column(db.String(75), nullable=False)
-    cnic         = db.Column(db.String(16), nullable=False, unique=True)
-    phone        = db.Column(db.String(11), nullable=False, unique=True)
+    id           = db.Column(db.Integer,     primary_key=True)
+    name         = db.Column(db.String(75),  nullable=False)
+    cnic         = db.Column(db.String(16),  nullable=False, unique=True)
+    phone        = db.Column(db.String(11),  nullable=False, unique=True)
     email        = db.Column(db.String(100), nullable=False, unique=True)
     address      = db.Column(db.String(100), nullable=False)
     cnic_front   = db.Column(db.String(500), nullable=False)
     cnic_back    = db.Column(db.String(500), nullable=False)
-    comments     = db.Column(db.Text, default=db.null(), nullable=True)
+    comments     = db.Column(db.Text,        nullable=True,  default=db.null())
 
     #Relationships:
     #This attribute would return the deal objects this buyer is associated to
@@ -131,13 +131,13 @@ class Deal(db.Model):
     id                     = db.Column(db.Integer,      primary_key=True)
     status                 = db.Column(db.String(20),   nullable=False)
     signing_date           = db.Column(db.String(20),   nullable=False)
-    amount_per_installment = db.Column(db.Integer,      nullable=False)
-    installment_frequency  = db.Column(db.String(20),   nullable=False)
+    amount_per_installment = db.Column(db.Integer,      nullable=True)
+    installment_frequency  = db.Column(db.String(20),   nullable=True)
     comments               = db.Column(db.Text,         nullable=True, default=db.null())
 
     #ForeginKey Columns:
-    working_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.id'), nullable=True, default=None)
-    buyer_id         = db.Column(db.Integer, db.ForeignKey('buyer.id'),           nullable=True, default=None)
+    working_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.id'), nullable=True,  default=None)
+    buyer_id         = db.Column(db.Integer, db.ForeignKey('buyer.id'),           nullable=True,  default=None)
     plot_id          = db.Column(db.Integer, db.ForeignKey('plot.id'),            nullable=False, unique=True)
 
     #Relationships:

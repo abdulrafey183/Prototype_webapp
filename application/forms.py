@@ -6,7 +6,7 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 import re
 
-from .model import Plot
+from .model import Plot, Buyer
 
 
 ### Custom Validators ###
@@ -59,9 +59,18 @@ class DeleteBuyerForm(FlaskForm):
 #Add Deal Form 
 class AddDealForm(FlaskForm):
 
-	#id 						= IntegerField('Deal ID', validators=[DataRequired()])
-	buyer_id 				= IntegerField  ('Buyer ID'              , validators=[DataRequired()])
-	plot_id 				= IntegerField  ('Plot ID'               , validators=[DataRequired()])
+	# defualt_choice = (None, 'Not Selected')
+	# buyers = [(row[0], 			str(row[1])+" - "+str(row[2])) for row in Buyer.query.with_entities(Buyer.id, Buyer.name, Buyer.cnic).all()]
+	# plots  = [(row[0], "Plot# "+str(row[0])+" - "+str(row[1])) for row in Plot.query.filter_by(status='not sold').with_entities(Plot.id, Plot.address).all()]
+
+	# buyers.insert(0, defualt_choice)
+	# plots.insert(0, defualt_choice)
+
+	#buyer_id 				= IntegerField  ('Buyer ID'              , validators=[DataRequired()])
+	#plot_id 				= IntegerField  ('Plot ID'               , validators=[DataRequired()])
+	buyer_id 				= SelectField	('Select Buyer', default=None, validators=[DataRequired()])
+	plot_id 				= SelectField   ('Select Plot' , default=None, validators=[DataRequired()])
+
 	first_amount_recieved 	= IntegerField  ('First Paid Amount'     , validators=[DataRequired()])
 	amount_per_installment 	= IntegerField  ('Amount per Installment', validators=[DataRequired()])
 	installment_frequency 	= StringField   ('Installments per Year' , validators=[DataRequired()])

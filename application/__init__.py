@@ -23,7 +23,6 @@ def create_app():
 
     #setting config variables from DevelopmentConfig class in config file
     app.config.from_object('config.DevelopmentConfig')
-    app.config['UPLOAD_FOLDER'] = "static\\img\\"
 
     #Initiaizaing Plugins
     db.__init__(app)
@@ -40,7 +39,7 @@ def create_app():
         # db.drop_all()
         # db.create_all()
 
-        # inserting dummy data
+        # # inserting dummy data
         # sql = open('dump.sql').read()
         # db.engine.execute(sql)
 

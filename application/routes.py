@@ -380,32 +380,27 @@ def addagent():
 @login_required
 def adddeal():
 
+    ####---MAKE THIS PRETTY---####
+    defualt_choice = (None, 'Not Selected')
+    buyers = [(row[0],          str(row[1])+" - "+str(row[2])) for row in Buyer.query.with_entities(Buyer.id, Buyer.name, Buyer.cnic).all()]
+    plots  = [(row[0], "Plot# "+str(row[0])+" - "+str(row[1])) for row in Plot.query.filter_by(status='not sold').with_entities(Plot.id, Plot.address).all()]
+    buyers.insert(0, defualt_choice)
+    plots.insert(0, defualt_choice)
     form = AddDealForm()
+    form.buyer_id.choices = buyers
+    form.plot_id.choices = plots
+     ####---MAKE THIS PRETTY---####
+
     if form.validate_on_submit():
         # Quering the mentioned plot and buyer returns None is no such pot exists        
         plot  = Plot .query.filter_by(id= form.plot_id .data).first()
         buyer = Buyer.query.filter_by(id= form.buyer_id.data).first()
 
-        # Applying validity checks
-        ####    ALSO CHECK IF PLOT PRICE IS SET  ###
-        if plot is None:       
-            flash(f'No plot exists with Plot ID: {form.plot_id.data}',  'danger')
-            return render_template('adddeal.html', form=form)
-
-        if buyer is None:
-            flash(f'No buyer exists with Buyer ID: {form.buyer_id.data}')
-            return render_template('adddeal.html', form=form)
-
-        if not (plot.deal is None):
-            flash(f'The Plot with ID {plot.id} cannot be sold')
-            flash(f'Plot Status: {plot.status}')
-            flash(f'Plot\'s Deal ID: {plot.deal.id}')
-            return render_template('adddeal.html', form=form)
+        ####  CHECK IF PLOT PRICE IS SET  ####
 
 
         # UPDATING CORESPONDING PLOT STATUS
         plot.status = 'sold' if form.first_amount_recieved.data == plot.price else 'in a deal'
-        # db.session.commit()
 
         try:
             # Creating Deal object
@@ -439,7 +434,7 @@ def adddeal():
 
         db.session.add(transaction)
         db.session.commit()
-        flash(f'Deal with ID {deal.id} successfully created!')
+        flash(f'Deal with ID {deal.id} successfully created!', 'success')
         return redirect(url_for('profile'))
 
     return render_template('adddeal.html', form= form)
