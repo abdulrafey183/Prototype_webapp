@@ -19,10 +19,10 @@ VALUES
 ;
 
 INSERT INTO `commissionagent`
-    (`id`, `name`, `cnic`, `phone`, `email`, `cnic_front`, `cnic_back`, `commission_rate`, `comments`)
+    (`id`, `name`, `cnic`, `phone`, `email`, `cnic_front`, `cnic_back`, `comments`)
 VALUES 
-    (1, 'Abdul Rafey', '1234567890123', '03207047670', 'arafey@example.com', 'img/1234567890123.jpg', 'img/1234567890123.jpg', 0.4, null),
-    (2, 'Abdul Ahad', '1234567890122',  '03207047671', 'ahad@example.com',   'img/1234567890122.jpg', 'img/1234567890122.jpg', 0.4, null);
+    (1, 'Abdul Rafey', '1234567890123', '03207047670', 'arafey@example.com', 'img/1234567890123.jpg', 'img/1234567890123.jpg', null),
+    (2, 'Abdul Ahad', '1234567890122',  '03207047671', 'ahad@example.com',   'img/1234567890122.jpg', 'img/1234567890122.jpg', null);
 
 
 INSERT INTO plot 

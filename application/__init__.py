@@ -57,8 +57,8 @@ def create_app():
         admin.add_link(MenuLink(name='Back to Profile', url='/profile'))
 
         #Creating tables in the database
-        #db.drop_all()
-        #db.create_all()
+        db.drop_all()
+        db.create_all()
         #print(app.config)
 
         #Adding Routes

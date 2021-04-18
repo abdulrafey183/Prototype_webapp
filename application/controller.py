@@ -58,7 +58,6 @@ def addagent_(agent):
 					email 	   = agent['email'],
 					cnic_front = agent['cnic_front'],
 					cnic_back  = agent['cnic_back'],
-					commission_rate = agent['commission_rate'],
 					comments = agent['comments']
 				)
 

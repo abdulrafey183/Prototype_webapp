@@ -120,23 +120,6 @@
                 {% endif %}
             </div>
 
-            {% if addagent %}
-            <div class="form-group">
-            {{ form.commission_rate.label }}
-
-            {% if form.commission_rate.errors %}
-            {{ form.commission_rate(class='form-control is-invalid') }}
-            <div class="invalid-feedback">
-                {% for error in form.commission_rate.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-                {% else %}
-                {{ form.commission_rate(class='form-control') }}
-                {% endif %}
-            </div>
-            {% endif %}
-
 		        <div class="form-group">
         	  {{ form.comments.label }}
      	

@@ -191,11 +191,10 @@ def editagent(agent_id):
             db.session.query(CommissionAgent).filter_by(
                                 id=agent_id
                                 ).update({ 
-                                    'name'           : form.name.data,
-                                    'cnic'           : form.cnic.data,
-                                    'phone'          : form.phone.data,
-                                    'email'          : form.email.data,
-                                    'commission_rate': form.commission_rate.data,
+                                    'name'     : form.name.data,
+                                    'cnic'     : form.cnic.data,
+                                    'phone'    : form.phone.data,
+                                    'email'    : form.email.data,
                                     'comments' : form.comments.data if form.comments.data else db.null()
             })
 
@@ -364,7 +363,6 @@ def addagent():
                 'email'           : form.email.data,
                 'cnic_front'      : front,
                 'cnic_back'       : back,
-                'commission_rate' : form.commission_rate.data,
                 'comments'        : form.comments.data if form.comments.data else db.null()
             }
 
