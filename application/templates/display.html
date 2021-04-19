@@ -1,42 +1,43 @@
 {% extends 'layout.html' %}
 
-{% block content %}	
-    
-    <div class="text-center">
-		<button id="buyer-button" class="btn" onclick="getall('buyer')">Buyers</button>
-		<button id="plot-button"  class="btn" onclick="getall('plot')">Plots</button>
-		<button id="deal-button"  class="btn" onclick="getall('deal')">Deals</button>
-		<button id="CA-button"    class="btn" onclick="getall('CA')">Commission Agents</button>
-		<button id="ET-button"    class="btn" onclick="getall('ET')">Expenditure Types</button>
-	</div>
+{% block content %}
 
-	<!-- Div to display Buyers --> 
+<div class="text-center">
+	<button id="buyer-button" class="btn" onclick="getall('buyer')">Buyers</button>
+	<button id="plot-button" class="btn" onclick="getall('plot')">Plots</button>
+	<button id="deal-button" class="btn" onclick="getall('deal')">Deals</button>
+	<button id="CA-button" class="btn" onclick="getall('CA')">Commission Agents</button>
+	<button id="ET-button" class="btn" onclick="getall('ET')">Expenditure Types</button>
+</div>
+
+<div class="container my-5">
+	<!-- Div to display Buyers -->
 	<div id="buyer-div">
 		<div id="buyer-info">
 		</div>
 	</div>
 
-	<!-- Div to display Plots --> 
+	<!-- Div to display Plots -->
 	<div id="plot-div">
 
-	<div class="row pl-4 my-3">
-		<div class="col-2">
-		  {{ filterPlotForm.status.label }}
+		<div class="row pl-4 my-3">
+			<div class="col-2">
+				{{ filterPlotForm.status.label }}
+			</div>
+			<div class="col-6">
+				{{ filterPlotForm.status(class='form-control') }}
+			</div>
+			<div class="col-4">
+				{{ filterPlotForm.filter(class='btn btn-outline-primary', id='filterPlot-btn') }}
+			</div>
 		</div>
-		<div class="col-6">
-		  {{ filterPlotForm.status(class='form-control') }}
-		</div>
-		<div class="col-4">
-			{{ filterPlotForm.filter(class='btn btn-outline-primary', id='filterPlot-btn') }}
-		</div>
-	</div>
 
 		<div id="plot-info">
 		</div>
 	</div>
 
 
-	<!-- Div to display Deals --> 
+	<!-- Div to display Deals -->
 	<div id="deal-div">
 		<div id="deal-info">
 		</div>
@@ -44,7 +45,7 @@
 
 
 	<!-- CAs -->
-	<!-- Div to display CAs --> 
+	<!-- Div to display CAs -->
 	<div id="CA-div">
 		<div id="CA-info">
 		</div>
@@ -55,10 +56,10 @@
 		<div id="ET-div" style="display: none;">
 		</div>
 	</div>
-
+</div>
 {% endblock %}
 
 {% block script %}
-	<script src="{{ url_for('static', filename='js/displaypage.js') }}"></script>
-	<script type="text/javascript">getall("{{ active }}")</script>
+<script src="{{ url_for('static', filename='js/displaypage.js') }}"></script>
+<script type="text/javascript">getall("{{ active }}")</script>
 {% endblock %}
