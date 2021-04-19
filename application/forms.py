@@ -71,16 +71,22 @@ class AddDealForm(FlaskForm):
 	buyer_id 				= SelectField	('Select Buyer', default=None, validators=[DataRequired()])
 	plot_id 				= SelectField   ('Select Plot' , default=None, validators=[DataRequired()])
 
+	plot_price				= IntegerField	('Plot Price')
+
 	first_amount_recieved 	= IntegerField  ('First Paid Amount'     , validators=[DataRequired()])
 	amount_per_installment 	= IntegerField  ('Amount per Installment', validators=[DataRequired()])
 	installment_frequency 	= StringField   ('Installments per Year' , validators=[DataRequired()])
 	comments 				= TextAreaField ('Comments'              , validators=[])
 	submit 					= SubmitField   ('Create Deal')
 
-# Add Transaction Form
+#Add Transaction Form
 class AddTransactionForm(FlaskForm):
-
-    pass
+	
+	deal_id  = HiddenField('deal_id')
+	exp_id   = HiddenField('exp_id')
+	amount   = IntegerField('Amount', validators=[DataRequired(), number_range(min=0)])
+	comments = TextAreaField('Comments')
+	add      = SubmitField('Enter Payment')
 
 # Add Notes Form
 class AddNotesForm(FlaskForm):
@@ -125,11 +131,4 @@ class FilterPlotForm(FlaskForm):
 	filter = SubmitField('Filter')
 
 
-#Add Transaction Form
-class AddTransactionForm(FlaskForm):
-	
-	deal_id  = HiddenField('deal_id')
-	exp_id   = HiddenField('exp_id')
-	amount   = IntegerField('Amount', validators=[DataRequired(), number_range(min=0)])
-	comments = TextAreaField('Comments')
-	add      = SubmitField('Enter Payment')
+

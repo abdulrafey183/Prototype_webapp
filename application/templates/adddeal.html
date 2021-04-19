@@ -42,6 +42,21 @@
             {% endif %}
           </div>
 
+          <div class="form-group" id="plot_price-div" style="display: none">
+            {{ form.plot_price.label }}
+
+            {% if form.plot_price.errors %}
+            {{ form.plot_price(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.plot_price.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %}
+            {{ form.plot_price(class='form-control') }}
+            {% endif %}
+          </div>
+
           <div class="form-group">
             {{ form.first_amount_recieved.label }}
 
@@ -113,4 +128,14 @@
 </div>
 <!-- new -->
 
-{% endblock %}
+{% endblock content %}
+
+{% block script %}
+
+  <script type="text/javascript">
+    $('#plot_id').on('change', function() {
+      $('#plot_price-div').show();
+    });
+  </script>
+
+{% endblock script %}
