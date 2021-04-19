@@ -23,7 +23,7 @@ def create_app():
 
     #setting config variables from DevelopmentConfig class in config file
     app.config.from_object('config.DevelopmentConfig')
-    
+
     #Initiaizaing Plugins
     db.__init__(app)
     login_manager.__init__(app)

@@ -72,7 +72,6 @@ class CommissionAgent(db.Model):
     email           = db.Column(db.String(100), nullable=False, unique=True)
     cnic_front      = db.Column(db.String(500), nullable=False)
     cnic_back       = db.Column(db.String(500), nullable=False)
-    commission_rate = db.Column(db.Float, nullable=False)
     comments        = db.Column(db.Text, nullable=True, default=db.null())
 
     #Relationships:
@@ -88,7 +87,6 @@ class CommissionAgent(db.Model):
                'cnic'            : self.cnic,
                'phone'           : self.phone,
                'email'           : self.email,
-               'commission_rate' : self.commission_rate,
                'comments'        : self.comments,
               }
 

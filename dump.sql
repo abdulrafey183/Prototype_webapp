@@ -6,13 +6,6 @@ VALUES
     (3, "munshi@example.com", "Manager 1"    , "pop", 1)
 ;
 
--- INSERT INTO buyer 
--- VALUES 
---     (1, "Hadi Ali"  , 12345,  null),
---     (2, "Haider Ali", 12346,  null)
--- ;
-
-
 INSERT INTO `buyer`
 VALUES
     (1, 'Laraib Arjamand', '3840188588576', '03018109400', 'laraib@example.com', 'Bhera','path1', 
@@ -25,12 +18,11 @@ VALUES
     'path2', null)
 ;
 
-
 INSERT INTO `commissionagent`
-    (`id`, `name`, `cnic`, `phone`, `email`, `cnic_front`, `cnic_back`, `commission_rate`, `comments`)
+    (`id`, `name`, `cnic`, `phone`, `email`, `cnic_front`, `cnic_back`, `comments`)
 VALUES 
-    (1, 'Abdul Rafey', '1234567890123', '03207047670', 'arafey@example.com', 'img/1234567890123.jpg', 'img/1234567890123.jpg', 0.4, null),
-    (2, 'Abdul Ahad', '1234567890122',  '03207047671', 'ahad@example.com',   'img/1234567890122.jpg', 'img/1234567890122.jpg', 0.4, null);
+    (1, 'Abdul Rafey', '1234567890123', '03207047670', 'arafey@example.com', 'img/1234567890123.jpg', 'img/1234567890123.jpg', null),
+    (2, 'Abdul Ahad', '1234567890122',  '03207047671', 'ahad@example.com',   'img/1234567890122.jpg', 'img/1234567890122.jpg', null);
 
 
 INSERT INTO plot 

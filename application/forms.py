@@ -36,7 +36,6 @@ class AddandEditForm(FlaskForm):
 	cnic_front   = FileField('CNIC Front', validators=[FileAllowed(['jpeg','png'], 'Image Files Only')])
 	cnic_back    = FileField('CNIC Back', validators=[FileAllowed(['jpeg','png'], 'Image Files Only')])
 	comments     = TextAreaField('Comments', validators=[])
-	commission_rate = FloatField('Commission Rate')
                            
 #Search Buyer Form
 class SearchBuyerForm(FlaskForm):
