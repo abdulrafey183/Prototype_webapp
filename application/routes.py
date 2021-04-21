@@ -402,7 +402,9 @@ def adddeal():
                 'attachments'            : form.attachments.data
                }
 
-        adddeal_(deal)
+        if adddeal_(deal):
+            return render_template('adddeal.html', form= form)
+            
         return redirect(url_for('profile'))
 
     return render_template('adddeal.html', form= form)

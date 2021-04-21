@@ -79,6 +79,13 @@ def adddeal_(deal_data):
 	buyer = Buyer.query.filter_by(id= deal_data['buyer_id']).first()
 	CA    = CommissionAgent.query.filter_by(id= deal_data['CA_id']).first()
 
+	if plot is None:
+		flash('No Plot Selected', 'danger')
+		return 'plot error'
+	elif buyer is None:
+		flash('No Buyer Selected', 'danger')
+		return 'buyer error'
+
 	print(f"------------------------\nPLOT ID: {plot}\nBUYER ID: {buyer}\nCA ID: {CA}\n------------------------")
 
 
