@@ -1,12 +1,13 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+
 <!-- new -->
 <div class="container my-5">
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-12 col-md-6">
-      <form method="POST" action="{{ url_for('adddeal') }}" class="form-style">
+      <form method="POST" action="{{ url_for('adddeal') }}" class="form-style" enctype='multipart/form-data'>
         <fieldset class="form-group">
           {{ form.csrf_token }}
           <legend class="text-orange-1 text-center">Add Deal</legend>
@@ -46,6 +47,10 @@
             {{ form.plot_price.label }}
 
             {% if form.plot_price.errors %}
+            <script>
+              document.getElementById('plot_price-div').style.display = 'block';
+              document.getElementById('c_rate-div').style.display     = 'block';
+            </script>
             {{ form.plot_price(class='form-control is-invalid') }}
             <div class="invalid-feedback">
               {% for error in form.plot_price.errors %}
@@ -54,6 +59,40 @@
             </div>
             {% else %}
             {{ form.plot_price(class='form-control') }}
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.CA_id.label }}
+
+            {% if form.CA_id.errors %}
+            {{ form.CA_id(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.CA_id.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %}
+            {{ form.CA_id(class='form-control') }}
+            {% endif %}
+          </div>
+
+          <div class="form-group" id="c_rate-div" style="display: none">
+            {{ form.c_rate.label }}
+
+            {% if form.c_rate.errors %}
+            <script>
+              document.getElementById('c_rate-div').style.display     = 'block';
+              document.getElementById('plot_price-div').style.display = 'block';
+            </script>
+            {{ form.c_rate(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.c_rate.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %}
+            {{ form.c_rate(class='form-control') }}
             {% endif %}
           </div>
 
@@ -106,7 +145,7 @@
             {{ form.comments.label }}
 
             {% if form.comments.errors %}
-            {{ form.comments(placeholder="tttt", class='form-control is-invalid') }}
+            {{ form.comments(class='form-control is-invalid') }}
             <div class="invalid-feedback">
               {% for error in form.comments.errors %}
               <span>{{ error }}</span>
@@ -116,7 +155,13 @@
             {{ form.comments(placeholder="Leave Empty if no comments", class='form-control') }}
             {% endif %}
           </div>
+
+          <div class="form-group">
+            {{ form.attachments.label }}
+            {{ form.attachments(class='form-control m-1') }}
+          </div>
           <br>
+
           <div class="form-group btn-center">
             {{ form.submit(class='btn btn-outline-dark') }}
           </div>
@@ -133,8 +178,37 @@
 {% block script %}
 
   <script type="text/javascript">
+
     $('#plot_id').on('change', function() {
-      $('#plot_price-div').show();
+     
+      if(this.value == 'None'){
+       
+        $('#plot_price-div').hide();
+        $('#plot_price').prop('required', false);
+      }
+      else{
+        
+        $.post('/rest/Plot/'+$('#plot_id').val(), function(row){
+          row.json_list[0]['price']  && $('#plot_price').val(row.json_list[0]['price']);
+          !row.json_list[0]['price'] && $('#plot_price').val('Not Set');
+        }).done($('#plot_price-div').show());
+        
+        $('#plot_price').prop('required', true);
+      }
+    });
+
+    $('#CA_id').on('change', function() {
+
+      if(this.value == 'None'){
+        
+        $('#c_rate-div').hide();
+        $('#c_rate').prop('required', false);
+      }
+      else{
+        
+        $('#c_rate-div').show();
+        $('#c_rate').prop('required', true);     
+      }
     });
   </script>
 

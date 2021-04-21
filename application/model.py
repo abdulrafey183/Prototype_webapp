@@ -48,6 +48,7 @@ class Buyer(db.Model):
     #Relationships:
     #This attribute would return the deal objects this buyer is associated to
     deals = db.relationship("Deal", backref='buyer_object', lazy=True)
+    files = db.relationship("File", backref="buyer_object" , lazy=True)
 
     @property
     def serialize(self):
@@ -57,7 +58,8 @@ class Buyer(db.Model):
                'name'     : self.name,
                'cnic'     : self.cnic,
                'comments' : self.comments,
-               'deals'    : [deal.serialize for deal in self.deals]
+               'deals'    : [deal.serialize for deal in self.deals],
+               'files'    : [file.serialize for file in self.files]
               }
     
 
@@ -126,20 +128,22 @@ class Deal(db.Model):
     __tablename__ = 'deal'
 
     #Attribute Columns:
-    id                     = db.Column(db.Integer,      primary_key=True)
-    status                 = db.Column(db.String(20),   nullable=False)
-    signing_date           = db.Column(db.String(20),   nullable=False)
-    amount_per_installment = db.Column(db.Integer,      nullable=True)
-    installment_frequency  = db.Column(db.String(20),   nullable=True)
-    comments               = db.Column(db.Text,         nullable=True, default=db.null())
+    id                     = db.Column(db.Integer     , primary_key=True)
+    status                 = db.Column(db.String(20)  , nullable=False)
+    signing_date           = db.Column(db.String(20)  , nullable=False)
+    amount_per_installment = db.Column(db.Integer     , nullable=True, default=db.null())
+    installment_frequency  = db.Column(db.String(20)  , nullable=True, default=db.null())
+    commission_rate        = db.Column(db.Float       , nullable=True, default=db.null())
+    comments               = db.Column(db.Text        , nullable=True, default=db.null())
 
     #ForeginKey Columns:
-    working_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.id'), nullable=True,  default=None)
-    buyer_id         = db.Column(db.Integer, db.ForeignKey('buyer.id'),           nullable=True,  default=None)
-    plot_id          = db.Column(db.Integer, db.ForeignKey('plot.id'),            nullable=False, unique=True)
+    commission_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.id'), nullable=True,  default=db.null())
+    buyer_id            = db.Column(db.Integer, db.ForeignKey('buyer.id'),           nullable=False)
+    plot_id             = db.Column(db.Integer, db.ForeignKey('plot.id'),            nullable=False, unique=True)
 
     #Relationships:
     transactions = db.relationship("Transaction", backref="deal_object", lazy=True)
+    files        = db.relationship("File"       , backref="deal_object", lazy=True)
 
     @property
     def serialize(self):
@@ -150,7 +154,7 @@ class Deal(db.Model):
                'signing_date'           : self.signing_date,
                'amount_per_installment' : self.amount_per_installment,
                'installment_frequency'  : self.installment_frequency,
-               'working_agent_id'       : self.working_agent_id if self.working_agent_id else None,
+               'commission_agent_id'    : self.commission_agent_id if self.commission_agent_id else None,
                'buyer_id'               : self.buyer_id,
                'plot_id'                : self.plot_id,
                'comments'               : self.comments
@@ -202,6 +206,30 @@ class Expenditure(db.Model):
               "id"   : self.id,
               "name" : self.name
              }
+
+
+class File(db.Model):
+    __tablename__ = 'file'
+
+    #Attribute Columns:
+    id     = db.Column(db.Integer                      , primary_key=True)
+    format = db.Column(db.String(20)                   , nullable=False )
+    data   = db.Column(db.LargeBinary(length=(2**32)-1), nullable=False)
+
+    #ForeginKey Columns:
+    deal_id  = db.Column(db.Integer, db.ForeignKey('deal.id'))
+    buyer_id = db.Column(db.Integer, db.ForeignKey('buyer.id'))
+
+    @property
+    def serialize(self):
+       """Return object data in easily serializable format"""
+       return {
+               'id'       : self.id,               
+               'format'   : self.format,
+               'data'     : self.data,
+               'deal_id'  : self.deal_id,
+               'buyer_id' : self.buyer_id
+              }
     
      
     

@@ -4,16 +4,12 @@ from flask_sqlalchemy   import sqlalchemy
 
 from .controller        import *
 from .utility           import *
-from .forms             import * # LoginForm, AddBuyerForm, AddDealForm, SearchBuyerForm, DeleteBuyerForm, EditBuyerForm, AddNotesForm, AddNormalUserForm, SearchForm, 
-#from .model             import * # db, User, Buyer, Deal, Plot, Transaction, Notes
+from .forms             import *
 from .middleware        import Middleware
 from .                  import login_manager
 from .                  import admin
 
 import os
-
-from datetime           import datetime
-#from application        import middleware
 
 
 #Setting utility variables
@@ -24,7 +20,6 @@ POST = 'POST'
 @app.route('/'    , methods= [GET])
 @app.route('/home', methods= [GET])
 def home():
-    print(url_for('static', filename=''))
     return render_template('home.html')
 
 
@@ -381,58 +376,33 @@ def adddeal():
     ####---MAKE THIS PRETTY---####
     defualt_choice = (None, 'Not Selected')
     buyers = [(row[0],          str(row[1])+" - "+str(row[2])) for row in Buyer.query.with_entities(Buyer.id, Buyer.name, Buyer.cnic).all()]
+    CAs    = [(row[0],          str(row[1])+" - "+str(row[2])) for row in CommissionAgent.query.with_entities(CommissionAgent.id, CommissionAgent.name, CommissionAgent.cnic).all()]
     plots  = [(row[0], "Plot# "+str(row[0])+" - "+str(row[1])) for row in Plot.query.filter_by(status='not sold').with_entities(Plot.id, Plot.address).all()]
     buyers.insert(0, defualt_choice)
+    CAs.insert(0, defualt_choice)
     plots.insert(0, defualt_choice)
     form = AddDealForm()
     form.buyer_id.choices = buyers
-    form.plot_id.choices = plots
-     ####---MAKE THIS PRETTY---####
+    form.plot_id.choices  = plots
+    form.CA_id.choices    = CAs
+    ####---MAKE THIS PRETTY---####
 
     if form.validate_on_submit():
-        # Quering the mentioned plot and buyer returns None is no such pot exists        
-        plot  = Plot .query.filter_by(id= form.plot_id .data).first()
-        buyer = Buyer.query.filter_by(id= form.buyer_id.data).first()
 
-        ####  CHECK IF PLOT PRICE IS SET  ####
+        deal = {
+                'plot_id'                : form.plot_id.data,
+                'buyer_id'               : form.buyer_id.data,
+                'CA_id'                  : form.CA_id.data,
+                'plot_price'             : form.plot_price.data,
+                'c_rate'                 : form.c_rate.data,
+                'first_amount_recieved'  : form.first_amount_recieved.data,
+                'amount_per_installment' : form.amount_per_installment.data,
+                'installment_frequency'  : form.installment_frequency.data,
+                'comments'               : form.comments.data,
+                'attachments'            : form.attachments.data
+               }
 
-
-        # UPDATING CORESPONDING PLOT STATUS
-        plot.status = 'sold' if form.first_amount_recieved.data == plot.price else 'in a deal'
-
-        try:
-            # Creating Deal object
-            deal = Deal(
-                # id                      = form.id.data,
-                buyer_id                = form.buyer_id.data,
-                plot_id                 = form.plot_id.data,
-                signing_date            = datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
-                status                  = 'finished' if form.first_amount_recieved.data == plot.price else 'on going',
-                amount_per_installment  = form.amount_per_installment.data,
-                installment_frequency   = form.installment_frequency.data,
-                comments                = form.comments.data if form.comments.data else db.null()
-            )
-
-            db.session.add(deal)
-            db.session.commit()
-            db.session.refresh(deal)
-
-        except sqlalchemy.exc.IntegrityError:
-            flash('ERROR: A deal with this ID already exists!')
-            return render_template('adddeal.html', form= form)
-
-        
-        # Creating corresponding transaction
-        transaction = Transaction(
-            amount      = form.first_amount_recieved.data,
-            date_time   = datetime.now(),
-            comments    = f'Initial Transaction for Deal {deal.id}',
-            deal_id     = deal.id
-        )
-
-        db.session.add(transaction)
-        db.session.commit()
-        flash(f'Deal with ID {deal.id} successfully created!', 'success')
+        adddeal_(deal)
         return redirect(url_for('profile'))
 
     return render_template('adddeal.html', form= form)
@@ -601,7 +571,7 @@ def filterplot(status):
     return jsonify(json_list=[plot.serialize for plot in plots])
 
 
-@app.route('/rest/buyer/all', methods=[GET, POST])
+@app.route('/rest/buyer/all', methods=[POST])
 @login_required
 def allbuyers():
 
@@ -609,7 +579,7 @@ def allbuyers():
     return jsonify(json_list=[buyer.serialize for buyer in buyers])
 
 
-@app.route('/rest/plot/all', methods=[GET, POST])
+@app.route('/rest/plot/all', methods=[POST])
 @login_required
 def allplots():
 
@@ -618,7 +588,7 @@ def allplots():
     return jsonify(json_list=[plot.serialize for plot in plots])
 
 
-@app.route('/rest/deal/all', methods=[GET, POST])
+@app.route('/rest/deal/all', methods=[POST])
 @login_required
 def alldeals():
 
@@ -627,7 +597,7 @@ def alldeals():
 
 
 
-@app.route('/rest/CA/all', methods=[GET, POST])
+@app.route('/rest/CA/all', methods=[POST])
 @login_required
 def allCAs():
 
@@ -635,11 +605,20 @@ def allCAs():
     return jsonify(json_list=[CA.serialize for CA in CAs])
 
 
-@app.route('/rest/ET/all', methods=[GET, POST])
+@app.route('/rest/ET/all', methods=[POST])
 @login_required
 def allETs():
 
     ETs = Expenditure.query.all()
     return jsonify(json_list=[ET.serialize for ET in ETs])
+
+
+@app.route('/rest/<table>/<id>', methods=[GET, POST])
+@login_required
+def getIDfromTable(table, id):
+
+    exec(f"locals()['temp'] = {table}.query.filter_by(id={id}).first()")
+    
+    return jsonify(json_list=[locals()['temp'].serialize])
 
 

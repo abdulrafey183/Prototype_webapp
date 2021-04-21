@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask import Markup
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, TextAreaField, HiddenField, SelectField, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, TextAreaField, HiddenField, SelectField, ValidationError, MultipleFileField
 from wtforms.validators import DataRequired, Length, number_range
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 
@@ -57,27 +57,24 @@ class DeleteBuyerForm(FlaskForm):
 
 #Add Deal Form 
 class AddDealForm(FlaskForm):
-
-	# defualt_choice = (None, 'Not Selected')
-	# buyers = [(row[0], 			str(row[1])+" - "+str(row[2])) for row in Buyer.query.with_entities(Buyer.id, Buyer.name, Buyer.cnic).all()]
-	# plots  = [(row[0], "Plot# "+str(row[0])+" - "+str(row[1])) for row in Plot.query.filter_by(status='not sold').with_entities(Plot.id, Plot.address).all()]
-
-	# buyers.insert(0, defualt_choice)
-	# plots.insert(0, defualt_choice)
-
+	
 	#buyer_id 				= IntegerField  ('Buyer ID'              , validators=[DataRequired()])
 	#plot_id 				= IntegerField  ('Plot ID'               , validators=[DataRequired()])
-	buyer_id 				= SelectField	('Select Buyer', default=None, validators=[DataRequired()])
-	plot_id 				= SelectField   ('Select Plot' , default=None, validators=[DataRequired()])
 
-	plot_price				= IntegerField	('Plot Price')
-
-	first_amount_recieved 	= IntegerField  ('First Paid Amount'     , validators=[DataRequired()])
-	amount_per_installment 	= IntegerField  ('Amount per Installment', validators=[DataRequired()])
-	installment_frequency 	= StringField   ('Installments per Year' , validators=[DataRequired()])
-	comments 				= TextAreaField ('Comments'              , validators=[])
-	submit 					= SubmitField   ('Create Deal')
-
+	buyer_id 				= SelectField		('Select Buyer'			  , default=None, validators=[DataRequired()])
+	plot_id 				= SelectField   	('Select Plot' 			  , default=None, validators=[DataRequired()])
+	c_rate					= FloatField		('Commission Rate'		  , default=0   , validators=[number_range(min=0, max=1)])
+	CA_id 					= SelectField		('Select Commission Agent', default=None)
+	plot_price				= IntegerField		('Plot Price')
+	first_amount_recieved 	= IntegerField  	('First Paid Amount (optional)', default=0)
+	amount_per_installment 	= IntegerField  	('Expected Amount per Installment (optional)', default=0)
+	installment_frequency 	= IntegerField  	('Expected Number of Installments per Year (optional)', default=0)
+	comments 				= TextAreaField 	('Comments')
+	attachments 			= MultipleFileField	('Attachments')
+	submit 					= SubmitField   	('Create Deal')
+	
+	
+	
 #Add Transaction Form
 class AddTransactionForm(FlaskForm):
 	
