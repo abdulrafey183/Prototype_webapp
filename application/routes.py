@@ -100,6 +100,12 @@ def add():
     return render_template('add.html')
 
 
+@app.route('/analytics')
+@login_required
+def analytics():
+    return render_template('analytics.html')
+
+
 @app.route('/display')
 @login_required
 def display():
@@ -133,33 +139,17 @@ def editbuyer(buyer_id):
     form  = AddandEditForm()
 
     buyer = Buyer.query.filter_by(id=buyer_id).first()
-
     # if no record of buyer with entered id is found
     if buyer is None:
         flash(f'No such buyer exists!', 'danger')
         return redirect(url_for("display"))
     
     if form.validate_on_submit():
-
-        try:
-            db.session.query(Buyer).filter_by(
-                                id=buyer_id
-                                ).update({ 
-                                    'name'       : form.name.data,
-                                    'cnic'       : form.cnic.data,
-                                    'phone'      : form.phone.data,
-                                    'email'      : form.email.data,
-                                    'address'    : form.address.data,
-                                    'comments'   : form.comments.data if form.comments.data else db.null()
-            })
-
-            db.session.commit()
-            flash(f'Buyer Info with id "{buyer.id}"" Updated', 'success')
+        edit = editbuyer_(buyer_id, form)
+        if edit:
             return redirect(url_for('display'))
-
-        except sqlalchemy.orm.exc.NoResultFound:
-            flash("ERROR: A buyer with this CNIC already exists!", "danger")
-            return render_template('editbuyerandagent.html', editbuyer=editbuyer, entity=buyer, form=form)   
+        else:
+            return render_template('editbuyerandagent.html', editbuyer=editbuyer, entity=buyer, form=form)
 
     else:       
         form.comments.data   = buyer.comments
@@ -181,26 +171,12 @@ def editagent(agent_id):
         return redirect(url_for("display"))
 
     if form.validate_on_submit():
-
-        try:
-            db.session.query(CommissionAgent).filter_by(
-                                id=agent_id
-                                ).update({ 
-                                    'name'     : form.name.data,
-                                    'cnic'     : form.cnic.data,
-                                    'phone'    : form.phone.data,
-                                    'email'    : form.email.data,
-                                    'comments' : form.comments.data if form.comments.data else db.null()
-            })
-
-            db.session.commit()
-            flash(f"Agent Info with id '{agent.id}' Updated", 'success')
+        edit = editagent_(agent_id, form)
+        if edit:
             return redirect(url_for('display'))
-
-        except sqlalchemy.orm.exc.NoResultFound:
-            flash("ERROR: A agent with this CNIC already exists!", "danger")
-            return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form)   
-
+        else:
+            return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form) 
+        
     else:
         form.comments.data = agent.comments
         return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form)
@@ -220,10 +196,7 @@ def deletebuyer(buyer_id):
         flash(f'No such buyer exists!', 'danger')
         return redirect(url_for("display"))
 
-    db.session.delete(buyer)
-    db.session.commit()
-
-    flash('Buyer Record Deleted!', 'danger')
+    deletebuyer_(buyer)
     return redirect(url_for('display'))
 
 
@@ -241,10 +214,7 @@ def deleteagent(agent_id):
         flash(f'No such agent exists!', 'danger')
         return redirect(url_for("display"))
 
-    db.session.delete(agent)
-    db.session.commit()
-
-    flash('Agent Record Deleted!', 'danger')
+    deleteagent_(agent)
     return redirect(url_for('display'))
 
 

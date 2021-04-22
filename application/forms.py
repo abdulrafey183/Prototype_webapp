@@ -6,16 +6,8 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 import re
 
-from .model import Plot, Buyer
-
-
-### Custom Validators ###
-
-# validate phone and cnic
-def validate_phone_and_cnic(form, field):
-
-	if not re.match(r'^([\s\d]+)$', field.data):
-		raise ValidationError('Enter Numbers Only!')
+from .model   import Plot, Buyer
+from .utility import validate_phone_and_cnic
 
 ### Forms
 
