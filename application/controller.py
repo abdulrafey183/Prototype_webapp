@@ -4,6 +4,7 @@ from flask_login import login_user
 from flask_sqlalchemy import sqlalchemy
 
 from .model import *
+from .utility           import *
 
 from datetime import datetime
 
@@ -28,17 +29,24 @@ def editplotprice_(plot_id, price):
 
 
 ### Buyer ###
-def addbuyer_(buyer):
+def addbuyer_(buyer_data):
     try:
+
+        front = savecnic(buyer_data.cnic_front.data, buyer_data.cnic.data, 'front')
+        back  = savecnic(buyer_data.cnic_back.data, buyer_data.cnic.data, 'back')
+
+        if not front or not back:
+            return False
+
         buyer = Buyer(
-            name=buyer['name'],
-            cnic=buyer['cnic'],
-            phone=buyer['phone'],
-            email=buyer['email'],
-            address=buyer['address'],
-            cnic_front=buyer['cnic_front'],
-            cnic_back=buyer['cnic_back'],
-            comments=buyer['comments']
+            name       = buyer_data.name.data,
+            cnic       = buyer_data.cnic.data,
+            phone      = buyer_data.phone.data,
+            email      = buyer_data.email.data,
+            address    = buyer_data.address.data,
+            cnic_front = front,
+            cnic_back  = back,
+            comments   = buyer_data.comments.data if buyer_data.comments.data else db.null()
         )
 
         db.session.add(buyer)
@@ -82,16 +90,23 @@ def deletebuyer_(buyer):
     flash('Buyer Record Deleted!', 'danger')
 
 ### Commission Agent ###
-def addagent_(agent):
+def addagent_(agent_data):
     try:
+
+        front = savecnic(agent_data.cnic_front.data, agent_data.cnic.data, 'front')
+        back  = savecnic(agent_data.cnic_back.data, agent_data.cnic.data, 'back')
+
+        if not front or not back:
+            return False
+
         agent = CommissionAgent(
-            name=agent['name'],
-            cnic=agent['cnic'],
-            phone=agent['phone'],
-            email=agent['email'],
-            cnic_front=agent['cnic_front'],
-            cnic_back=agent['cnic_back'],
-            comments=agent['comments']
+            name       = agent_data.name.data,
+            cnic       = agent_data.cnic.data,
+            phone      = agent_data.phone.data,
+            email      = agent_data.email.data,
+            cnic_front = front,
+            cnic_back  = back,
+            comments   = agent_data.comments.data if agent_data.comments.data else db.null()
         )
 
         db.session.add(agent)

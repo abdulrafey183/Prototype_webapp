@@ -3,7 +3,6 @@ from flask_login        import login_required, logout_user, current_user, login_
 from flask_sqlalchemy   import sqlalchemy
 
 from .controller        import *
-from .utility           import *
 from .forms             import *
 from .middleware        import Middleware
 from .                  import login_manager
@@ -279,29 +278,12 @@ def addbuyer():
     addbuyer = True 
     form = AddandEditForm()
     if form.validate_on_submit():
-
-        front = savecnic(form.cnic_front.data, form.cnic.data, 'front')
-        back  = savecnic(form.cnic_back.data, form.cnic.data, 'back')
-
-        # if cnic image is not uploaded
-        if not front or not back:
-            return render_template('addbuyerandagent.html', addbuyer=addbuyer, form=form)
-
-        buyer = {
-                'name'            :form.name.data,
-                'cnic'            : form.cnic.data,
-                'phone'           : form.phone.data,
-                'email'           : form.email.data,
-                'address'         : form.address.data,
-                'cnic_front'      : front,
-                'cnic_back'       : back,
-                'comments'        : form.comments.data if form.comments.data else db.null()
-            }
-
-        if addbuyer_(buyer):
+        buyer_data = form
+        print(buyer_data.cnic)
+        if addbuyer_(buyer_data):
             return redirect(url_for('profile')) 
         else:
-            return render_template('addbuyerandagent.html', form=form) 
+            return render_template('addbuyerandagent.html', addbuyer=addbuyer, form=form) 
 
     return render_template('addbuyerandagent.html',  form=form, addbuyer=addbuyer)
 
@@ -313,28 +295,12 @@ def addagent():
     addagent = True 
     form = AddandEditForm()
     if form.validate_on_submit():   
-
-        front = savecnic(form.cnic_front.data, form.cnic.data, 'front')
-        back  = savecnic(form.cnic_back.data, form.cnic.data, 'back')
-
-        # if cnic image is not uploaded
-        if not front or not back:
-            return render_template('addbuyerandagent.html', addagent=addagent, form=form)
-
-        agent = {
-                'name'            :form.name.data,
-                'cnic'            : form.cnic.data,
-                'phone'           : form.phone.data,
-                'email'           : form.email.data,
-                'cnic_front'      : front,
-                'cnic_back'       : back,
-                'comments'        : form.comments.data if form.comments.data else db.null()
-            }
-
-        if addagent_(agent):
+        agent_data = form
+        
+        if addagent_(form):
             return redirect(url_for('profile')) 
         else:
-            return render_template('addbuyerandagent.html', form=form) 
+            return render_template('addbuyerandagent.html', addagent=addagent, form=form) 
 
     return render_template('addbuyerandagent.html',  form=form, addagent=addagent)
 
