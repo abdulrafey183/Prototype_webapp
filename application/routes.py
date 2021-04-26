@@ -427,24 +427,32 @@ def dealinfo(deal_id):
 @login_required
 def addtransaction(type, id):
 
-    if type == 'receivepayment':
-        form   = AddTransactionForm(deal_id=id)
-        deal_id = id
-        exp_id  = None
-    elif type == 'expense':
-        form  = AddTransactionForm(exp_id=id)
-        deal_id = None
-        exp_id  = id
-    else:
+    try: 
+        if type == 'receivepayment':
+            deal = Deal.query.filter_by(id=id).first()
+            form   = AddTransactionForm(deal=deal.id)
+            form.deal.choices = [(row[0], row[0]) for row in Deal.query.with_entities(Deal.id).all()]
+        elif type == 'expense':
+            ET = Expenditure.query.filter_by(id=id).first()
+            form  = AddTransactionForm(ET=ET.id)
+            print("ET id:", form.ET.data)
+            form.ET.choices = [(row[0], row[1]) for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]
+        else:
+            abort(404)
+    except AttributeError as ae:
         abort(404)
 
+    print("Deal:", form.deal.data)
+    print("ET:", form.ET.data)
+    print("Amount:", form.amount.data)
+    print(form.validate_on_submit())
     if form.validate_on_submit():
         transaction = Transaction(
-            amount      = form.amount.data,
-            date_time   = datetime.now(),
-            comments    = form.comments.data or db.null(),
-            deal_id     = deal_id,
-            expenditure_id = exp_id
+            amount         = form.amount.data,
+            date_time      = datetime.now(),
+            comments       = form.comments.data or db.null(),
+            deal_id        = form.deal.id, 
+            expenditure_id = form.ET.id 
         )
 
         db.session.add(transaction)
@@ -452,6 +460,8 @@ def addtransaction(type, id):
 
         flash('Transaction Successfuly Added', 'success')
         return redirect(url_for('profile'))
+    else:
+        print("--------\nNO SHOT\n--------")
         
 
     return render_template('addtransaction.html', form=form, type=type)

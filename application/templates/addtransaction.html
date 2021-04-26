@@ -7,7 +7,7 @@
 			<div class="col-md-3"></div>
 			<div class="col-12 col-md-6">
 				<form method="POST" 
-					  action="{{ url_for('addtransaction', type=type, id=(form.deal_id.data or form.exp_id.data)) }}" 
+					  action="{{ url_for('addtransaction', type=type, id=(form.deal.data or form.ET.data)) }}" 
 					  class="form-style"
 				>
 					<fieldset class="form-group">
@@ -20,7 +20,7 @@
 							<p class="text-dark-3 text-center">
 								Recieve Payment for a Deal
 							</p>
-							{{ form.deal_id }}
+							{{ form.deal(class='form-control', disabled=true) }}
 						{% else %}
 							<legend class="text-orange-1 text-center">
 								Add Expense
@@ -28,7 +28,7 @@
 							<p class="text-dark-3 text-center">
 								Add an Expense to the System
 							</p>
-							{{ form.exp_id }}
+							{{ form.ET(class='form-control', disabled=true) }}
 						{% endif %}
 
 						<br>
