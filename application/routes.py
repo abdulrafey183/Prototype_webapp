@@ -373,7 +373,7 @@ def dealanalytics(deal_id):
 
     deal_id = int(deal_id)
 
-    deal = Deal.query.filter_by(id=deal_id).first()
+    deal        = Deal.query.filter_by(id=deal_id).first()
     transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
     plot        = Plot.query.filter_by(id=deal.plot_id).first()
 
