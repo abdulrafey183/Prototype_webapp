@@ -106,6 +106,7 @@ function make_deal_card(deal) {
     'Respective Buyer ID: ' +
     deal.buyer_id +
     '</br>' +
+    "<a href='/analytics/deal/" + deal.id + "'>Show Analytics</a>" +
     '</p></div></div></div></div>';
 
   return str;

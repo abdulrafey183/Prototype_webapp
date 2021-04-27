@@ -116,6 +116,10 @@ def display():
         active = active[:-1]
         flash('Chose a Deal to Recieve Payment', 'info')
 
+    if active[-1] == "~":
+        active = active[:-1]
+        flash('Chose a Deal to View its Analytics', 'info')
+
     return render_template('display.html', active=active, filterPlotForm=filterPlotForm)
 
 
@@ -358,6 +362,18 @@ def dealinfo(deal_id):
 
     return render_template('dealinfo.html', deal=deal)
 
+
+@app.route('/analytics/deal/<deal_id>')
+@login_required
+def dealanalytics(deal_id):
+
+    deal_id = int(deal_id)
+    deal = Deal.query.filter_by(id=deal_id).first()
+
+    if deal is None:
+        flash('ERROR: NO Such deal exists', 'danger')
+
+    return render_template('dealanalytics.html', deal=deal)
 
 @app.route('/add/transaction/<type>/<id>', methods=[GET, POST])
 @login_required
