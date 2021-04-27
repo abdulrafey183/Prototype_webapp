@@ -60,7 +60,7 @@ class AddDealForm(FlaskForm):
 	plot_price				= IntegerField		('Plot Price')
 	first_amount_recieved 	= IntegerField  	('First Paid Amount (optional)', default=0)
 	amount_per_installment 	= IntegerField  	('Expected Amount per Installment (optional)', default=0)
-	installment_frequency 	= IntegerField  	('Expected Number of Installments per Year (optional)', default=0)
+	installment_frequency 	= SelectField   	('Expected Number of Installments per Year (optional)', default=None)
 	comments 				= TextAreaField 	('Comments')
 	attachments 			= MultipleFileField	('Attachments')
 	submit 					= SubmitField   	('Create Deal')
