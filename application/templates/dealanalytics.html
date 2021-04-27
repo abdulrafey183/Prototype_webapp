@@ -1,5 +1,13 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-{{ deal.id }}
+
+<h1>Transaction Analytics</h1>
+<h2>Deal ID: {{ transaction["deal_id"] }}</h2>
+<h6>Number of Installments {{ transaction["total_installments"] }}</h6>
+<h6>First Installment : {{ transaction["first_installment"] }}</h6>
+<h6>Latest Installment : {{ transaction["latest_installment"]}}</h6>
+<h6>Amount Paid : {{ transaction["amount_paid"] }}</h6>
+<h6>Amount Left : {{ transaction["amount_left"] }}</h6>
+
 {% endblock %}
