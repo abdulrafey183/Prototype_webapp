@@ -112,11 +112,13 @@ def display():
     active = request.args.get("active") or "buyer"
     filterPlotForm = FilterPlotForm()
 
-    if active[-1] == "+":
+    if active[-1] == '+':
         active = active[:-1]
         flash('Chose a Deal to Recieve Payment', 'info')
-
-    if active[-1] == "~":
+    elif active[-1] == '!':
+        active = active[:-1]
+        flash('Chose Expenditure Type of Expense', 'info')
+    elif active[-1] == "~":
         active = active[:-1]
         flash('Chose a Deal to View its Analytics', 'info')
 
@@ -393,38 +395,57 @@ def dealanalytics(deal_id):
 
     return render_template('dealanalytics.html')
 
-@app.route('/add/transaction/<type>/<id>', methods=[GET, POST])
-@login_required
-def addtransaction(type, id):
 
-    if type == 'receivepayment':
-        form   = AddTransactionForm(deal_id=id)
-        deal_id = id
-        exp_id  = None
-    elif type == 'expense':
-        form  = AddTransactionForm(exp_id=id)
-        deal_id = None
-        exp_id  = id
-    else:
+@app.route('/add/transaction/receivepayment/<id>', methods=[GET, POST])
+@login_required
+def receivepayment(id):
+
+    try:       
+        deal = Deal.query.filter_by(id=id).first()
+        form   = ReceivePaymentForm(deal_id=deal.id)
+        form.deal_id.choices = [(row[0], row[0]) for row in Deal.query.with_entities(Deal.id).all()]       
+           
+    except AttributeError as ae:
         abort(404)
 
     if form.validate_on_submit():
-        transaction = Transaction(
-            amount      = form.amount.data,
-            date_time   = datetime.now(),
-            comments    = form.comments.data or db.null(),
-            deal_id     = deal_id,
-            expenditure_id = exp_id
-        )
-
-        db.session.add(transaction)
-        db.session.commit()
-
-        flash('Transaction Successfuly Added', 'success')
-        return redirect(url_for('profile'))
+        data = {
+            'type': 'deal',
+            'id'  : form.deal_id.data,
+            'comments': form.comments.data,
+            'amount': form.amount.data
+        }
+        addtransaction_(data)
         
+        return redirect(url_for('profile'))        
 
-    return render_template('addtransaction.html', form=form, type=type)
+    return render_template('receivepayment.html', form=form)
+
+
+@app.route('/add/transaction/expense/<id>', methods=[GET, POST])
+@login_required
+def addexpense(id):
+
+    try:       
+        ET = Expenditure.query.filter_by(id=id).first()
+        form   = AddExpenseForm(ET_id=ET.id)
+        form.ET_id.choices = [(row[0], row[1]) for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]       
+           
+    except AttributeError as ae:
+        abort(404)
+
+    if form.validate_on_submit():
+        data = {
+            'type': 'ET',
+            'id'  : form.ET_id.data,
+            'comments': form.comments.data,
+            'amount': form.amount.data
+        }
+        addtransaction_(data)
+
+        return redirect(url_for('profile'))        
+
+    return render_template('addexpense.html', form=form)
 
 
 @app.route('/add/notes', methods=[GET, POST])

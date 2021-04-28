@@ -225,3 +225,21 @@ def adddeal_(deal_data):
     db.session.commit()
 
     flash(f'Deal with ID {deal.id} successfully created!', 'success')
+
+
+def addtransaction_(data):
+
+    transaction = Transaction(
+            amount         = data['amount'],
+            date_time      = datetime.now(),
+            comments       = data['comments'] or db.null(),
+            deal_id        = data['id'] if data['type'] == 'deal' else db.null(),
+            expenditure_id = data['id'] if data['type'] == 'ET'   else db.null()
+        )
+
+    db.session.add(transaction)
+    db.session.commit()
+
+    data['type'] == 'deal' and flash('Received Payment Successfuly Added to System', 'success')
+    data['type'] == 'ET'   and flash('Expense Successfully Added to System'        , 'success')
+

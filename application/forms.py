@@ -6,8 +6,9 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 import re
 
-from .model   import Plot, Buyer
+from .model   import db, Plot, Buyer
 from .utility import validate_phone_and_cnic
+
 
 ### Forms
 
@@ -57,7 +58,7 @@ class AddDealForm(FlaskForm):
 	plot_id 				= SelectField   	('Select Plot' 			  , default=None, validators=[DataRequired()])
 	c_rate					= FloatField		('Commission Rate'		  , default=0   , validators=[number_range(min=0, max=1)])
 	CA_id 					= SelectField		('Select Commission Agent', default=None)
-	plot_price				= IntegerField		('Plot Price')
+	plot_price				= IntegerField		('Plot Price', default=0)
 	first_amount_recieved 	= IntegerField  	('First Paid Amount (optional)', default=0)
 	amount_per_installment 	= IntegerField  	('Expected Amount per Installment (optional)', default=0)
 	installment_frequency 	= SelectField   	('Expected Number of Installments per Year (optional)', default=None)
@@ -69,12 +70,21 @@ class AddDealForm(FlaskForm):
 	
 #Add Transaction Form
 class AddTransactionForm(FlaskForm):
-	
-	deal_id  = HiddenField('deal_id')
-	exp_id   = HiddenField('exp_id')
+
 	amount   = IntegerField('Amount', validators=[DataRequired(), number_range(min=0)])
 	comments = TextAreaField('Comments')
-	add      = SubmitField('Enter Payment')
+	add      = SubmitField('Add')
+
+
+class ReceivePaymentForm(AddTransactionForm):
+
+	deal_id = SelectField('Deal', default=db.null())
+
+
+class AddExpenseForm(AddTransactionForm):
+
+	ET_id = SelectField('Expenditure Type', default=db.null())
+
 
 # Add Notes Form
 class AddNotesForm(FlaskForm):
