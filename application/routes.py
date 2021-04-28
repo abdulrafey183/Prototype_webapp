@@ -8,6 +8,7 @@ from .middleware        import Middleware
 from .                  import login_manager
 from .                  import admin
 
+from statistics import mean
 import os
 
 
@@ -147,12 +148,12 @@ def editbuyer(buyer_id):
     # if no record of buyer with entered id is found
     if buyer is None:
         flash(f'No such buyer exists!', 'danger')
-        return redirect(url_for("display"))
+        return redirect(url_for('display', active='buyer'))
     
     if form.validate_on_submit():
         edit = editbuyer_(buyer_id, form)
         if edit:
-            return redirect(url_for('display'))
+            return redirect(url_for('display', active='buyer'))
         else:
             return render_template('editbuyerandagent.html', editbuyer=editbuyer, entity=buyer, form=form)
 
@@ -173,12 +174,12 @@ def editagent(agent_id):
     # if no record of buyer with entered id is found
     if agent is None:
         flash(f'No such agent exists!', 'danger')
-        return redirect(url_for("display"))
+        return redirect(url_for('display', active='CA'))
 
     if form.validate_on_submit():
         edit = editagent_(agent_id, form)
         if edit:
-            return redirect(url_for('display'))
+            return redirect(url_for('display', active='CA'))
         else:
             return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form) 
         
@@ -202,7 +203,7 @@ def deletebuyer(buyer_id):
         return redirect(url_for("display"))
 
     deletebuyer_(buyer)
-    return redirect(url_for('display'))
+    return redirect(url_for('display', active='buyer'))
 
 
 @app.route("/delete/agent/<agent_id>", methods=[POST, GET])
@@ -217,7 +218,7 @@ def deleteagent(agent_id):
     # if no record of buyer with entered id is found
     if agent is None:
         flash(f'No such agent exists!', 'danger')
-        return redirect(url_for("display"))
+        return redirect(url_for('display', active='CA'))
 
     deleteagent_(agent)
     return redirect(url_for('display'))
@@ -383,12 +384,23 @@ def dealanalytics(deal_id):
         flash(f'No Transaction for Deal with Id {deal_id}', 'danger')
 
     else:
+        no_of_installments  = len(transaction)
+        amount_paid         = sum(t.amount for t in transaction)
+        amount_left         = plot.price - amount_paid
+        expected_amount     = deal.amount_per_installment if deal.amount_per_installment else None
+        average_amount_paid = mean([t.amount for t in transaction])
+        installment_left    = amount_left // average_amount_paid
+        predicted_amount    = amount_left // installment_left
+
         transaction_data = {    "deal_id"            : deal_id,
-                                "first_installment"  : transaction[0].amount,
-                                "latest_installment" : transaction[-1].amount,
-                                "total_installments" : len(transaction),
-                                "amount_paid"        : sum(t.amount for t in transaction),
-                                "amount_left"        : plot.price - (sum(t.amount for t in transaction))
+                                "transactions"       : transaction,
+                                "total_installments" : no_of_installments,
+                                "amount_paid"        : amount_paid,
+                                "amount_left"        : amount_left,
+                                "expected_amount"    : expected_amount,
+                                "average_amount_paid": average_amount_paid,
+                                "predicted_amount"   : predicted_amount,
+                                "installment_left"   : installment_left
                             }
 
         return render_template('dealanalytics.html', transaction=transaction_data)
