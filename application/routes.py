@@ -118,6 +118,9 @@ def display():
     elif active[-1] == '!':
         active = active[:-1]
         flash('Chose Expenditure Type of Expense', 'info')
+    elif active[-1] == "~":
+        active = active[:-1]
+        flash('Chose a Deal to View its Analytics', 'info')
 
     return render_template('display.html', active=active, filterPlotForm=filterPlotForm)
 
@@ -317,6 +320,9 @@ def adddeal():
     buyers = [(row[0],          str(row[1])+" - "+str(row[2])) for row in Buyer.query.with_entities(Buyer.id, Buyer.name, Buyer.cnic).all()]
     CAs    = [(row[0],          str(row[1])+" - "+str(row[2])) for row in CommissionAgent.query.with_entities(CommissionAgent.id, CommissionAgent.name, CommissionAgent.cnic).all()]
     plots  = [(row[0], "Plot# "+str(row[0])+" - "+str(row[1])) for row in Plot.query.filter_by(status='not sold').with_entities(Plot.id, Plot.address).all()]
+    
+    installment_frequency = [None, "Monthly", "Half Yearly", "Yearly"]
+
     buyers.insert(0, defualt_choice)
     CAs.insert(0, defualt_choice)
     plots.insert(0, defualt_choice)
@@ -324,6 +330,7 @@ def adddeal():
     form.buyer_id.choices = buyers
     form.plot_id.choices  = plots
     form.CA_id.choices    = CAs
+    form.installment_frequency.choices = installment_frequency
     ####---MAKE THIS PRETTY---####
 
     if form.validate_on_submit():
@@ -360,6 +367,33 @@ def dealinfo(deal_id):
         flash('ERROR: NO Such deal exists', 'danger')
 
     return render_template('dealinfo.html', deal=deal)
+
+
+@app.route('/analytics/deal/<deal_id>')
+@login_required
+def dealanalytics(deal_id):
+
+    deal_id = int(deal_id)
+
+    deal        = Deal.query.filter_by(id=deal_id).first()
+    transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
+    plot        = Plot.query.filter_by(id=deal.plot_id).first()
+
+    if not transaction:
+        flash(f'No Transaction for Deal with Id {deal_id}', 'danger')
+
+    else:
+        transaction_data = {    "deal_id"            : deal_id,
+                                "first_installment"  : transaction[0].amount,
+                                "latest_installment" : transaction[-1].amount,
+                                "total_installments" : len(transaction),
+                                "amount_paid"        : sum(t.amount for t in transaction),
+                                "amount_left"        : plot.price - (sum(t.amount for t in transaction))
+                            }
+
+        return render_template('dealanalytics.html', transaction=transaction_data)
+
+    return render_template('dealanalytics.html')
 
 
 @app.route('/add/transaction/receivepayment/<id>', methods=[GET, POST])

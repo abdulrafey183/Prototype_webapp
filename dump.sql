@@ -26,21 +26,21 @@ VALUES
 
 
 INSERT INTO plot 
-    (`id`, `type`, `address`, `status`, `size`)
+    (`id`, `type`, `address`, `status`,`price`, `size`)
 VALUES 
-    (1 , "residential", "first"   , "in a deal", "7"),
-    (2 , "residential", "second"  , "in a deal", "2"),
-    (3 , "residential", "third"   , "in a deal", "5"),
-    (4 , "residential", "fouth"   , "in a deal", "5"),
-    (5 , "residential", "fifth"   , "in a deal", "7"),
-    (6 , "residential", "sixth"   , "in a deal", "5"),
-    (7 , "residential", "seventh" , "not sold",  "7"),
-    (11, "commercial" , "eleven"  , "in a deal", "5"),
-    (12, "commercial" , "twelve"  , "in a deal", "5"),
-    (13, "commercial" , "thirteen", "in a deal", "5"),
-    (14, "commercial" , "fourteen", "in a deal", "5"),
-    (15, "commercial" , "fifteen" , "in a deal", "5"),
-    (16, "commercial" , "sixteen" , "not sold",  "5")
+    (1 , "residential", "first"   , "in a deal", 100000, "7"),
+    (2 , "residential", "second"  , "in a deal", 100000, "2"),
+    (3 , "residential", "third"   , "in a deal", 100000, "5"),
+    (4 , "residential", "fouth"   , "in a deal", 100000, "5"),
+    (5 , "residential", "fifth"   , "in a deal", 100000, "7"),
+    (6 , "residential", "sixth"   , "in a deal", 100000, "5"),
+    (7 , "residential", "seventh" , "not sold" , NULL  , "7"),
+    (11, "commercial" , "eleven"  , "in a deal", 100000, "5"),
+    (12, "commercial" , "twelve"  , "in a deal", 100000, "5"),
+    (13, "commercial" , "thirteen", "in a deal", 100000, "5"),
+    (14, "commercial" , "fourteen", "in a deal", 100000, "5"),
+    (15, "commercial" , "fifteen" , "in a deal", 100000, "5"),
+    (16, "commercial" , "sixteen" , "not sold" , NULL  , "5")
 ;
 
 

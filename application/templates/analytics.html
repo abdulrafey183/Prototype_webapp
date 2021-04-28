@@ -1,5 +1,33 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<h1>Analysis</h1>
+<!-- new -->
+<section class="service-area" id="services">
+	<div class="container">
+		<div class="row mt-5">
+			<div class="col-12">
+				<div class="section-title text-center">
+					<h2 class="text-orange-1">Display Analytics</h2>
+					<p class="text-dark-3">View deal and transaction analytics here</p>
+				</div>
+			</div>
+		</div>
+		<br><br>
+		<div class="row">
+			<div class="col-12 col-md-6 col-xl-4">
+				<a href="{{ url_for('display', active='deal~') }}">
+					<div class="service-wrap text-center">
+						<div class="service-icon">
+							<i class="far fa-handshake"></i>
+						</div>
+						<h3>Deal Analytics</h3>
+						<p>View Deal Info Here</p>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+</section>
+<br><br>
+<!-- new -->
 {% endblock %}
