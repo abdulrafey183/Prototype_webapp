@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+	<div class="container my-5">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-12 col-md-6">
+				<form method="POST" 
+					  action="{{ url_for('receivepayment', id=form.deal_id.data) }}" 
+					  class="form-style"
+				>
+					<fieldset class="form-group">
+						{{ form.csrf_token }}						
+
+						
+						<legend class="text-orange-1 text-center">
+							Recieve Payment
+						</legend>
+						<p class="text-dark-3 text-center">
+							Recieve Payment for a Deal
+						</p>
+
+						{{ form.deal_id(class='form-control', disabled=true) }}
+						
+						<br>
+						<div class="form-group">
+							{{ form.amount.label }}
+							{% if form.amount.errors %}
+							{{ form.amount(class='form-control is-invalid') }}
+							<div class="invalid-feedback">
+								{% for error in form.amount.errors %}
+								<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+							{% else %}
+							{{ form.amount(class='form-control') }}
+							{% endif %}
+						</div>
+						<br>
+						<div class="form-group">
+							{{ form.comments.label }}
+							{% if form.comments.errors %}
+							{{ form.comments(class='form-control is-invalid') }}
+							<div class="invalid-feedback">
+								{% for error in form.comments.errors %}
+								<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+							{% else %}
+							{{ form.comments(class='form-control') }}
+							{% endif %}
+						</div>
+						<br>
+						<div class="form-group btn-center">
+							{{ form.add(class='btn btn-outline-dark') }}
+						</div>
+					</fieldset>
+				</form>
+			</div>
+			<div class="col-md-3"></div>
+		</div>
+	</div>
+
+{% endblock %}

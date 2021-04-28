@@ -7,30 +7,22 @@
 			<div class="col-md-3"></div>
 			<div class="col-12 col-md-6">
 				<form method="POST" 
-					  action="{{ url_for('addtransaction', type=type, id=(form.deal.data or form.ET.data)) }}" 
+					  action="{{ url_for('addexpense', id=form.ET_id.data) }}" 
 					  class="form-style"
 				>
 					<fieldset class="form-group">
 						{{ form.csrf_token }}						
 
-						{% if type == "receivepayment" %}
-							<legend class="text-orange-1 text-center">
-								Recieve Payment
-							</legend>
-							<p class="text-dark-3 text-center">
-								Recieve Payment for a Deal
-							</p>
-							{{ form.deal(class='form-control', disabled=true) }}
-						{% else %}
-							<legend class="text-orange-1 text-center">
-								Add Expense
-							</legend>
-							<p class="text-dark-3 text-center">
-								Add an Expense to the System
-							</p>
-							{{ form.ET(class='form-control', disabled=true) }}
-						{% endif %}
+						
+						<legend class="text-orange-1 text-center">
+							Recieve Payment
+						</legend>
+						<p class="text-dark-3 text-center">
+							Recieve Payment for a Deal
+						</p>
 
+						{{ form.ET_id(class='form-control', disabled=true) }}
+						
 						<br>
 						<div class="form-group">
 							{{ form.amount.label }}

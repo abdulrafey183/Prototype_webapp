@@ -6,16 +6,9 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 import re
 
-from .model import db, Plot, Buyer
+from .model   import db, Plot, Buyer
+from .utility import validate_phone_and_cnic
 
-
-### Custom Validators ###
-
-# validate phone and cnic
-def validate_phone_and_cnic(form, field):
-
-	if not re.match(r'^([\s\d]+)$', field.data):
-		raise ValidationError('Enter Numbers Only!')
 
 ### Forms
 
@@ -77,15 +70,21 @@ class AddDealForm(FlaskForm):
 	
 #Add Transaction Form
 class AddTransactionForm(FlaskForm):
-	
-	# deal_id  = HiddenField('deal_id')
-	# ET_id    = HiddenField('exp_id')
-	deal     = SelectField('Deal'			 , default=db.null())
-	ET       = SelectField('Expenditure Type', default=db.null())
 
 	amount   = IntegerField('Amount', validators=[DataRequired(), number_range(min=0)])
 	comments = TextAreaField('Comments')
 	add      = SubmitField('Add')
+
+
+class ReceivePaymentForm(AddTransactionForm):
+
+	deal_id = SelectField('Deal', default=db.null())
+
+
+class AddExpenseForm(AddTransactionForm):
+
+	ET_id = SelectField('Expenditure Type', default=db.null())
+
 
 # Add Notes Form
 class AddNotesForm(FlaskForm):

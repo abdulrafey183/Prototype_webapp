@@ -199,10 +199,18 @@ body {
   margin: 0 auto;
 }
 
-.footer-logo {
+/* .footer-logo {
   color: white;
   max-width: 30px;
   max-height: 30px;
+} */
+
+.footer-logo {
+  font-size: 24px;
+  color: #f55536;
+  font-weight: 500;
+  letter-spacing: 0.75px;
+  max-width: max-content;
 }
 
 ul {

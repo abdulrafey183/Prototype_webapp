@@ -3,7 +3,6 @@ from flask_login        import login_required, logout_user, current_user, login_
 from flask_sqlalchemy   import sqlalchemy
 
 from .controller        import *
-from .utility           import *
 from .forms             import *
 from .middleware        import Middleware
 from .                  import login_manager
@@ -100,6 +99,12 @@ def add():
     return render_template('add.html')
 
 
+@app.route('/analytics')
+@login_required
+def analytics():
+    return render_template('analytics.html')
+
+
 @app.route('/display')
 @login_required
 def display():
@@ -107,9 +112,12 @@ def display():
     active = request.args.get("active") or "buyer"
     filterPlotForm = FilterPlotForm()
 
-    if active[-1] == "+":
+    if active[-1] == '+':
         active = active[:-1]
         flash('Chose a Deal to Recieve Payment', 'info')
+    elif active[-1] == '!':
+        active = active[:-1]
+        flash('Chose Expenditure Type of Expense', 'info')
 
     return render_template('display.html', active=active, filterPlotForm=filterPlotForm)
 
@@ -133,33 +141,17 @@ def editbuyer(buyer_id):
     form  = AddandEditForm()
 
     buyer = Buyer.query.filter_by(id=buyer_id).first()
-
     # if no record of buyer with entered id is found
     if buyer is None:
         flash(f'No such buyer exists!', 'danger')
         return redirect(url_for("display"))
     
     if form.validate_on_submit():
-
-        try:
-            db.session.query(Buyer).filter_by(
-                                id=buyer_id
-                                ).update({ 
-                                    'name'       : form.name.data,
-                                    'cnic'       : form.cnic.data,
-                                    'phone'      : form.phone.data,
-                                    'email'      : form.email.data,
-                                    'address'    : form.address.data,
-                                    'comments'   : form.comments.data if form.comments.data else db.null()
-            })
-
-            db.session.commit()
-            flash(f'Buyer Info with id "{buyer.id}"" Updated', 'success')
+        edit = editbuyer_(buyer_id, form)
+        if edit:
             return redirect(url_for('display'))
-
-        except sqlalchemy.orm.exc.NoResultFound:
-            flash("ERROR: A buyer with this CNIC already exists!", "danger")
-            return render_template('editbuyerandagent.html', editbuyer=editbuyer, entity=buyer, form=form)   
+        else:
+            return render_template('editbuyerandagent.html', editbuyer=editbuyer, entity=buyer, form=form)
 
     else:       
         form.comments.data   = buyer.comments
@@ -181,26 +173,12 @@ def editagent(agent_id):
         return redirect(url_for("display"))
 
     if form.validate_on_submit():
-
-        try:
-            db.session.query(CommissionAgent).filter_by(
-                                id=agent_id
-                                ).update({ 
-                                    'name'     : form.name.data,
-                                    'cnic'     : form.cnic.data,
-                                    'phone'    : form.phone.data,
-                                    'email'    : form.email.data,
-                                    'comments' : form.comments.data if form.comments.data else db.null()
-            })
-
-            db.session.commit()
-            flash(f"Agent Info with id '{agent.id}' Updated", 'success')
+        edit = editagent_(agent_id, form)
+        if edit:
             return redirect(url_for('display'))
-
-        except sqlalchemy.orm.exc.NoResultFound:
-            flash("ERROR: A agent with this CNIC already exists!", "danger")
-            return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form)   
-
+        else:
+            return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form) 
+        
     else:
         form.comments.data = agent.comments
         return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form)
@@ -220,10 +198,7 @@ def deletebuyer(buyer_id):
         flash(f'No such buyer exists!', 'danger')
         return redirect(url_for("display"))
 
-    db.session.delete(buyer)
-    db.session.commit()
-
-    flash('Buyer Record Deleted!', 'danger')
+    deletebuyer_(buyer)
     return redirect(url_for('display'))
 
 
@@ -241,10 +216,7 @@ def deleteagent(agent_id):
         flash(f'No such agent exists!', 'danger')
         return redirect(url_for("display"))
 
-    db.session.delete(agent)
-    db.session.commit()
-
-    flash('Agent Record Deleted!', 'danger')
+    deleteagent_(agent)
     return redirect(url_for('display'))
 
 
@@ -309,29 +281,12 @@ def addbuyer():
     addbuyer = True 
     form = AddandEditForm()
     if form.validate_on_submit():
-
-        front = savecnic(form.cnic_front.data, form.cnic.data, 'front')
-        back  = savecnic(form.cnic_back.data, form.cnic.data, 'back')
-
-        # if cnic image is not uploaded
-        if not front or not back:
-            return render_template('addbuyerandagent.html', addbuyer=addbuyer, form=form)
-
-        buyer = {
-                'name'            :form.name.data,
-                'cnic'            : form.cnic.data,
-                'phone'           : form.phone.data,
-                'email'           : form.email.data,
-                'address'         : form.address.data,
-                'cnic_front'      : front,
-                'cnic_back'       : back,
-                'comments'        : form.comments.data if form.comments.data else db.null()
-            }
-
-        if addbuyer_(buyer):
+        buyer_data = form
+        print(buyer_data.cnic)
+        if addbuyer_(buyer_data):
             return redirect(url_for('profile')) 
         else:
-            return render_template('addbuyerandagent.html', form=form) 
+            return render_template('addbuyerandagent.html', addbuyer=addbuyer, form=form) 
 
     return render_template('addbuyerandagent.html',  form=form, addbuyer=addbuyer)
 
@@ -343,28 +298,12 @@ def addagent():
     addagent = True 
     form = AddandEditForm()
     if form.validate_on_submit():   
-
-        front = savecnic(form.cnic_front.data, form.cnic.data, 'front')
-        back  = savecnic(form.cnic_back.data, form.cnic.data, 'back')
-
-        # if cnic image is not uploaded
-        if not front or not back:
-            return render_template('addbuyerandagent.html', addagent=addagent, form=form)
-
-        agent = {
-                'name'            :form.name.data,
-                'cnic'            : form.cnic.data,
-                'phone'           : form.phone.data,
-                'email'           : form.email.data,
-                'cnic_front'      : front,
-                'cnic_back'       : back,
-                'comments'        : form.comments.data if form.comments.data else db.null()
-            }
-
-        if addagent_(agent):
+        agent_data = form
+        
+        if addagent_(form):
             return redirect(url_for('profile')) 
         else:
-            return render_template('addbuyerandagent.html', form=form) 
+            return render_template('addbuyerandagent.html', addagent=addagent, form=form) 
 
     return render_template('addbuyerandagent.html',  form=form, addagent=addagent)
 
@@ -423,48 +362,56 @@ def dealinfo(deal_id):
     return render_template('dealinfo.html', deal=deal)
 
 
-@app.route('/add/transaction/<type>/<id>', methods=[GET, POST])
+@app.route('/add/transaction/receivepayment/<id>', methods=[GET, POST])
 @login_required
-def addtransaction(type, id):
+def receivepayment(id):
 
-    try: 
-        if type == 'receivepayment':
-            deal = Deal.query.filter_by(id=id).first()
-            form   = AddTransactionForm(deal=deal.id)
-            form.deal.choices = [(row[0], row[0]) for row in Deal.query.with_entities(Deal.id).all()]
-        elif type == 'expense':
-            ET = Expenditure.query.filter_by(id=id).first()
-            form  = AddTransactionForm(ET=ET.id)
-            print("ET id:", form.ET.data)
-            form.ET.choices = [(row[0], row[1]) for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]
-        else:
-            abort(404)
+    try:       
+        deal = Deal.query.filter_by(id=id).first()
+        form   = ReceivePaymentForm(deal_id=deal.id)
+        form.deal_id.choices = [(row[0], row[0]) for row in Deal.query.with_entities(Deal.id).all()]       
+           
     except AttributeError as ae:
         abort(404)
 
-    print("Deal:", form.deal.data)
-    print("ET:", form.ET.data)
-    print("Amount:", form.amount.data)
-    print(form.validate_on_submit())
     if form.validate_on_submit():
-        transaction = Transaction(
-            amount         = form.amount.data,
-            date_time      = datetime.now(),
-            comments       = form.comments.data or db.null(),
-            deal_id        = form.deal.id, 
-            expenditure_id = form.ET.id 
-        )
-
-        db.session.add(transaction)
-        db.session.commit()
-
-        flash('Transaction Successfuly Added', 'success')
-        return redirect(url_for('profile'))
-    else:
-        print("--------\nNO SHOT\n--------")
+        data = {
+            'type': 'deal',
+            'id'  : form.deal_id.data,
+            'comments': form.comments.data,
+            'amount': form.amount.data
+        }
+        addtransaction_(data)
         
+        return redirect(url_for('profile'))        
 
-    return render_template('addtransaction.html', form=form, type=type)
+    return render_template('receivepayment.html', form=form)
+
+
+@app.route('/add/transaction/expense/<id>', methods=[GET, POST])
+@login_required
+def addexpense(id):
+
+    try:       
+        ET = Expenditure.query.filter_by(id=id).first()
+        form   = AddExpenseForm(ET_id=ET.id)
+        form.ET_id.choices = [(row[0], row[1]) for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]       
+           
+    except AttributeError as ae:
+        abort(404)
+
+    if form.validate_on_submit():
+        data = {
+            'type': 'ET',
+            'id'  : form.ET_id.data,
+            'comments': form.comments.data,
+            'amount': form.amount.data
+        }
+        addtransaction_(data)
+
+        return redirect(url_for('profile'))        
+
+    return render_template('addexpense.html', form=form)
 
 
 @app.route('/add/notes', methods=[GET, POST])
