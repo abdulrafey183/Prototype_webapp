@@ -3,8 +3,8 @@ from flask import current_app as app
 from flask_login import login_user
 from flask_sqlalchemy import sqlalchemy
 
-from .model import *
-from .utility           import *
+from .model   import *
+from .utility import *
 
 from datetime import datetime
 
@@ -225,6 +225,20 @@ def adddeal_(deal_data):
     db.session.commit()
 
     flash(f'Deal with ID {deal.id} successfully created!', 'success')
+
+
+def dealanalytics_(deal_id):
+
+    deal        = Deal.query.filter_by(id=deal_id).first()
+    transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
+    plot        = Plot.query.filter_by(id=deal.plot_id).first()
+
+    if not transaction:
+        return
+
+    else:
+        transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
+        return transaction_data
 
 
 def addtransaction_(data):

@@ -8,7 +8,6 @@ from .middleware        import Middleware
 from .                  import login_manager
 from .                  import admin
 
-from statistics import mean
 import os
 
 
@@ -375,37 +374,13 @@ def dealinfo(deal_id):
 def dealanalytics(deal_id):
 
     deal_id = int(deal_id)
+    transaction_data = dealanalytics_(deal_id)
 
-    deal        = Deal.query.filter_by(id=deal_id).first()
-    transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
-    plot        = Plot.query.filter_by(id=deal.plot_id).first()
-
-    if not transaction:
+    if transaction_data is None:
         flash(f'No Transaction for Deal with Id {deal_id}', 'danger')
+        return render_template('dealanalytics.html')
 
-    else:
-        no_of_installments  = len(transaction)
-        amount_paid         = sum(t.amount for t in transaction)
-        amount_left         = plot.price - amount_paid
-        expected_amount     = deal.amount_per_installment if deal.amount_per_installment else None
-        average_amount_paid = mean([t.amount for t in transaction])
-        installment_left    = amount_left // average_amount_paid
-        predicted_amount    = amount_left // installment_left
-
-        transaction_data = {    "deal_id"            : deal_id,
-                                "transactions"       : transaction,
-                                "total_installments" : no_of_installments,
-                                "amount_paid"        : amount_paid,
-                                "amount_left"        : amount_left,
-                                "expected_amount"    : expected_amount,
-                                "average_amount_paid": average_amount_paid,
-                                "predicted_amount"   : predicted_amount,
-                                "installment_left"   : installment_left
-                            }
-
-        return render_template('dealanalytics.html', transaction=transaction_data)
-
-    return render_template('dealanalytics.html')
+    return render_template('dealanalytics.html', transaction=transaction_data)
 
 
 @app.route('/add/transaction/receivepayment/<id>', methods=[GET, POST])
