@@ -38,18 +38,19 @@ def calc_transaction_analytics(deal_id, transaction, plot):
     expected_time_left   = calc_expected_time_left(avg_installment_freq, installment_left)
 
     
-    transaction_data = {    
-        "deal_id"              : deal_id,
-        "transactions"         : transaction,
-        "total_installments"   : no_of_installments,
-        "avg_installment_freq" : avg_installment_freq, 
-        "amount_paid"          : amount_paid,
-        "amount_left"          : amount_left,
-        "avg_amount_paid"      : avg_amount_paid,
-        "predicted_amount"     : predicted_amount,
-        "installment_left"     : installment_left,
-        "expected_time_left"   : expected_time_left if expected_time_left else None
-    }
+<<<<<<< HEAD
+    transaction_data = {    "deal_id"              : deal_id,
+                            "transactions"         : transaction,
+                            "total_installments"   : no_of_installments,
+                            "avg_installment_freq" : avg_installment_freq, 
+                            "amount_paid"          : amount_paid,
+                            "amount_left"          : amount_left,
+                            "avg_amount_paid"      : avg_amount_paid,
+                            "predicted_amount"     : predicted_amount,
+                            "installment_left"     : installment_left,
+                            "expected_time_left"   : expected_time_left
+                        }
+
     return transaction_data
 
 
@@ -73,7 +74,7 @@ def calc_avg_installment_freq(transaction):
     
     avg_installment_freq = mean([days for days in installment_freq])
     
-    if avg_installment_freq < 30:
+    if avg_installment_freq < 30 and avg_installment_freq > 0:
         return str(avg_installment_freq) + " Day(s)"
 
     elif avg_installment_freq >= 30:
