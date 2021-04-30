@@ -23,7 +23,7 @@ def savecnic(cnicfile, cnic, side):
 
 def calc_transaction_analytics(deal_id, transaction, plot):
 
-    no_of_installments   = len(transaction)                          # total number of transactios made
+    no_of_installments   = len(transaction)    # total number of transactios made
     avg_installment_freq = calc_avg_installment_freq(transaction)    # average time between each transaction
     
     amount_paid          = sum(t.amount for t in transaction)        # total amount paid in all transactions
@@ -32,32 +32,44 @@ def calc_transaction_analytics(deal_id, transaction, plot):
 
     installment_left     = math.ceil(amount_left // avg_amount_paid)  # expected number of installments left 
     predicted_amount     = math.ceil(amount_left // installment_left) # predicted amount paid for the next installments left
+    expected_time_left   = calc_expected_time_left(avg_installment_freq, installment_left)
 
-    # expected time for the payments to complete
-    expected_time_left   = str(int(avg_installment_freq.split()[0]) * installment_left) + " " + " ".join(avg_installment_freq.split()[1:])
-
+    
     transaction_data = {    "deal_id"              : deal_id,
                             "transactions"         : transaction,
                             "total_installments"   : no_of_installments,
-                            "avg_installment_freq" : avg_installment_freq,
+                            "avg_installment_freq" : avg_installment_freq, 
                             "amount_paid"          : amount_paid,
                             "amount_left"          : amount_left,
                             "avg_amount_paid"      : avg_amount_paid,
                             "predicted_amount"     : predicted_amount,
                             "installment_left"     : installment_left,
-                            "expected_time_left"   : expected_time_left
+                            "expected_time_left"   : expected_time_left if expected_time_left else None
                         }
     return transaction_data
+
+
+def calc_expected_time_left(avg_installment_freq, installment_left):
+
+    if avg_installment_freq: 
+        # expected time for the payments to complete
+        expected_time_left   = str(int(avg_installment_freq.split()[0]) * installment_left) + " " + " ".join(avg_installment_freq.split()[1:]) 
+    else:
+        expected_time_left = None
+
+    return expected_time_left
+
 
 def calc_avg_installment_freq(transaction):
 
     installment_freq     = [(j.date_time - i.date_time).days for i, j in zip(transaction[:-1], transaction[1:])]
+
+    if not installment_freq:
+        return
+    
     avg_installment_freq = mean([days for days in installment_freq])
     
-    if avg_installment_freq == 0:
-        return
-
-    elif avg_installment_freq < 30:
+    if avg_installment_freq < 30:
         return str(avg_installment_freq) + " Day(s)"
 
     elif avg_installment_freq >= 30:
