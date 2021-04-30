@@ -21,14 +21,14 @@ class LoginForm(FlaskForm):
 
 class AddandEditForm(FlaskForm):
 
-	name 	     = StringField('Name', validators=[DataRequired(), Length(min=1, max=75)])
-	cnic 	     = StringField('CNIC', validators=[DataRequired(), Length(min=13, max=13), validate_phone_and_cnic])
-	phone        = StringField('Phone', validators=[DataRequired(), Length(min=11, max=11), validate_phone_and_cnic])
-	address      = StringField('Address', validators=[])
-	email        = StringField('Email', validators=[DataRequired(), Length(max=100)])
-	cnic_front   = FileField('CNIC Front', validators=[FileAllowed(['jpeg','png'], 'Image Files Only')])
-	cnic_back    = FileField('CNIC Back', validators=[FileAllowed(['jpeg','png'], 'Image Files Only')])
-	comments     = TextAreaField('Comments', validators=[])
+	name 	     = StringField('Name',          validators=[DataRequired(), Length(min=1, max=75)])
+	cnic 	     = StringField('CNIC',          validators=[DataRequired(), Length(min=13, max=13), validate_phone_and_cnic])
+	phone        = StringField('Phone',         validators=[DataRequired(), Length(min=11, max=11), validate_phone_and_cnic])
+	address      = StringField('Address',       validators=[])
+	email        = StringField('Email',         validators=[DataRequired(), Length(max=100)])
+	cnic_front   = FileField  ('CNIC Front',    validators=[FileAllowed(['jpeg','png'], 'Image Files Only')])
+	cnic_back    = FileField  ('CNIC Back',     validators=[FileAllowed(['jpeg','png'], 'Image Files Only')])
+	comments     = TextAreaField('Comments',    validators=[])
                            
 #Search Buyer Form
 class SearchBuyerForm(FlaskForm):
@@ -38,9 +38,10 @@ class SearchBuyerForm(FlaskForm):
 	search = SubmitField ('Search Buyer')
 
 class SearchAgentForm(FlaskForm):
+
 	id     = IntegerField('Agent ID')
-	name   = StringField('Name')
-	search = SubmitField('Search Agent')
+	name   = StringField ('Name')
+	search = SubmitField ('Search Agent')
 
 #Delete Buyer Form
 class DeleteBuyerForm(FlaskForm):
@@ -54,12 +55,12 @@ class AddDealForm(FlaskForm):
 	#buyer_id 				= IntegerField  ('Buyer ID'              , validators=[DataRequired()])
 	#plot_id 				= IntegerField  ('Plot ID'               , validators=[DataRequired()])
 
-	buyer_id 				= SelectField		('Select Buyer'			  , default=None, validators=[DataRequired()])
-	plot_id 				= SelectField   	('Select Plot' 			  , default=None, validators=[DataRequired()])
-	c_rate					= FloatField		('Commission Rate'		  , default=0   , validators=[number_range(min=0, max=1)])
-	CA_id 					= SelectField		('Select Commission Agent', default=None)
-	plot_price				= IntegerField		('Plot Price', default=0)
-	first_amount_recieved 	= IntegerField  	('First Paid Amount (optional)', default=0)
+	buyer_id 				= SelectField		('Select Buyer'			        , default=None, validators=[DataRequired()])
+	plot_id 				= SelectField   	('Select Plot' 			        , default=None, validators=[DataRequired()])
+	c_rate					= FloatField		('Commission Rate'		        , default=0   , validators=[number_range(min=0, max=1)])
+	CA_id 					= SelectField		('Select Commission Agent'      , default=None)
+	plot_price				= IntegerField		('Plot Price'                   , default=0)
+	first_amount_recieved 	= IntegerField  	('First Paid Amount (optional)' , default=0)
 	amount_per_installment 	= IntegerField  	('Expected Amount per Installment (optional)', default=0)
 	installment_frequency 	= SelectField   	('Expected Number of Installments per Year (optional)', default=None)
 	comments 				= TextAreaField 	('Comments')
@@ -71,9 +72,9 @@ class AddDealForm(FlaskForm):
 #Add Transaction Form
 class AddTransactionForm(FlaskForm):
 
-	amount   = IntegerField('Amount', validators=[DataRequired(), number_range(min=0)])
+	amount   = IntegerField ('Amount', validators=[DataRequired(), number_range(min=0)])
 	comments = TextAreaField('Comments')
-	add      = SubmitField('Add')
+	add      = SubmitField  ('Add')
 
 
 class ReceivePaymentForm(AddTransactionForm):
@@ -97,17 +98,17 @@ class AddNotesForm(FlaskForm):
 class AddNormalUserForm(FlaskForm):
 
 	#id 	 = IntegerField('Buyer ID', validators=[DataRequired()])
-	username = StringField('Username',   validators=[DataRequired(), Length(min=1, max=50)])
-	email    = StringField('Email',      validators=[DataRequired(), Length(min=1, max=75)])
-	password = PasswordField('Password', validators=[Length(max=100)], default='12345')
-	create 	 = SubmitField('Create User')
+	username = StringField  ('Username' , validators=[DataRequired(), Length(min=1, max=50)])
+	email    = StringField  ('Email'    , validators=[DataRequired(), Length(min=1, max=75)])
+	password = PasswordField('Password' , validators=[Length(max=100)], default='12345')
+	create 	 = SubmitField  ('Create User')
 
 #Set Plot Price Form
 class SetPlotPrice(FlaskForm):
 	
-	address = SelectField('Address', choices=[row[0] for row in Plot.query.with_entities(Plot.address).all()])
-	price   = IntegerField('Price',  validators=[DataRequired()])
-	set     = SubmitField('Set Price')
+	address = SelectField   ('Address', choices=[row[0] for row in Plot.query.with_entities(Plot.address).all()])
+	price   = IntegerField  ('Price',  validators=[DataRequired()])
+	set     = SubmitField   ('Set Price')
 
 #Add Expenditure Type Form
 class AddExpendituretypeForm(FlaskForm):

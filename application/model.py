@@ -1,5 +1,5 @@
-from enum import unique
-from flask_login import UserMixin
+from enum           import unique
+from flask_login    import UserMixin
 from . import db
 
 class User(db.Model, UserMixin):
@@ -36,9 +36,9 @@ class Buyer(db.Model):
 
     #Attribute Columns
     id           = db.Column(db.Integer,     primary_key=True)
-    name         = db.Column(db.String(75),  nullable=False)
-    cnic         = db.Column(db.String(16),  nullable=False, unique=True)
-    phone        = db.Column(db.String(11),  nullable=False, unique=True)
+    name         = db.Column(db.String(75) , nullable=False)
+    cnic         = db.Column(db.String(16) , nullable=False, unique=True)
+    phone        = db.Column(db.String(11) , nullable=False, unique=True)
     email        = db.Column(db.String(100), nullable=False, unique=True)
     address      = db.Column(db.String(100), nullable=False)
     cnic_front   = db.Column(db.String(500), nullable=False)
@@ -52,29 +52,31 @@ class Buyer(db.Model):
 
     @property
     def serialize(self):
-       """Return object data in easily serializable format"""
-       return {
-               'id'       : self.id,               
-               'name'     : self.name,
-               'cnic'     : self.cnic,
-               'comments' : self.comments,
-               'deals'    : [deal.serialize for deal in self.deals],
-               'files'    : [file.serialize for file in self.files]
-              }
+        '''
+        Return object data in easily serializable format
+        '''
+        return {
+            'id'       : self.id,               
+            'name'     : self.name,
+            'cnic'     : self.cnic,
+            'comments' : self.comments,
+            'deals'    : [deal.serialize for deal in self.deals],
+            'files'    : [file.serialize for file in self.files]
+        }
     
 
 class CommissionAgent(db.Model):
     __tablename__ = 'commissionagent'
 
     #Attribute Columns:
-    id              = db.Column(db.Integer, primary_key=True)
-    name            = db.Column(db.String(75), nullable=False)
-    cnic            = db.Column(db.String(16), nullable=False, unique=True)
-    phone           = db.Column(db.String(11), nullable=False, unique=True)
+    id              = db.Column(db.Integer    , primary_key=True)
+    name            = db.Column(db.String(75) , nullable=False)
+    cnic            = db.Column(db.String(16) , nullable=False, unique=True)
+    phone           = db.Column(db.String(11) , nullable=False, unique=True)
     email           = db.Column(db.String(100), nullable=False, unique=True)
     cnic_front      = db.Column(db.String(500), nullable=False)
     cnic_back       = db.Column(db.String(500), nullable=False)
-    comments        = db.Column(db.Text, nullable=True, default=db.null())
+    comments        = db.Column(db.Text       , nullable=True, default=db.null())
 
     #Relationships:
     #This attribute returns a list of deals that  are associated to a particular agent, when called
@@ -82,15 +84,17 @@ class CommissionAgent(db.Model):
 
     @property
     def serialize(self):
-       """Return object data in easily serializable format"""
-       return {
-               'id'              : self.id,               
-               'name'            : self.name,
-               'cnic'            : self.cnic,
-               'phone'           : self.phone,
-               'email'           : self.email,
-               'comments'        : self.comments,
-              }
+        '''
+        Return object data in easily serializable format
+        '''
+        return {
+            'id'              : self.id,               
+            'name'            : self.name,
+            'cnic'            : self.cnic,
+            'phone'           : self.phone,
+            'email'           : self.email,
+            'comments'        : self.comments,
+        }
 
 class Plot(db.Model):
     __tablename__ = 'plot'
@@ -111,17 +115,19 @@ class Plot(db.Model):
 
     @property
     def serialize(self):
-       """Return object data in easily serializable format"""
-       return {
-               'id'       : self.id,               
-               'type'     : self.type,
-               'address'  : self.address,
-               'status'   : self.status,
-               'price'    : self.price,
-               'size'     : self.size,
-               'comments' : self.comments,
-               'deal'     : self.deal.serialize if self.deal else None
-              }
+        '''
+        Return object data in easily serializable format
+        '''
+        return {
+            'id'       : self.id,               
+            'type'     : self.type,
+            'address'  : self.address,
+            'status'   : self.status,
+            'price'    : self.price,
+            'size'     : self.size,
+            'comments' : self.comments,
+            'deal'     : self.deal.serialize if self.deal else None
+        }
 
 
 class Deal(db.Model):
@@ -147,18 +153,20 @@ class Deal(db.Model):
 
     @property
     def serialize(self):
-       """Return object data in easily serializable format"""
-       return {
-               'id'                     : self.id,               
-               'status'                 : self.status,
-               'signing_date'           : self.signing_date,
-               'amount_per_installment' : self.amount_per_installment,
-               'installment_frequency'  : self.installment_frequency,
-               'commission_agent_id'    : self.commission_agent_id if self.commission_agent_id else None,
-               'buyer_id'               : self.buyer_id,
-               'plot_id'                : self.plot_id,
-               'comments'               : self.comments
-              }
+        '''
+        Return object data in easily serializable format
+        '''
+        return {
+            'id'                     : self.id,               
+            'status'                 : self.status,
+            'signing_date'           : self.signing_date,
+            'amount_per_installment' : self.amount_per_installment,
+            'installment_frequency'  : self.installment_frequency,
+            'commission_agent_id'    : self.commission_agent_id if self.commission_agent_id else None,
+            'buyer_id'               : self.buyer_id,
+            'plot_id'                : self.plot_id,
+            'comments'               : self.comments
+        }
 
 
 class Transaction(db.Model):
@@ -202,10 +210,10 @@ class Expenditure(db.Model):
 
     @property
     def serialize(self):
-      return {
-              "id"   : self.id,
-              "name" : self.name
-             }
+        return {
+            "id"   : self.id,
+            "name" : self.name
+        }
 
 
 class File(db.Model):
@@ -222,14 +230,16 @@ class File(db.Model):
 
     @property
     def serialize(self):
-       """Return object data in easily serializable format"""
-       return {
-               'id'       : self.id,               
-               'format'   : self.format,
-               'data'     : self.data,
-               'deal_id'  : self.deal_id,
-               'buyer_id' : self.buyer_id
-              }
+        '''
+        Return object data in easily serializable format
+        '''
+        return {
+            'id'       : self.id,               
+            'format'   : self.format,
+            'data'     : self.data,
+            'deal_id'  : self.deal_id,
+            'buyer_id' : self.buyer_id
+        }
     
      
     
