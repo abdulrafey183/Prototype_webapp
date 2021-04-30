@@ -1,5 +1,8 @@
-from flask import current_app as app
+from flask      import current_app as app
+from flask      import flash
+from wtforms    import ValidationError
 from statistics import mean
+
 import math
 import re
 
@@ -35,6 +38,7 @@ def calc_transaction_analytics(deal_id, transaction, plot):
     expected_time_left   = calc_expected_time_left(avg_installment_freq, installment_left)
 
     
+<<<<<<< HEAD
     transaction_data = {    "deal_id"              : deal_id,
                             "transactions"         : transaction,
                             "total_installments"   : no_of_installments,
@@ -46,6 +50,7 @@ def calc_transaction_analytics(deal_id, transaction, plot):
                             "installment_left"     : installment_left,
                             "expected_time_left"   : expected_time_left
                         }
+
     return transaction_data
 
 
