@@ -65,7 +65,9 @@ th, td {
 
 	<h6>Predicted Number of Installments Left: {{ transaction["installment_left"] }}</h6>
 
+	{% if transaction["expected_time_left"] %}
 	<h6>Expected Time Left: {{ transaction["expected_time_left"] }}</h6>
+	{% endif %}
 	{% endif %}
 {% endif %}
 
