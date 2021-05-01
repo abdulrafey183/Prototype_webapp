@@ -147,12 +147,12 @@ def editbuyer(buyer_id):
     # if no record of buyer with entered id is found
     if buyer is None:
         flash(f'No such buyer exists!', 'danger')
-        return redirect(url_for("display"))
+        return redirect(url_for('display', active='buyer'))
     
     if form.validate_on_submit():
         edit = editbuyer_(buyer_id, form)
         if edit:
-            return redirect(url_for('display'))
+            return redirect(url_for('display', active='buyer'))
         else:
             return render_template('editbuyerandagent.html', editbuyer=editbuyer, entity=buyer, form=form)
 
@@ -173,12 +173,12 @@ def editagent(agent_id):
     # if no record of buyer with entered id is found
     if agent is None:
         flash(f'No such agent exists!', 'danger')
-        return redirect(url_for("display"))
+        return redirect(url_for('display', active='CA'))
 
     if form.validate_on_submit():
         edit = editagent_(agent_id, form)
         if edit:
-            return redirect(url_for('display'))
+            return redirect(url_for('display', active='CA'))
         else:
             return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form) 
         
@@ -202,7 +202,7 @@ def deletebuyer(buyer_id):
         return redirect(url_for("display"))
 
     deletebuyer_(buyer)
-    return redirect(url_for('display'))
+    return redirect(url_for('display', active='buyer'))
 
 
 @app.route("/delete/agent/<agent_id>", methods=[POST, GET])
@@ -217,7 +217,7 @@ def deleteagent(agent_id):
     # if no record of buyer with entered id is found
     if agent is None:
         flash(f'No such agent exists!', 'danger')
-        return redirect(url_for("display"))
+        return redirect(url_for('display', active='CA'))
 
     deleteagent_(agent)
     return redirect(url_for('display'))
@@ -374,26 +374,13 @@ def dealinfo(deal_id):
 def dealanalytics(deal_id):
 
     deal_id = int(deal_id)
+    transaction_data = dealanalytics_(deal_id)
 
-    deal        = Deal.query.filter_by(id=deal_id).first()
-    transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
-    plot        = Plot.query.filter_by(id=deal.plot_id).first()
-
-    if not transaction:
+    if transaction_data is None:
         flash(f'No Transaction for Deal with Id {deal_id}', 'danger')
+        return render_template('dealanalytics.html')
 
-    else:
-        transaction_data = {    "deal_id"            : deal_id,
-                                "first_installment"  : transaction[0].amount,
-                                "latest_installment" : transaction[-1].amount,
-                                "total_installments" : len(transaction),
-                                "amount_paid"        : sum(t.amount for t in transaction),
-                                "amount_left"        : plot.price - (sum(t.amount for t in transaction))
-                            }
-
-        return render_template('dealanalytics.html', transaction=transaction_data)
-
-    return render_template('dealanalytics.html')
+    return render_template('dealanalytics.html', transaction=transaction_data)
 
 
 @app.route('/add/transaction/receivepayment/<id>', methods=[GET, POST])

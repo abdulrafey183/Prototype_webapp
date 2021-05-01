@@ -2,18 +2,73 @@
 
 {% block content %}
 
-<h1>Transaction Analytics</h1>
+<style type="text/css">
+
+table, th, td {
+	border: 1px solid black;
+}
+
+th, td {
+	padding: 15px;
+}
+
+</style>
+
+<h1>Transaction Analytics</h1><br>
 
 {% if not transaction %}
-<h1>No Transaction History Found</h1>
-
+	<h1>No Transaction History Found</h1>
 {% else %}
-<h2>Deal ID: {{ transaction["deal_id"] }}</h2>
-<h6>Number of Installments {{ transaction["total_installments"] }}</h6>
-<h6>First Installment : {{ transaction["first_installment"] }}</h6>
-<h6>Latest Installment : {{ transaction["latest_installment"]}}</h6>
-<h6>Amount Paid : {{ transaction["amount_paid"] }}</h6>
-<h6>Amount Left : {{ transaction["amount_left"] }}</h6>
+	<h2>Deal ID: {{ transaction["deal_id"] }}</h2><br>
+	<h6>Number of Installments {{ transaction["total_installments"] }}</h6>
+
+	<table>
+		<tr>
+			<th>Transaction No.</th>
+			<th>Date</th>
+			<th>Transaction Amount</th>
+			<th>Comments</th>
+		</tr>
+
+		{% for transaction in transaction["transactions"]%}
+		<tr>
+			<td>{{ loop.index }}</td>
+			<td>{{ transaction.date_time }}</td>
+			<td>{{ transaction.amount }}</td>
+			{% if transaction.comments %}
+			<td>{{ transaction.comments }}</td>
+			{% else %}
+			<td>No Comments</td>
+			{% endif %}
+		</tr>
+		{% endfor %}
+	</table>
+
+	<br><br>
+	
+	{% if transaction["avg_installment_freq"] %}
+	<h6>Installment Frequency : {{ transaction["avg_installment_freq"] }}</h6>
+	{% endif %}
+
+	<h6>Amount Paid : {{ transaction["amount_paid"] }}</h6>
+
+	<h6>Amount Left : {{ transaction["amount_left"] }}</h6>
+
+	{% if transaction["total_installments"] > 1 %}
+	<h6>Average Amount Paid per Installment: {{ transaction["avg_amount_paid"] }}</h6>
+
+	{% if transaction["expected_amount"] %}
+	<h6>Expected Amount Paid per Installment: {{ transaction["expected_amount"] }}</h6>
+	{% endif %}
+
+	<h6>Predicted Amount for Next Installments: {{ transaction["predicted_amount"] }} per installment</h6>
+
+	<h6>Predicted Number of Installments Left: {{ transaction["installment_left"] }}</h6>
+
+	{% if transaction["expected_time_left"] %}
+	<h6>Expected Time Left: {{ transaction["expected_time_left"] }}</h6>
+	{% endif %}
+	{% endif %}
 {% endif %}
 
 {% endblock %}

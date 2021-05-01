@@ -4,8 +4,13 @@ from flask_login        import login_user
 from flask_sqlalchemy   import sqlalchemy
 from sqlalchemy.exc     import IntegrityError
 
+<<<<<<< HEAD
 from .model     import *
 from .utility   import *
+=======
+from .model   import *
+from .utility import *
+>>>>>>> d0c4ddebba0f8d19ec8899a8ba4e4db20c087572
 
 from datetime import datetime
 
@@ -228,6 +233,7 @@ def adddeal_(deal_data):
     flash(f'Deal with ID {deal.id} successfully created!', 'success')
 
 
+<<<<<<< HEAD
 def addexpenditure_(data):
 
     try: 
@@ -247,6 +253,21 @@ def addexpenditure_(data):
         flash(f'Expenditure Type \'{ data["name"] }\' Already Exists', 'danger')
 
    
+=======
+def dealanalytics_(deal_id):
+
+    deal        = Deal.query.filter_by(id=deal_id).first()
+    transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
+    plot        = Plot.query.filter_by(id=deal.plot_id).first()
+
+    if not transaction:
+        return
+
+    else:
+        transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
+        return transaction_data
+
+>>>>>>> d0c4ddebba0f8d19ec8899a8ba4e4db20c087572
 
 def addtransaction_(data):
 

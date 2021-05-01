@@ -1,7 +1,6 @@
-/aplication/static/ssl/.pem
-<<<<<<< HEAD
+/application/static/ssl/.pem
+/application/__pycache__
 .vscode
 __pycache__
-=======
-__pycache__
->>>>>>> fc63d52468b7a1110c5ae1b6badc724ecc7bef37
+config.py
+wsgi.py
