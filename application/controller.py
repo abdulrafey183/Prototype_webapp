@@ -4,13 +4,8 @@ from flask_login        import login_user
 from flask_sqlalchemy   import sqlalchemy
 from sqlalchemy.exc     import IntegrityError
 
-<<<<<<< HEAD
-from .model     import *
-from .utility   import *
-=======
 from .model   import *
 from .utility import *
->>>>>>> d0c4ddebba0f8d19ec8899a8ba4e4db20c087572
 
 from datetime import datetime
 
