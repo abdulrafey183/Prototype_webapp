@@ -37,8 +37,6 @@ def calc_transaction_analytics(deal_id, transaction, plot):
     predicted_amount     = math.ceil(amount_left // installment_left) # predicted amount paid for the next installments left
     expected_time_left   = calc_expected_time_left(avg_installment_freq, installment_left)
 
-    
-<<<<<<< HEAD
     transaction_data = {    "deal_id"              : deal_id,
                             "transactions"         : transaction,
                             "total_installments"   : no_of_installments,
@@ -71,17 +69,35 @@ def calc_avg_installment_freq(transaction):
 
     if not installment_freq:
         return
-    
-    avg_installment_freq = mean([days for days in installment_freq])
-    
-    if avg_installment_freq < 30 and avg_installment_freq > 0:
+
+    avg_installment_freq = mean(installment_freq)
+
+    if avg_installment_freq > 0:
         return str(avg_installment_freq) + " Day(s)"
-
-    elif avg_installment_freq >= 30:
-        return str(avg_installment_freq//30) + " Month(s)"
-
     else:
-        return
+        return calc_time_in_hours(transaction)
+
+
+def calc_time_in_hours(transaction):
+
+    installment_freq     = [((j.date_time - i.date_time).seconds)//3600 for i, j in zip(transaction[:-1], transaction[1:])]
+
+    avg_installment_freq = mean(installment_freq)
+
+    if avg_installment_freq > 0:
+        return str(avg_installment_freq) + " Hours"
+    else:
+        return calc_time_in_minutes(transaction)
+
+
+def calc_time_in_minutes(transaction):
+
+    installment_freq     = [((j.date_time - i.date_time).seconds)//60%60 for i, j in zip(transaction[:-1], transaction[1:])]
+
+    avg_installment_freq = mean(installment_freq)
+
+    return str(avg_installment_freq) + " Minutes"
+
 
 ### Custom Form Validators ###
 

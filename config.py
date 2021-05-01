@@ -15,7 +15,7 @@ class DevelopmentConfig(Config):
     DEBUG                   = True
     TESTING                 = True
     # SQLALCHEMY_DATABASE_URI = environ.get('FlaskPrototypeDevDB')
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:root@localhost/build_guild' 
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:password123@localhost/build_guild' 
 
 
     
