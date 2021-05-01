@@ -203,7 +203,7 @@ class Expenditure(db.Model):
 
     #Attribute Columns:
     id   = db.Column(db.Integer,     primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False, unique=True)
 
     #Relationships:
     transactions = db.relationship("Transaction", backref="expenditure_object", lazy=True)

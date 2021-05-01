@@ -15,14 +15,41 @@
 
 						
 						<legend class="text-orange-1 text-center">
-							Recieve Payment
+							Add Expense
 						</legend>
 						<p class="text-dark-3 text-center">
-							Recieve Payment for a Deal
+							Add Expense for an Expenditure Type
 						</p>
 
-						{{ form.ET_id(class='form-control', disabled=true) }}
-						
+						<div id="ET_id-div">
+							{{ form.ET_id.label }}
+							{{ form.ET_id(class='form-control') }}
+							<a class="span-link" id="new">
+								Create New Expenditure Type
+							</a>
+							<br>
+						</div>						
+
+						<div id="ET_name-div" class="form-group" style="display: none">
+							
+							{{ form.ET_name.label }}
+							{% if form.ET_name.errors %}
+							{{ form.ET_name(class='form-control is-invalid') }}
+							<a class="span-link" id="back">
+								Select and Existing Expenditure Type
+							</a>
+							<div class="invalid-feedback">
+								{% for error in form.ET_name.errors %}
+								<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+							{% else %}
+							{{ form.ET_name(class='form-control') }}
+							<a class="span-link" id="back">
+								Select and Existing Expenditure Type
+							</a>
+							{% endif %}
+						</div>
 						<br>
 						<div class="form-group">
 							{{ form.amount.label }}
@@ -62,4 +89,29 @@
 		</div>
 	</div>
 
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+
+	{% if error %}
+	console.log('popop');
+	$('#ET_id-div').hide();
+	$('#ET_name-div').show();
+	$('#ET_name').prop('required', true); 
+	{% endif %}
+
+	$('#new').on('click', function(){
+		$('#ET_id-div').hide();
+		$('#ET_name-div').show();
+		$('#ET_id').val('None'); 
+		$('#ET_name').prop('required', true); 
+	});
+	$('#back').on('click', function(){
+		$('#ET_id-div').show();
+		$('#ET_name-div').hide();
+		$('#ET_name').val('');  
+		$('#ET_name').prop('required', false);  
+	});
+</script>
 {% endblock %}
