@@ -1,3 +1,12 @@
+.span-link{
+  color: blue;
+}
+
+.span-link:hover {
+
+  color: orange;
+}
+
 .deleteLink {
   text-decoration: none;
   color: red;

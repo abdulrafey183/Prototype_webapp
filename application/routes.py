@@ -422,27 +422,31 @@ def receivepayment(id):
     return render_template('receivepayment.html', form=form)
 
 
-@app.route('/add/transaction/expense/<id>', methods=[GET, POST])
+@app.route('/add/transaction/expense', methods=[GET, POST])
 @login_required
-def addexpense(id):
+def addexpense():
+    
+    #ET = Expenditure.query.filter_by(id=id).first()
+    form    = AddExpenseForm()
+    choices = [(row[0], row[1]) for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]
+    choices.insert(0, (None, 'Not Selected'))
+    form.ET_id.choices = choices       
 
-    try:       
-        ET = Expenditure.query.filter_by(id=id).first()
-        form   = AddExpenseForm(ET_id=ET.id)
-        form.ET_id.choices = [(row[0], row[1]) for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]       
-           
-    except AttributeError as ae:
-        abort(404)
 
     if form.validate_on_submit():
         data = {
-            'type': 'ET',
-            'id'  : form.ET_id.data,
-            'comments': form.comments.data,
-            'amount': form.amount.data
+            'type'      : 'ET',
+            'name'      : form.ET_name.data,
+            'id'        : form.ET_id.data,
+            'comments'  : form.comments.data,
+            'amount'    : form.amount.data
         }
-        addtransaction_(data)
-
+        temp = addexpense_(data)
+        if temp == 'duplicate':
+            return render_template('addexpense.html', form=form, error=True)
+        elif temp == 'not selected':
+            return render_template('addexpense.html', form=form)
+        
         return redirect(url_for('profile'))        
 
     return render_template('addexpense.html', form=form)
@@ -509,15 +513,12 @@ def addexpendituretype():
 
     form = AddExpendituretypeForm()
     if form.validate_on_submit():
-        type = Expenditure(
-                    name=form.name.data
-                )
-        db.session.add(type)
-        db.session.commit()
-
-        flash(f'New Expenditure Type \'{form.name.data}\' Created', 'success')
-        return redirect(url_for('display', active="ET"))
-
+        data = {
+            'name'  : form.name.data,
+            'flash' : True 
+        }
+        if addexpenditure_(data) is not None: 
+            return redirect(url_for('display', active="ET"))
 
     return render_template('addexpendituretype.html', form=form)
 

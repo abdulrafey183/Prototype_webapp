@@ -83,7 +83,8 @@ class ReceivePaymentForm(AddTransactionForm):
 
 class AddExpenseForm(AddTransactionForm):
 
-	ET_id = SelectField('Expenditure Type', default=db.null())
+	ET_id   = SelectField('Expenditure Type'   , default=None)
+	ET_name = StringField('Create New Expenditure Type', validators=[Length(max=100)])
 
 
 # Add Notes Form
