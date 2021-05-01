@@ -38,7 +38,6 @@ def calc_transaction_analytics(deal_id, transaction, plot):
     expected_time_left   = calc_expected_time_left(avg_installment_freq, installment_left)
 
     
-<<<<<<< HEAD
     transaction_data = {    "deal_id"              : deal_id,
                             "transactions"         : transaction,
                             "total_installments"   : no_of_installments,
