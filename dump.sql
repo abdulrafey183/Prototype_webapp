@@ -39,6 +39,13 @@ VALUES
     (16, "commercial" , "sixteen" , "not sold" , NULL  , "5")
 ;
 
+INSERT INTO `expenditure`
+VALUES
+    (1, 'Salary'),
+    (2, 'Office Expenses'),
+    (3, 'Miscellaneous')
+;
+
 
 INSERT INTO `deal`
 VALUES

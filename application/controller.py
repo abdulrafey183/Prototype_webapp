@@ -1,10 +1,16 @@
-from flask import flash
-from flask import current_app as app
-from flask_login import login_user
-from flask_sqlalchemy import sqlalchemy
+from flask              import flash
+from flask              import current_app as app
+from flask_login        import login_user
+from flask_sqlalchemy   import sqlalchemy
+from sqlalchemy.exc     import IntegrityError
 
+<<<<<<< HEAD
+from .model     import *
+from .utility   import *
+=======
 from .model   import *
 from .utility import *
+>>>>>>> d0c4ddebba0f8d19ec8899a8ba4e4db20c087572
 
 from datetime import datetime
 
@@ -227,6 +233,27 @@ def adddeal_(deal_data):
     flash(f'Deal with ID {deal.id} successfully created!', 'success')
 
 
+<<<<<<< HEAD
+def addexpenditure_(data):
+
+    try: 
+        type = Expenditure(
+                    name=data['name']
+                )
+        db.session.add(type)
+        db.session.commit()
+        db.session.refresh(type)
+
+        if data['flash']:
+            flash(f'New Expenditure Type \'{type.name}\' Created', 'success')
+
+        return type.id
+
+    except IntegrityError as ie:
+        flash(f'Expenditure Type \'{ data["name"] }\' Already Exists', 'danger')
+
+   
+=======
 def dealanalytics_(deal_id):
 
     deal        = Deal.query.filter_by(id=deal_id).first()
@@ -240,6 +267,7 @@ def dealanalytics_(deal_id):
         transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
         return transaction_data
 
+>>>>>>> d0c4ddebba0f8d19ec8899a8ba4e4db20c087572
 
 def addtransaction_(data):
 
@@ -256,4 +284,29 @@ def addtransaction_(data):
 
     data['type'] == 'deal' and flash('Received Payment Successfuly Added to System', 'success')
     data['type'] == 'ET'   and flash('Expense Successfully Added to System'        , 'success')
+
+
+def addexpense_(data):
+
+    if data['name']:
+        temp = addexpenditure_({'name': data['name'], 'flash': True})
+        if temp is None:
+            return 'duplicate'
+        else:
+            data['id'] = temp
+            # addtransaction_(data)
+    else:
+        if data['id'] == 'None':
+            flash('No Expenditure Type Selected', 'danger')
+            return 'not selected'
+        # else:
+        #     addtransaction_(data)
+
+    addtransaction_(data)
+    
+
+    
+        
+
+    
 

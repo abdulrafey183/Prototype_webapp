@@ -2,5 +2,5 @@
 /application/__pycache__
 .vscode
 __pycache__
-config.py
-wsgi.py
+# config.py
+# wsgi.py

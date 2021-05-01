@@ -3,8 +3,8 @@ from os import environ
 class Config:
     
     FLASK_APP           = 'wsgi.py'
-    # SECRET_KEY          = environ.get("FlaskPrototypeSecretKey")
-    SECRET_KEY          = 'sectetKey'
+    SECRET_KEY          = environ.get("FlaskPrototypeSecretKey")
+    # SECRET_KEY          = 'sectetKey'
     STATIC_FOLDER       = 'static'
     TEMPLATES_FOLDER    = 'templates'
 
@@ -14,8 +14,8 @@ class DevelopmentConfig(Config):
     ENV                     = environ.get('FlaskPrototypeDevEnv')
     DEBUG                   = True
     TESTING                 = True
-    # SQLALCHEMY_DATABASE_URI = environ.get('FlaskPrototypeDevDB')
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:password123@localhost/build_guild' 
+    SQLALCHEMY_DATABASE_URI = environ.get('FlaskPrototypeDevDB')
+    # SQLALCHEMY_DATABASE_URI = 'mysql://root:root@localhost/build_guild' 
 
 
     
