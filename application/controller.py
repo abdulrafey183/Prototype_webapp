@@ -228,7 +228,6 @@ def adddeal_(deal_data):
     flash(f'Deal with ID {deal.id} successfully created!', 'success')
 
 
-<<<<<<< HEAD
 def addexpenditure_(data):
 
     try: 
@@ -248,7 +247,6 @@ def addexpenditure_(data):
         flash(f'Expenditure Type \'{ data["name"] }\' Already Exists', 'danger')
 
    
-=======
 def dealanalytics_(deal_id):
 
     deal        = Deal.query.filter_by(id=deal_id).first()
@@ -262,7 +260,6 @@ def dealanalytics_(deal_id):
         transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
         return transaction_data
 
->>>>>>> d0c4ddebba0f8d19ec8899a8ba4e4db20c087572
 
 def addtransaction_(data):
 
