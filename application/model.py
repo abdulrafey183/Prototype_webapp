@@ -41,8 +41,8 @@ class Buyer(db.Model):
     phone        = db.Column(db.String(11) , nullable=False, unique=True)
     email        = db.Column(db.String(100), nullable=False, unique=True)
     address      = db.Column(db.String(100), nullable=False)
-    cnic_front   = db.Column(db.String(500), nullable=False)
-    cnic_back    = db.Column(db.String(500), nullable=False)
+    #cnic_front   = db.Column(db.String(500), nullable=False)
+    #cnic_back    = db.Column(db.String(500), nullable=False)
     comments     = db.Column(db.Text,        nullable=True,  default=db.null())
 
     #Relationships:
@@ -60,8 +60,8 @@ class Buyer(db.Model):
             'name'     : self.name,
             'cnic'     : self.cnic,
             'comments' : self.comments,
-            'deals'    : [deal.serialize for deal in self.deals],
-            'files'    : [file.serialize for file in self.files]
+            'deals'    : [deal.serialize for deal in self.deals] if self.deals else None,
+            #'files'    :serialize for file in self.files]
         }
     
 
@@ -74,13 +74,14 @@ class CommissionAgent(db.Model):
     cnic            = db.Column(db.String(16) , nullable=False, unique=True)
     phone           = db.Column(db.String(11) , nullable=False, unique=True)
     email           = db.Column(db.String(100), nullable=False, unique=True)
-    cnic_front      = db.Column(db.String(500), nullable=False)
-    cnic_back       = db.Column(db.String(500), nullable=False)
+    #cnic_front      = db.Column(db.String(500), nullable=False)
+    #cnic_back       = db.Column(db.String(500), nullable=False)
     comments        = db.Column(db.Text       , nullable=True, default=db.null())
 
     #Relationships:
     #This attribute returns a list of deals that  are associated to a particular agent, when called
     deals = db.relationship("Deal", backref='working_agent_object', lazy=True)
+    files = db.relationship("File", backref="agent_object" , lazy=True)
 
     @property
     def serialize(self):
@@ -220,13 +221,15 @@ class File(db.Model):
     __tablename__ = 'file'
 
     #Attribute Columns:
-    id     = db.Column(db.Integer                      , primary_key=True)
-    format = db.Column(db.String(20)                   , nullable=False )
-    data   = db.Column(db.LargeBinary(length=(2**32)-1), nullable=False)
+    id       = db.Column(db.Integer                      , primary_key=True)
+    filename = db.Column(db.String(50)                   , nullable=False)
+    format   = db.Column(db.String(20)                   , nullable=False )
+    data     = db.Column(db.LargeBinary(length=(2**32)-1), nullable=False)
 
     #ForeginKey Columns:
     deal_id  = db.Column(db.Integer, db.ForeignKey('deal.id'))
     buyer_id = db.Column(db.Integer, db.ForeignKey('buyer.id'))
+    agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.id'))
 
     @property
     def serialize(self):
@@ -234,11 +237,13 @@ class File(db.Model):
         Return object data in easily serializable format
         '''
         return {
-            'id'       : self.id,               
+            'id'       : self.id,
+            'filename' : self.filename,               
             'format'   : self.format,
             'data'     : self.data,
             'deal_id'  : self.deal_id,
-            'buyer_id' : self.buyer_id
+            'buyer_id' : self.buyer_id,
+            'agent_id' : self.agent_id
         }
     
      

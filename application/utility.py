@@ -6,22 +6,21 @@ from statistics import mean
 import math
 import re
 
-def savecnic(cnicfile, cnic, side):
+def get_cnic_file_data(id, cnic, data, fileformat, side, entity):
 
-    ''' 
-    Utility function to save the CNIC image file
-    uploaded by the user.
-    '''
-    
-    if not cnicfile:
-        flash("ERROR: CNIC Image Missing!", "danger")
-        return False
+    filename   = cnic + '_' + side
 
-    # path to folder for storing cnic images
-    cnic_file_path = app.root_path + '\\static\\img\\cnic\\agents\\' + str(cnic) + side + '.jpg'
+    cnic_file_data = { 'cnic'     : True, 
+                       'format'   : fileformat, 
+                       'filename' : filename, 
+                       'data'     : data, 
+                     }
+    if entity == 'buyer':
+        cnic_file_data.update({'agent_id' : False, 'buyer_id' : id})
+    if entity == 'agent':
+        cnic_file_data.update({'agent_id' : id, 'buyer_id' : False})
 
-    cnicfile.save(cnic_file_path)
-    return cnic_file_path
+    return cnic_file_data
 
 
 def calc_transaction_analytics(deal_id, transaction, plot):

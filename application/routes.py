@@ -285,7 +285,7 @@ def addbuyer():
     form = AddandEditForm()
     if form.validate_on_submit():
         buyer_data = form
-        print(buyer_data.cnic)
+        
         if addbuyer_(buyer_data):
             return redirect(url_for('profile')) 
         else:

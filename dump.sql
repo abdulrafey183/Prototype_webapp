@@ -8,17 +8,17 @@ VALUES
 
 INSERT INTO `buyer`
 VALUES
-    (1, 'Laraib Arjamand', '3840188588576', '03018109400', 'laraib@example.com', 'Bhera', 'path1', 'path2', null),
-    (2, 'Bushra Arjamand', '3840188588572', '03004264935', 'bushra@example.com', 'Bhera', 'path1', 'path2', null),
-    (3, 'Hooria Arjamand', '3840188588579', '03015702001', 'hooria@example.com', 'Bhera', 'path1', 'path2', null),
-    (4, 'Asma Arjamand'  , '3840188588571', '03018109401', 'asma@example.com'  , 'Bhera', 'path1', 'path2', null)
+    (1, 'Laraib Arjamand', '3840188588576', '03018109400', 'laraib@example.com', 'Bhera', null),
+    (2, 'Bushra Arjamand', '3840188588572', '03004264935', 'bushra@example.com', 'Bhera', null),
+    (3, 'Hooria Arjamand', '3840188588579', '03015702001', 'hooria@example.com', 'Bhera', null),
+    (4, 'Asma Arjamand'  , '3840188588571', '03018109401', 'asma@example.com'  , 'Bhera', null)
 ;
 
 INSERT INTO `commissionagent`
-    (`id`, `name`, `cnic`, `phone`, `email`, `cnic_front`, `cnic_back`, `comments`)
+    (`id`, `name`, `cnic`, `phone`, `email`, `comments`)
 VALUES 
-    (1, 'Abdul Rafey', '1234567890123', '03207047670', 'arafey@example.com', 'img/1234567890123.jpg', 'img/1234567890123.jpg', null),
-    (2, 'Abdul Ahad' , '1234567890122', '03207047671', 'ahad@example.com'  , 'img/1234567890122.jpg', 'img/1234567890122.jpg', null);
+    (1, 'Abdul Rafey', '1234567890123', '03207047670', 'arafey@example.com', null),
+    (2, 'Abdul Ahad' , '1234567890122', '03207047671', 'ahad@example.com'  , null);
 
 
 INSERT INTO plot 
