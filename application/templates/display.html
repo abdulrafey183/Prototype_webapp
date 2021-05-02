@@ -2,12 +2,24 @@
 
 {% block content %}
 
-<div class="text-center">
-	<button id="buyer-button" class="btn" onclick="getall('buyer')">Buyers</button>
-	<button id="plot-button" class="btn" onclick="getall('plot')">Plots</button>
-	<button id="deal-button" class="btn" onclick="getall('deal')">Deals</button>
-	<button id="CA-button" class="btn" onclick="getall('CA')">Commission Agents</button>
-	<button id="ET-button" class="btn" onclick="getall('ET')">Expenditure Types</button>
+<div class="row">
+	<div class="container d-flex justify-content-center">
+		<button id="buyer-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('buyer')">
+			<div class="d-flex flex-column"><i class="fas fa-user-tie mb-1"></i><small>Buyers</small></div>
+		</button>
+		<button id="plot-button" class="btn mx-1 py-2 px-2" onclick="getall('plot')">
+			<div class="d-flex flex-column"><i class="fas fa-map-pin mb-1"></i><small>Plots</small></div>
+		</button>
+		<button id="deal-button" class="btn mx-1 py-2 px-2" onclick="getall('deal')">
+			<div class="d-flex flex-column"><i class="far fa-handshake mb-1"></i><small>Deals</small></div>
+		</button>
+		<button id="CA-button" class="btn mx-1 py-2 px-2" onclick="getall('CA')">
+			<div class="d-flex flex-column"><i class="fas fa-user-tie mb-1"></i><small>Agents</small></div>
+		</button>
+		<button id="ET-button" class="btn mx-1 py-2 px-2" onclick="getall('ET')">
+			<div class="d-flex flex-column"><i class="far fa-credit-card mb-1"></i><small>Expense</small></div>
+		</button>
+	</div>
 </div>
 
 <div class="container my-5">
