@@ -268,6 +268,9 @@ def editplotprice(plot_id):
     Middleware.authorizeSuperUser(current_user)
     
     plot = Plot.query.filter_by(id=plot_id).first()
+    if plot.status != 'not sold':
+        flash('Plot Price Cannot be Changed Because Plot is in a Deal', 'danger')
+        return redirect(url_for('plotinfo', plot_id=plot_id))
 
     form = SetPlotPrice(address=plot.address)
     if form.validate_on_submit():
@@ -381,6 +384,13 @@ def dealanalytics(deal_id):
         return render_template('dealanalytics.html')
 
     return render_template('dealanalytics.html', transaction=transaction_data)
+
+
+@app.route('/analytics/expenditure/macro')
+@login_required
+def expenditure_macro_analytics():    
+
+    return render_template('expenditure-macro-analytics.html')
 
 
 @app.route('/add/transaction/receivepayment/<id>', methods=[GET, POST])

@@ -131,4 +131,14 @@ class FilterPlotForm(FlaskForm):
 	filter = SubmitField('Filter')
 
 
+#Macro Analytics Form
+class MacroAnalyticsForm(FlaskForm):
+ 
+	choices = [ (1, 'Last 7 Days'), (2, 'Last 14 Days'), (3, 'Last 30 Days'), (4, 'Last 3 Months'), (5, 'Last 6 Months') ]
+
+	shortcuts 	= SelectField('Chose a Time Period', )
+
+	start 		= DateTimeField('From', format='%Y-%m-%d')
+	end 		= DateTimeField('To'  , format='%Y-%m-%d')
+
 
