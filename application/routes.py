@@ -386,11 +386,17 @@ def dealanalytics(deal_id):
     return render_template('dealanalytics.html', transaction=transaction_data)
 
 
-@app.route('/analytics/expenditure/macro')
+@app.route('/analytics/expenditure/macro', methods=[GET, POST])
 @login_required
 def expenditure_macro_analytics():    
 
-    return render_template('expenditure-macro-analytics.html')
+    form = MacroAnalyticsForm()
+    if form.validate_on_submit():
+        print("\n\n\n", form.shortcuts.data)
+        print(form.start.data)
+        print(form.end.data, "\n\n\n")
+
+    return render_template('expenditure-macro-analytics.html', form=form)
 
 
 @app.route('/add/transaction/receivepayment/<id>', methods=[GET, POST])

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask import Markup
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, TextAreaField, HiddenField, SelectField, ValidationError, MultipleFileField
-from wtforms.validators import DataRequired, Length, number_range
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, TextAreaField, HiddenField, SelectField, ValidationError, MultipleFileField, DateField
+from wtforms.validators import DataRequired, Length, number_range, Optional
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 import re
@@ -134,11 +134,12 @@ class FilterPlotForm(FlaskForm):
 #Macro Analytics Form
 class MacroAnalyticsForm(FlaskForm):
  
-	choices = [ (1, 'Last 7 Days'), (2, 'Last 14 Days'), (3, 'Last 30 Days'), (4, 'Last 3 Months'), (5, 'Last 6 Months') ]
+	choices = [ (1, 'Last 7 Days'), (2, 'Last 14 Days'), (3, 'Last 30 Days'), (4, 'Last 3 Months'), (5, 'Last 6 Months'), (7, 'All Time'), (8, 'Custom') ]
 
-	shortcuts 	= SelectField('Chose a Time Period', )
+	shortcuts 	= SelectField('Chose a Time Period', choices=choices, validators=[DataRequired()])
 
-	start 		= DateTimeField('From', format='%Y-%m-%d')
-	end 		= DateTimeField('To'  , format='%Y-%m-%d')
+	start 		= DateField('From', format='%Y-%m-%d', validators=[Optional()])
+	end 		= DateField('To'  , format='%Y-%m-%d', validators=[Optional()])
+	show 		= SubmitField('Show')
 
 
