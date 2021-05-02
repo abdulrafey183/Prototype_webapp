@@ -20,7 +20,7 @@ function make_plot_card(plot) {
     "' aria-expanded='true' aria-controls='collapseBuyer" +
     plot.id +
     "'>" +
-    plot.id +
+    plot.address +
     "</button></h2></div><div id='collapseBuyer" +
     plot.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
@@ -71,7 +71,7 @@ function make_buyer_card(buyer) {
     "' aria-expanded='true' aria-controls='collapseBuyer" +
     buyer.id +
     "'>" +
-    buyer.id +
+    buyer.name +
     "</button></h2></div><div id='collapseBuyer" +
     buyer.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
@@ -120,7 +120,7 @@ function make_CA_card(CA) {
     "' aria-expanded='true' aria-controls='collapseBuyer" +
     CA.id +
     "'>" +
-    CA.id +
+    CA.name +
     "</button></h2></div><div id='collapseBuyer" +
     CA.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
@@ -145,7 +145,7 @@ function make_ET_card(ET) {
     "' aria-expanded='true' aria-controls='collapseBuyer" +
     ET.id +
     "'>" +
-    ET.id +
+    ET.name +
     "</button></h2></div><div id='collapseBuyer" +
     ET.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
