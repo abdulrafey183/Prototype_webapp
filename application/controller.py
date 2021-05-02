@@ -22,7 +22,8 @@ def login_(email, password):
     return False
 
 
-def editplotprice_(plot_id, price):
+def editplotprice_(plot_id, price):   
+   
     db.session.query(Plot).filter_by(id=plot_id).update({'price': price})
     db.session.commit()
 

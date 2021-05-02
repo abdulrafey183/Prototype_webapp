@@ -20,47 +20,48 @@ function make_plot_card(plot) {
     "' aria-expanded='true' aria-controls='collapseBuyer" +
     plot.id +
     "'>" +
-    plot.id +
+    plot.address +
     "</button></h2></div><div id='collapseBuyer" +
     plot.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
-    'Plot ID: ' +
+    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td>" +
     plot.id +
-    '</br>' +
-    'Plot Type: ' +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Type</th><td>" +
     plot.type +
-    '</br>' +
-    'Plot Address: ' +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Address</th><td>" +
     plot.address +
-    '</br>' +
-    'Plot Status: ' +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Status</th><td>" +
     plot.status +
-    '</br>';
+    '</td></tr>';
 
   if (!plot.price)
-    str += "Plot Price: <span style='color: red;'>Not Set</span></br>";
-  else str += 'Plot Price: ' + plot.price + ' </br>';
+    str +=
+      "<tr class='text-dark-3'><th scope='row'>Price</th><td><span style='color: red;'>Not Set</span></td></tr>";
+  else
+    str +=
+      "<tr class='text-dark-3'><th scope='row'>Price</th><td>" +
+      plot.price +
+      '</td></tr>';
 
   str +=
-    'Plot Size: ' +
+    "<tr class='text-dark-3'><th scope='row'>Size</th><td>" +
     plot.size +
-    '</br>' +
-    'Plot Comments: ' +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Comments</th><td>" +
     plot.comments +
-    '</br>';
+    '</td></tr>';
 
   if (plot.deal) {
     str +=
-      "Plot's Deal: " +
-      "<a href='" +
-      '/dealinfo/' +
+      "<tr class='text-dark-3'><th scope='row'>Deal</th><td><a href='/dealinfo/" +
       plot.deal.id +
-      "''>" +
+      "'>" +
       plot.deal.id +
-      '</a></br>';
+      '</a></td></tr>';
   }
 
-  return str + '</div></div></div></div>';
+  return (
+    str + '</tbody></table></div></div></div></section></div></div></div></div>'
+  );
 }
 
 function make_buyer_card(buyer) {
@@ -70,12 +71,17 @@ function make_buyer_card(buyer) {
     "' aria-expanded='true' aria-controls='collapseBuyer" +
     buyer.id +
     "'>" +
-    buyer.id +
+    buyer.name +
     "</button></h2></div><div id='collapseBuyer" +
     buyer.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
+    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td>" +
+    buyer.id +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
     buyer.name +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
     buyer.cnic +
+    '</td></tr></tbody></table></div></div></div></section>' +
     '</div></div></div></div>';
   return str;
 }
@@ -91,23 +97,19 @@ function make_deal_card(deal) {
     "</button></h2></div><div id='collapseBuyer" +
     deal.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
-    '<p>' +
-    'Deal ID: ' +
+    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td>" +
     deal.id +
-    "(<a href='/add/transaction/receivepayment/" +
+    "<a href='/add/transaction/receivepayment/" +
     deal.id +
-    "'>Recieve Payment</a>)</br>" +
-    'Date of Signing: ' +
+    "'>Recieve Payment</a></td></tr><tr class='text-dark-3'><th scope='row'>Date of Signing</th><td>" +
     deal.signing_date +
-    '</br>' +
-    'Respective Plot ID: ' +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Respective Plot</th><td>" +
     deal.plot_id +
-    '</br>' +
-    'Respective Buyer ID: ' +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Respective Buyer</th><td>" +
     deal.buyer_id +
-    '</br>' +
-    "<a href='/analytics/deal/" + deal.id + "'>Show Micro-Analytics of Deal</a>" +
-    '</p></div></div></div></div>';
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Analytics</th><td><a href='/analytics/deal/" +
+    deal.id +
+    "'>Show Micro-Analytics of Deal</a></td></tr></tbody></table></div></div></div></section>";
 
   return str;
 }
@@ -118,35 +120,47 @@ function make_CA_card(CA) {
     "' aria-expanded='true' aria-controls='collapseBuyer" +
     CA.id +
     "'>" +
-    CA.id +
+    CA.name +
     "</button></h2></div><div id='collapseBuyer" +
     CA.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
-    '<p>' +
-    "<a href='/agent/" +
+    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td><a href='/agent/" +
     CA.id +
-    "'>Commission Agent ID: " +
+    "'>" +
     CA.id +
-    '</a></br>' +
-    'Commission Agent Name: ' +
+    "</a></td></tr><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
     CA.name +
-    '</br>' +
-    'Commission Agent CNIC: ' +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
     CA.cnic +
-    '</br>' +
-    '</p></div></div></div></div>';
+    '</td></tr></tbody></table></div></div></div></section>' +
+    '</div></div></div></div>';
 
   return str;
 }
 
 function make_ET_card(ET) {
   let str =
-    '<p>' +
-    'Expenditure Type: ' +
-    ET.name +
-    "(<a href='/add/transaction/expense/" +
+    "<div class='accordion' id='accordionExample'><div class='card'><div class='card-header' id='headingOne'><h2 class='mb-0'><button class='btn btn-link btn-block text-left' type='button' data-toggle='collapse' data-target='#collapseBuyer" +
     ET.id +
-    "'>Add Expense of this type</a>)</br>";
+    "' aria-expanded='true' aria-controls='collapseBuyer" +
+    ET.id +
+    "'>" +
+    ET.name +
+    "</button></h2></div><div id='collapseBuyer" +
+    ET.id +
+    "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
+    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td><a href='" +
+    ET.id +
+    "'>" +
+    ET.id +
+    "</a></td></tr><tr class='text-dark-3'><th scope='row'>Type</th><td>" +
+    ET.name +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Add</th><td>" +
+    "<a href='/add/transaction/expense/" +
+    ET.id +
+    "'>Add Expense of this type</a>" +
+    '</td></tr></tbody></table></div></div></div></section>' +
+    '</div></div></div></div>';
 
   return str;
 }

@@ -29,7 +29,7 @@
               <th scope="row">Price</th>
               <td>
                 <span style="color: red;">Not Set</span>
-                {% if not current_user.rank %}
+                {% if ((not current_user.rank) and (plot.status == 'not sold')) %}
                 (<a href="{{ url_for('editplotprice', plot_id=plot.id) }}">Set Plot Price</a>)
               </td>
             </tr>
@@ -39,7 +39,7 @@
               <th scope="row">Price</th>
               <td>
                 {{ plot.price }}
-                {% if not current_user.rank %}
+                {% if ((not current_user.rank) and (plot.status == 'not sold')) %}
                 (<a href="{{ url_for('editplotprice', plot_id=plot.id) }}">Edit Plot Price</a>)
                 {% endif %}
               </td>

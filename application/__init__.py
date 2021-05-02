@@ -35,7 +35,7 @@ def create_app():
 
         from . import model
 
-        # # Creating tables in the database
+        # Creating tables in the database
         db.drop_all()
         db.create_all()
 
