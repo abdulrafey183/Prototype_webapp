@@ -1,9 +1,8 @@
-.span-link{
+.span-link {
   color: blue;
 }
 
 .span-link:hover {
-
   color: orange;
 }
 
@@ -476,3 +475,34 @@ ul {
   object-fit: contain;
   margin: 20px auto;
 }
+
+.accordion .card {
+  border: none;
+  margin-bottom: 2px;
+}
+
+.accordion .card .card-header {
+  color: white;
+  border-radius: 50px;
+  padding: 7px;
+  display: flex;
+  background-color: #f55536;
+}
+
+.accordion .card .card-header .btn {
+  color: white;
+  font-weight: 600;
+  /* transition: color 0.5s ease; */
+}
+
+/* .accordion .card .card-header .btn:hover {
+  color: #fa7f66;
+} */
+
+/* .accordion .card .card-header .btn .btn-accordion {
+  border-radius: 20px;
+  background-color: rgb(222, 200, 236);
+  color: #f55536;
+  width: 40px;
+  height: 40px;
+} */
