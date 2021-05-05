@@ -11,12 +11,15 @@ from datetime import datetime
 
 
 def login_(email, password):
-
-    user = User.query.filter_by(email=email).first()
-    if (user and user.check_password(password1=password)):
-        login_user(user)
-        flash(f'Welcome {user.username}', 'success')
-        return True
+    
+    try:
+        user = Person.query.filter(Person.email==email).first().user[0] 
+        if (user and user.check_password(password1=password)):
+            login_user(user)
+            flash(f'Welcome {user.person.name}', 'success')
+            return True
+    except IndexError:
+        pass
 
     flash('Invalid username/password combination', 'danger')
     return False
@@ -32,12 +35,10 @@ def editplotprice_(plot_id, price):
 
 ### Buyer ###
 def addbuyer_(buyer_data):
+
     try:
-
-        front = savecnic(buyer_data.cnic_front.data, buyer_data.cnic.data, 'front')
-        back  = savecnic(buyer_data.cnic_back.data, buyer_data.cnic.data, 'back')
-
-        if not front or not back:
+        if not buyer_data.address.data:
+            flash(f'Address Field is Empty', 'danger') 
             return False
 
         buyer = Buyer(
@@ -46,13 +47,18 @@ def addbuyer_(buyer_data):
             phone      = buyer_data.phone.data,
             email      = buyer_data.email.data,
             address    = buyer_data.address.data,
-            cnic_front = front,
-            cnic_back  = back,
             comments   = buyer_data.comments.data if buyer_data.comments.data else db.null()
         )
 
         db.session.add(buyer)
         db.session.commit()
+
+        frontfiledata = get_cnic_file_data(buyer.id, buyer_data.cnic.data, buyer_data.cnic_front.data, 'jpg', 'front', 'buyer')
+        backfiledata  = get_cnic_file_data(buyer.id, buyer_data.cnic.data, buyer_data.cnic_back.data, 'jpg', 'back', 'buyer')
+
+        addfile_(frontfiledata)
+        addfile_(backfiledata)
+
 
         flash(f'Buyer with id "{buyer.id}" created', 'success')
         return True
@@ -93,26 +99,24 @@ def deletebuyer_(buyer):
 
 ### Commission Agent ###
 def addagent_(agent_data):
+
     try:
-
-        front = savecnic(agent_data.cnic_front.data, agent_data.cnic.data, 'front')
-        back  = savecnic(agent_data.cnic_back.data, agent_data.cnic.data, 'back')
-
-        if not front or not back:
-            return False
-
         agent = CommissionAgent(
             name       = agent_data.name.data,
             cnic       = agent_data.cnic.data,
             phone      = agent_data.phone.data,
             email      = agent_data.email.data,
-            cnic_front = front,
-            cnic_back  = back,
             comments   = agent_data.comments.data if agent_data.comments.data else db.null()
         )
 
         db.session.add(agent)
         db.session.commit()
+
+        frontfiledata = get_cnic_file_data(agent.id, agent_data.cnic.data, agent_data.cnic_front.data, 'jpg', 'front', 'agent')
+        backfiledata  = get_cnic_file_data(agent.id, agent_data.cnic.data, agent_data.cnic_back.data, 'jpg', 'back', 'agent')
+
+        addfile_(frontfiledata)
+        addfile_(backfiledata)
 
         flash(f'Agent with id "{agent.id}" created', 'success')
         return True
@@ -296,7 +300,7 @@ def addexpense_(data):
         #     addtransaction_(data)
 
     addtransaction_(data)
-    
+
 
 def addnormaluser_(data):
 
@@ -321,10 +325,16 @@ def addnormaluser_(data):
         return 'duplicate'
 
         
-        
+def addfile_(data):
 
-    
-        
+    if data['cnic']:
+        file = File( filename=data['filename'],
+                     format=data['format'],
+                     data=data['data'].read(),
+                     buyer_id=data['buyer_id'] if data['buyer_id'] else db.null(),
+                     agent_id=data['agent_id'] if data['agent_id'] else db.null()
+                    )
 
-    
+        db.session.add(file)
+        db.session.commit()
 

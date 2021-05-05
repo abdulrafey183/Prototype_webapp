@@ -289,7 +289,7 @@ def addbuyer():
     form = AddandEditForm()
     if form.validate_on_submit():
         buyer_data = form
-        print(buyer_data.cnic)
+        
         if addbuyer_(buyer_data):
             return redirect(url_for('profile')) 
         else:
@@ -572,7 +572,7 @@ def filterplot(status):
     return jsonify(json_list=[plot.serialize for plot in plots])
 
 
-@app.route('/rest/buyer/all', methods=[POST])
+@app.route('/rest/buyer/all', methods=[GET, POST])
 @login_required
 def allbuyers():
 
@@ -585,7 +585,6 @@ def allbuyers():
 def allplots():
 
     plots = Plot.query.all()
-    print(len(plots))
     return jsonify(json_list=[plot.serialize for plot in plots])
 
 
