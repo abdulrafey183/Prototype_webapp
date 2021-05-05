@@ -298,6 +298,31 @@ def addexpense_(data):
     addtransaction_(data)
     
 
+def addnormaluser_(data):
+
+     #Adding user to the Database
+    try:
+        print(type(data['type']))
+        user = User(
+            username = data['username'],
+            email    = data['email']    if data['type'] == 1 else db.null(), 
+            password = data['password'] if data['type'] == 1 else db.null(), 
+            rank     = data['type']
+        )
+        db.session.add(user)
+        db.session.commit()
+
+        data['type'] == 1 and flash(f'User Successfully Added to the System'    , 'success')
+        data['type'] == 2 and flash(f'Employee Successfully Added to the System', 'success')
+        return
+
+    except sqlalchemy.exc.IntegrityError as ie:
+        flash('User with emil already exists', 'danger')
+        return 'duplicate'
+
+        
+        
+
     
         
 

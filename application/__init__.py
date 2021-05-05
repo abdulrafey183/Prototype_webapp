@@ -29,21 +29,20 @@ def create_app():
     login_manager.__init__(app)
     admin.init_app(app, index_view=AdminPanel(name= 'Admin Panel'))
     #cors.__init__(app)
-    #cors          = CORS(app, support_credentials=True)
 
     with app.app_context():
 
         from . import model
 
-        # Creating tables in the database
-        db.drop_all()
-        db.create_all()
+        # # Creating tables in the database
+        # db.drop_all()
+        # db.create_all()
 
-        # inserting dummy data
-        sql = open('dump.sql').read()
-        db.engine.execute(sql)
+        # # inserting dummy data
+        # sql = open('dump.sql').read()
+        # db.engine.execute(sql)
 
-        db.session.commit()
+        # db.session.commit()
 
         #Addning Databse Viewss to Admin Panel
         admin.add_view(ProtectedModelView(model.User,  db.session, category='Databases', name="Users" ))
@@ -55,11 +54,6 @@ def create_app():
         admin.add_view(ProtectedModelView(model.Transaction, db.session, category='Databases', name="Transactions"))
         
         admin.add_link(MenuLink(name='Back to Profile', url='/profile'))
-
-        #Creating tables in the database
-        #db.drop_all()
-        #db.create_all()
-        #print(app.config)
 
         #Adding Routes
         from . import routes

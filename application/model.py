@@ -6,9 +6,9 @@ class User(db.Model, UserMixin):
     #Attribute Columns
     id       = db.Column(db.Integer,     primary_key=True) 
 
-    email    = db.Column(db.String(75) , nullable= False, unique= True) 
+    email    = db.Column(db.String(75) , nullable= True, unique= True) 
     username = db.Column(db.String(50) , nullable= False) 
-    password = db.Column(db.String(100), nullable= False) 
+    password = db.Column(db.String(100), nullable= True ) 
     rank     = db.Column(db.Integer    , nullable= False)
 
     #Relationships:
@@ -30,31 +30,61 @@ class User(db.Model, UserMixin):
     	return f'Email: {self.email}, Username: {self.username}, Password: {self.password}'
 
 
+ class Person(db.Model):
+     __tablename__ = 'person'
+
+    #Attribute Columns
+    id              = db.Column(db.Integer    , primary_key=True)
+    name            = db.Column(db.String(75) , nullable=False)
+    cnic            = db.Column(db.String(16) , nullable=False, unique=True)
+    phone           = db.Column(db.String(11) , nullable=False, unique=True)
+    email           = db.Column(db.String(100), nullable=False, unique=True)
+    cnic_front      = db.Column(db.String(500), nullable=False)
+    cnic_back       = db.Column(db.String(500), nullable=False)
+    comments        = db.Column(db.Text       , nullable=True, default=db.null())
+
+    #Relationships
+    buyer           = db.relationship('Buyer'           , backref='person', lazy=True)
+    commissionagent = db.relationship('CommissionAgent' , backref='person', lazy=True)
+    user            = db.relationship('User'            , backref='person', lazy=True)
+
+     @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'cnic': self.cnic,
+            'phone': self.phone,
+            'email': self.email,
+            
+
+        }
+
+
 
 class Buyer(db.Model):
     __tablename__ = 'buyer'
 
     #Attribute Columns
-    id           = db.Column(db.Integer,     primary_key=True)
-    name         = db.Column(db.String(75) , nullable=False)
-    cnic         = db.Column(db.String(16) , nullable=False, unique=True)
-    phone        = db.Column(db.String(11) , nullable=False, unique=True)
-    email        = db.Column(db.String(100), nullable=False, unique=True)
+    # id           = db.Column(db.Integer,     primary_key=True)
+    # name         = db.Column(db.String(75) , nullable=False)
+    # cnic         = db.Column(db.String(16) , nullable=False, unique=True)
+    # phone        = db.Column(db.String(11) , nullable=False, unique=True)
+    # email        = db.Column(db.String(100), nullable=False, unique=True)
     address      = db.Column(db.String(100), nullable=False)
-    cnic_front   = db.Column(db.String(500), nullable=False)
-    cnic_back    = db.Column(db.String(500), nullable=False)
-    comments     = db.Column(db.Text,        nullable=True,  default=db.null())
+    # cnic_front   = db.Column(db.String(500), nullable=False)
+    # cnic_back    = db.Column(db.String(500), nullable=False)
+    # comments     = db.Column(db.Text,        nullable=True,  default=db.null())
+
+    #Foregin Key Columns
+    person_id = db.Column(db.Integer, db.ForeignKey('buyer.id'), nullable=False)
 
     #Relationships:
-    #This attribute would return the deal objects this buyer is associated to
     deals = db.relationship("Deal", backref='buyer_object', lazy=True)
     files = db.relationship("File", backref="buyer_object" , lazy=True)
 
     @property
     def serialize(self):
-        '''
-        Return object data in easily serializable format
-        '''
         return {
             'id'       : self.id,               
             'name'     : self.name,
@@ -132,6 +162,8 @@ class Plot(db.Model):
 
 class Deal(db.Model):
     __tablename__ = 'deal'
+
+    #buyer_object = None
 
     #Attribute Columns:
     id                     = db.Column(db.Integer     , primary_key=True)
