@@ -75,9 +75,11 @@ function make_buyer_card(buyer) {
     "</button></h2></div><div id='collapseBuyer" +
     buyer.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
-    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td>" +
+    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td>" + "<a href='/buyer/" +
     buyer.id +
-    "</td></tr><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
+    "'>" +
+    buyer.id +
+    "</a></td></tr><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
     buyer.name +
     "</td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
     buyer.cnic +
@@ -107,11 +109,11 @@ function make_deal_card(deal) {
     deal.plot_id +
     "</td></tr><tr class='text-dark-3'><th scope='row'>Respective Buyer</th><td>" +
     deal.buyer_id +
-    "</td></tr><tr class='text-dark-3'><th scope='row'>Analytics</th><td><a href='/analytics/deal/" +
+    "</td></tr><tr class='text-dark-3'><td><a href='/deal/" +
     deal.id +
-    "'>Show Micro-Analytics of Deal</a></td></tr></tbody></table></div></div></div></section>";
+    "'>Show Details</a></td></tr></tbody></table></div></div></div></section>";
 
-  return str;
+  return str; 
 }
 function make_CA_card(CA) {
   let str =

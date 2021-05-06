@@ -136,57 +136,6 @@ def displayagents():
     return render_template('displayagent.html', agents=agents, form=form)
 
 
-@app.route('/edit/buyer/<buyer_id>', methods=[POST, GET])
-@login_required
-def editbuyer(buyer_id):
-    
-    editbuyer = True
-    form  = AddandEditForm()
-
-    buyer = Buyer.query.filter_by(id=buyer_id).first()
-    # if no record of buyer with entered id is found
-    if buyer is None:
-        flash(f'No such buyer exists!', 'danger')
-        return redirect(url_for('display', active='buyer'))
-    
-    if form.validate_on_submit():
-        edit = editbuyer_(buyer_id, form)
-        if edit:
-            return redirect(url_for('display', active='buyer'))
-        else:
-            return render_template('editbuyerandagent.html', editbuyer=editbuyer, entity=buyer, form=form)
-
-    else:       
-        form.comments.data   = buyer.comments
-        return render_template('editbuyerandagent.html',  editbuyer=editbuyer, entity=buyer, form=form)
-
-
-@app.route("/edit/agent/<agent_id>", methods=[POST, GET])
-@login_required
-def editagent(agent_id):
-    
-    editagent = True
-    form  = AddandEditForm()
-
-    agent = CommissionAgent.query.filter_by(id=agent_id).first()
-
-    # if no record of buyer with entered id is found
-    if agent is None:
-        flash(f'No such agent exists!', 'danger')
-        return redirect(url_for('display', active='CA'))
-
-    if form.validate_on_submit():
-        edit = editagent_(agent_id, form)
-        if edit:
-            return redirect(url_for('display', active='CA'))
-        else:
-            return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form) 
-        
-    else:
-        form.comments.data = agent.comments
-        return render_template('editbuyerandagent.html', editagent=editagent, entity=agent, form=form)
-
-
 @app.route("/delete/buyer/<buyer_id>", methods=[POST, GET])
 @login_required
 def deletebuyer(buyer_id):
@@ -279,39 +228,59 @@ def editplotprice(plot_id):
 
     return render_template('editplotprice.html', plot=plot, form=form)
 
-
-@app.route('/add/buyer', methods=[GET, POST])
+@app.route('/add/buyeroragent', methods=[GET, POST])
 @login_required
-def addbuyer():
+def addbuyeroragent():
 
-    addbuyer = True 
     form = AddandEditForm()
+
     if form.validate_on_submit():
-        buyer_data = form
-        
-        if addbuyer_(buyer_data):
-            return redirect(url_for('profile')) 
+        entity = form.entity.data
+        if addbuyeroragent_(form):
+            return redirect(url_for('profile'))
         else:
-            return render_template('addbuyerandagent.html', addbuyer=addbuyer, form=form) 
+            return(render_template('addbuyerandagent.html',  form=form))
 
-    return render_template('addbuyerandagent.html',  form=form, addbuyer=addbuyer)
+    return render_template('addbuyerandagent.html',  form=form)
 
 
-@app.route('/add/agent', methods=[GET, POST])
+@app.route('/edit/<entity>/<id>', methods=[GET, POST])
 @login_required
-def addagent():
+def editbuyeroragent(id, entity):
 
-    addagent = True 
     form = AddandEditForm()
-    if form.validate_on_submit():   
-        agent_data = form
-        
-        if addagent_(form):
-            return redirect(url_for('profile')) 
-        else:
-            return render_template('addbuyerandagent.html', addagent=addagent, form=form) 
+    db_entity = None
 
-    return render_template('addbuyerandagent.html',  form=form, addagent=addagent)
+    if entity == 'Buyer':
+        db_entity = Buyer.query.filter_by(id=id).first()
+        active = 'buyer'
+    elif entity == 'Commission Agent':
+        db_entity = CommissionAgent.query.filter_by(id=id).first()
+        active = 'CA'
+
+    # if no record of entity with entered id is found
+    if db_entity is None:
+        flash(f'No such {entity} exists!', 'danger')
+        return redirect(url_for('display', active='buyer'))
+    
+    if form.validate_on_submit():
+
+        edit = editbuyeroragent_(id, form)
+
+        if edit:
+            return redirect(url_for('display', active=active))
+        else:
+            return render_template('editbuyerandagent.html', entity=db_entity, form=form)
+
+    else:     
+        form.comments.data   = db_entity.comments
+
+        if entity == 'Buyer':
+            form.entity.data = 'Buyer'
+        elif entity == 'Commission Agent':
+            form.entity.data = 'Commission Agent'
+
+        return render_template('editbuyerandagent.html', entity=db_entity, form=form)
 
 
 @app.route('/add/deal', methods=[GET, POST])
@@ -359,7 +328,7 @@ def adddeal():
     return render_template('adddeal.html', form= form)
 
 
-@app.route('/dealinfo/<deal_id>')
+@app.route('/deal/<deal_id>')
 @login_required
 def dealinfo(deal_id):
 
@@ -372,7 +341,7 @@ def dealinfo(deal_id):
     return render_template('dealinfo.html', deal=deal)
 
 
-@app.route('/analytics/deal/<deal_id>')
+@app.route('/deal/analytics/<deal_id>')
 @login_required
 def dealanalytics(deal_id):
 

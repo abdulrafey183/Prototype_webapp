@@ -1,11 +1,87 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+
+<!-- new -->
+<section class="my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-9">
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th scope="col" colspan="2">
+                <h1 id="title" class="text-orange-1 text-center">Deal Information</h1>
+                <p id="sub-title" class="text-dark-3 text-center">All the Deal information is listed here</p>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          	<tr class="text-dark-3">
+              <th scope="row">ID</th>
+              <td>{{deal.id}}</td>
+            </tr>
+            {% if deal.buyer_id %}
+            <tr class="text-dark-3">
+              <th scope="row">Buyer Id</th>
+              <td>{{deal.buyer_id}}</td>
+            </tr>
+            {% endif %}
+            {% if deal.commission_agent_id %}
+            <tr class="text-dark-3">
+              <th scope="row">Commission Agent Id</th>
+              <td>{{deal.commission_agent_id}}</td>
+            </tr>
+            {% endif %}
+            {% if deal.plot_id %}
+            <tr class="text-dark-3">
+              <th scope="row">Plot Id</th>
+              <td>{{deal.plot_id}}</td>
+            </tr>
+            {% endif %}
+            <tr class="text-dark-3">
+              <th scope="row">Status</th>
+              <td>{{deal.status}}</td>
+            </tr>
+            <tr class="text-dark-3">
+              <th scope="row">Signing Date</th>
+              <td>{{deal.signing_date}}</td>
+            </tr>
+            {% if deal.amount_per_installment %}
+            <tr class="text-dark-3">
+              <th scope="row">Amount Per Installment</th>
+              <td>{{deal.amount_per_installment}}</td>
+            </tr>
+            {% endif %}
+            {% if installment_frequency %}
+            <tr class="text-dark-3">
+              <th scope="row">Installment Frequency</th>
+              <td>{{deal.installment_frequency}}</td>
+            </tr>
+            {% endif %}
+            {% if commission_rate %}
+            <tr class="text-dark-3">
+              <th scope="row">Commission Rate</th>
+              <td>{{deal.commission_rate}}</td>
+            </tr>
+            {% endif %}
+            {% if comments %}
+            <tr class="text-dark-3">
+              <th scope="row">Comments</th>
+              <td>{{deal.comments}}</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
       
-	  <legend>Deal ID {{deal.id}}:</legend>
-
-      <p>
-       DEAL DATA
-      </p>
-
+      <div class="row pl-5 pb-4 border-bottom border-secondary"> 
+        
+      <button id="edit-btn" class="btn btn-outline-secondary btn-sm  ml-2"><a href="/deal/analytics/{{deal.id}}">Show Analytics</a></button>        
+    </div>
+    </div>
+  </div>
+</section>
+<!-- new -->
 {% endblock %}
+

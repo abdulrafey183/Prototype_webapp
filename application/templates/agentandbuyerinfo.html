@@ -76,6 +76,8 @@
   </div>
 </section>
 <!-- new -->
+{% endblock %}
+{% block script %}
 <script type="text/javascript">
 
   var title = "";
@@ -85,7 +87,7 @@
     title      = "Buyer Information";
     subtitle   = "All the buyer's information is listed here";
     delete_url = "{{ url_for('deletebuyer', buyer_id=entity.id) }}";
-    edit_url   = "{{ url_for('editbuyer', buyer_id=entity.id) }}";
+    edit_url   = "{{ url_for('editbuyeroragent', id=entity.id, entity='Buyer') }}";
     delete_txt = "Delete Buyer";
     edit_txt   = "Edit Buyer";
 
@@ -93,20 +95,21 @@
     title      = "Agent Information";
     subtitle   = "All the agent's information is listed here";
     delete_url = "{{ url_for('deleteagent', agent_id=entity.id) }}";
-    edit_url   = "{{ url_for('editagent', agent_id=entity.id) }}";
+    edit_url   = "{{ url_for('editbuyeroragent', id=entity.id, entity='Commission Agent') }}";
     delete_txt = "Delete Agent";
     edit_txt   = "Edit Agent";
 
   {% else %}
     title = "{{ url_for('profile') }}";
   {% endif %}
-
-  document.getElementById("title").innerHTML = title;
-  document.getElementById("sub-title").innerHTML = subtitle;
-  document.getElementById("delete-link").text = delete_txt;
-  document.getElementById("edit-link").text = edit_txt
-  document.getElementById("edit-link").setAttribute("href", edit_url);
-  document.getElementById("delete-link").setAttribute("href", delete_url);
+  
+  console.log(title);
+  $("#title").text(title);
+  $("#sub-title").text(subtitle);
+  $("#delete-link").text(delete_txt);
+  $("#edit-link").text(edit_txt)
+  $("#edit-link").attr("href", edit_url);
+  $("#delete-link").attr("href", delete_url);
   
 
 </script>

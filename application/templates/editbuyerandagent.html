@@ -6,12 +6,23 @@
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-12 col-md-6">
-        <form method="POST" action="{{ url_for('editbuyer', buyer_id=entity.id) }}" class="form-style">
+        <form method="POST" class="form-style">
 	         <fieldset class="form-group">
               {{ form.csrf_token }}
+              {{ form.errors }}
               <legend class="text-orange-1 text-center"id="title">Edit Buyer</legend>
               <p id="sub-title" class="text-dark-3 text-center">Edit buyer information</p>
               <br>
+
+              <div id="ET_id-div">
+                {{ form.entity.label }}
+                {{ form.entity(class='form-control', id='record-type') }}
+                <a class="span-link" id="new">
+                  Select Entity to Add
+                </a>
+                <br>
+              </div>  
+
 		          <div class="form-group">
                 	{{ form.name.label }}
                 	{% if form.name.errors %}
@@ -41,69 +52,64 @@
          
                   </div>
 
-      <div class="form-group">
-          {{ form.email.label }}
-      
-          {% if form.email.errors %}
-            {{ form.email(class='form-control is-invalid') }}
-              <div class="invalid-feedback">
-                {% for error in form.email.errors %}
-                  <span>{{ error }}</span>
-                {% endfor %}
+              <div class="form-group">
+                  {{ form.email.label }}
+              
+                  {% if form.email.errors %}
+                    {{ form.email(class='form-control is-invalid') }}
+                      <div class="invalid-feedback">
+                        {% for error in form.email.errors %}
+                          <span>{{ error }}</span>
+                        {% endfor %}
+                      </div>
+                    {% else %}
+                      {{ form.email(class='form-control', value=entity.email) }}
+                    {% endif %}         
               </div>
-            {% else %}
-              {{ form.email(class='form-control', value=entity.email) }}
-            {% endif %}
- 
+
+            <div class="form-group" id='buyer-address'>
+                {{ form.address.label }}
+                {% if form.address.errors %}
+                  {{ form.address(class='form-control is-invalid') }}
+                    <div class="invalid-feedback">
+                      {% for error in form.address.errors %}
+                        <span>{{ error }}</span>
+                      {% endfor %}
+                    </div>
+                  {% else %}
+                    {{ form.address(class='form-control', value=entity.address) }}
+                  {% endif %}
+       
+            </div>
+
+          <div class="form-group">
+              {{ form.cnic.label }}
+          
+              {% if form.cnic.errors %}
+                {{ form.cnic(class='form-control is-invalid') }}
+                  <div class="invalid-feedback">
+                    {% for error in form.cnic.errors %}
+                      <span>{{ error }}</span>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  {{ form.cnic(placeholder="Enter numbers only", class='form-control', value=entity.cnic) }}
+                {% endif %}     
           </div>
 
-      {% if editbuyer %}
-      <div class="form-group">
-          {{ form.address.label }}
-          {% if form.address.errors %}
-            {{ form.address(class='form-control is-invalid') }}
-              <div class="invalid-feedback">
-                {% for error in form.address.errors %}
-                  <span>{{ error }}</span>
-                {% endfor %}
-              </div>
-            {% else %}
-              {{ form.address(class='form-control', value=entity.address) }}
-            {% endif %}
- 
-          </div>
-      {% endif %}
-
-      <div class="form-group">
-          {{ form.cnic.label }}
-      
-          {% if form.cnic.errors %}
-            {{ form.cnic(class='form-control is-invalid') }}
-              <div class="invalid-feedback">
-                {% for error in form.cnic.errors %}
-                  <span>{{ error }}</span>
-                {% endfor %}
-              </div>
-            {% else %}
-              {{ form.cnic(placeholder="Enter numbers only", class='form-control', value=entity.cnic) }}
-            {% endif %}
- 
-          </div>
-
-		  <div class="form-group">
-        	{{ form.comments.label }}
-     	
-        	{% if form.comments.errors %}
-        	  {{ form.comments(class='form-control is-invalid') }}
-          	  <div class="invalid-feedback">
-                {% for error in form.comments.errors %}
-                  <span>{{ error }}</span>
-                {% endfor %}
-          	  </div>
-          	{% else %}
-                {{ form.comments(placeholder="Leave empty if no comments", class='form-control') }}
-            {% endif %}
- 
+		      <div class="form-group">
+          	{{ form.comments.label }}
+       	
+          	{% if form.comments.errors %}
+          	  {{ form.comments(class='form-control is-invalid') }}
+            	  <div class="invalid-feedback">
+                  {% for error in form.comments.errors %}
+                    <span>{{ error }}</span>
+                  {% endfor %}
+            	  </div>
+            	{% else %}
+                  {{ form.comments(placeholder="Leave empty if no comments", class='form-control') }}
+              {% endif %}   
       	  </div>
 
 	      <button type="submit" class="btn btn-outline-dark">Submit</button>
@@ -111,27 +117,37 @@
 	  </fieldset>
 	</form>
   </div>
+{% endblock %}
 
+{% block script %}
   <script type="text/javascript">
 
+      var select = $('#record-type').val();
       var action = "";
       var legend = "";
 
-      {% if editbuyer %}
-        action = "{{ url_for('editbuyer',  buyer_id=entity.id) }}";
+      if (select == 'Buyer'){
         legend = "Edit Buyer";
         text   = "Edit Buyer Information";
-      {% elif editagent %}
-        action = "{{ url_for('editagent', agent_id=entity.id) }}";
+        action="{{ url_for('editbuyeroragent', id=entity.id, entity='Buyer') }}";
+        $('#address').prop('required', true)
+        $('#buyer-address').show();
+        //$('#record-type').val('Buyer')
+      }
+
+      else if (select == 'Commission Agent'){
         legend = "Edit Agent";
         text   = "Edit Agent Information";
-      {% else %}
-        action = "{{ url_for('profile')}}";
-      {% endif %}
+        action="{{ url_for('editbuyeroragent', id=entity.id, entity='Commission Agent') }}";
+        $('#address').prop('required', false)
+        $('#buyer-address').hide();
+        //$('#record-type').val('Commission Agent')
+      }
 
-      document.getElementsByTagName("form")[0].setAttribute("action", action);    
-      document.getElementById("title").innerHTML = legend;
-      document.getElementById("sub-title").innerHTML = text;
-      
-  </script>
+      else
+        action = "{{ url_for('profile')}}";
+
+      $('#title').text(legend);
+      $('#sub-title').text(text);
+    </script>
 {% endblock %}

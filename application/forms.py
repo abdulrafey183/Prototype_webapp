@@ -21,13 +21,14 @@ class LoginForm(FlaskForm):
 
 class AddandEditForm(FlaskForm):
 
+	entity       = SelectField('Add Record As', choices=['Not Selected', 'Buyer', 'Commission Agent'], default='Not Selected', validators=[DataRequired()])
 	name 	     = StringField('Name',          validators=[DataRequired(), Length(min=1, max=75)])
 	cnic 	     = StringField('CNIC',          validators=[DataRequired(), Length(min=13, max=13), validate_phone_and_cnic])
 	phone        = StringField('Phone',         validators=[DataRequired(), Length(min=11, max=11), validate_phone_and_cnic])
 	address      = StringField('Address',       validators=[])
 	email        = StringField('Email',         validators=[DataRequired(), Length(max=100)])
-	cnic_front   = FileField  ('CNIC Front',    validators=[DataRequired(), FileAllowed(['jpeg','png'], 'Image Files Only')])
-	cnic_back    = FileField  ('CNIC Back',     validators=[DataRequired(), FileAllowed(['jpeg','png'], 'Image Files Only')])
+	cnic_front   = FileField  ('CNIC Front',    validators=[FileAllowed(['jpeg','png'], 'Image Files Only')])
+	cnic_back    = FileField  ('CNIC Back',     validators=[FileAllowed(['jpeg','png'], 'Image Files Only')])
 	comments     = TextAreaField('Comments',    validators=[])
                            
 #Search Buyer Form
