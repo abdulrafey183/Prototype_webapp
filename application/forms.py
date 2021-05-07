@@ -1,16 +1,11 @@
-from flask_wtf import FlaskForm
-from flask import Markup
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, TextAreaField, HiddenField, SelectField, ValidationError, MultipleFileField, DateField
+from flask_wtf 			import FlaskForm
+from wtforms 			import StringField, PasswordField, SubmitField, IntegerField, FloatField, TextAreaField, HiddenField, SelectField, ValidationError, MultipleFileField, DateField
 from wtforms.validators import DataRequired, Length, number_range, Optional
-from flask_wtf.file import FileField, FileRequired, FileAllowed
-
-import re
+from flask_wtf.file 	import FileField, FileRequired, FileAllowed
 
 from .model   import db, Plot, Buyer
 from .utility import validate_phone_and_cnic
 
-
-### Forms
 
 #Login Form 
 class LoginForm(FlaskForm):
@@ -18,6 +13,32 @@ class LoginForm(FlaskForm):
     email    = StringField  ('Email'   , validators=[DataRequired(), Length(min=1, max=75)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=100)])
     submit   = SubmitField  ('Login')
+
+
+class AddPersonForm(FlaskForm):
+
+	name 	     = StringField  ('Name',        validators=[DataRequired(), Length(min=1, max=75)])
+	email        = StringField  ('Email',       validators=[DataRequired(), Length(max=75)])
+	cnic 	     = StringField  ('CNIC',        validators=[DataRequired(), Length(min=13, max=13), validate_phone_and_cnic])
+	phone        = StringField  ('Phone',       validators=[DataRequired(), Length(min=11, max=11), validate_phone_and_cnic])
+	cnic_front   = FileField    ('CNIC Front',  validators=[DataRequired(), FileAllowed(['jpeg','png'], 'Image Files Only')])
+	cnic_back    = FileField    ('CNIC Back',   validators=[DataRequired(), FileAllowed(['jpeg','png'], 'Image Files Only')])
+	
+	comments     = TextAreaField('Comments',    validators=[])
+
+#Add User or Employee Form
+class AddUserOrEmployeeForm(AddPersonForm):
+
+	#Overriding Parent Class Fields
+	email      = StringField  ('Email'     ,  validators=[Optional(), Length(min=1, max=75)] )
+	cnic_front = FileField    ('CNIC Front',  validators=[Optional(), FileAllowed(['jpeg','png'], 'Image Files Only')])
+	cnic_back  = FileField    ('CNIC Back' ,  validators=[Optional(), FileAllowed(['jpeg','png'], 'Image Files Only')])
+
+	type       = SelectField  ('Chose Type',  choices=[(1, 'User'), (2, 'Employee')], default=1)
+	password = PasswordField('Password'  , validators=[Length(max=100)], default='12345')
+	create 	 = SubmitField  ('Add')
+
+
 
 class AddandEditForm(FlaskForm):
 
@@ -96,14 +117,6 @@ class AddNotesForm(FlaskForm):
 	content = TextAreaField('Content')
 	add 	= SubmitField  ('Add Note')
 
-#Add User or Employee Form
-class AddUserOrEmployeeForm(FlaskForm):
-
-	type     = SelectField  ('Chose Type', choices=[(1, 'User'), (2, 'Employee')], default=1  )
-	username = StringField  ('Username'  , validators=[Length(min=1, max=50), DataRequired()] )
-	email    = StringField  ('Email'     , validators=[Length(min=1, max=75), Optional()] )
-	password = PasswordField('Password'  , validators=[Length(max=100)], default='12345')
-	create 	 = SubmitField  ('Add')
 
 #Set Plot Price Form
 class SetPlotPrice(FlaskForm):

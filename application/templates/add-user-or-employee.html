@@ -6,7 +6,7 @@
 	<div class="row">
 		<div class="col-md-3"></div>
 		<div class="col-12 col-md-6">
-			<form method="POST" action="{{ url_for('addnormaluser') }}" class="form-style">
+			<form method="POST" action="{{ url_for('add_user_or_employee') }}" class="form-style">
 				<fieldset class="form-group">
 					{{ form.csrf_token }}
 					<legend class="text-orange-1 text-center">
@@ -32,17 +32,17 @@
 					</div>
 
 					<div class="form-group">
-						{{ form.username.label }}
+						{{ form.name.label }}
 
-						{% if form.username.errors %}
-						{{ form.username(class='form-control is-invalid') }}
+						{% if form.name.errors %}
+						{{ form.name(class='form-control is-invalid') }}
 						<div class="invalid-feedback">
-							{% for error in form.username.errors %}
+							{% for error in form.name.errors %}
 							<span>{{ error }}</span>
 							{% endfor %}
 						</div>
 						{% else %}
-						{{ form.username(class='form-control') }}
+						{{ form.name(class='form-control') }}
 						{% endif %}
 					</div>
 
@@ -76,8 +76,83 @@
 						{{ form.password(placeholder='Leave empty for default password (12345)', class='form-control')
 						}}
 						{% endif %}
-
 					</div>
+
+					<div class="form-group">
+						{{ form.cnic.label }}
+
+						{% if form.cnic.errors %}
+						{{ form.cnic(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.cnic.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ form.cnic(class='form-control') }}
+						{% endif %}
+					</div>
+
+					<div class="form-group">
+						{{ form.phone.label }}
+
+						{% if form.phone.errors %}
+						{{ form.phone(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.phone.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ form.phone(class='form-control') }}
+						{% endif %}
+					</div>
+
+					<div class="form-group">
+						{{ form.cnic_front.label }}
+
+						{% if form.cnic_front.errors %}
+						{{ form.cnic_front(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.cnic_front.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ form.cnic_front(class='form-control') }}
+						{% endif %}
+					</div>
+
+					<div class="form-group">
+						{{ form.cnic_back.label }}
+
+						{% if form.cnic_back.errors %}
+						{{ form.cnic_back(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.cnic_back.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ form.cnic_back(class='form-control') }}
+						{% endif %}
+					</div>
+
+					<div class="form-group">
+						{{ form.comments.label }}
+
+						{% if form.comments.errors %}
+						{{ form.comments(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.comments.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ form.comments(class='form-control') }}
+						{% endif %}
+					</div>
+
 					<br>
 					<div class="form-group btn-center">
 						{{ form.create(class='btn btn-outline-dark') }}
@@ -95,9 +170,20 @@
 {% block script %}
 <script type="text/javascript">
 	$(function() {
-    	$('#email').prop('required', true);
+		console.log(($('#type').val()))
+    	if ($('#type').val() == 1){
+			$('#email').prop('required', true);
+			$('#email-div').show();
+			$('#password-div').show();
+		}
+		else{
+			$('#email').prop('required', false);
+			$('#email-div').hide();
+			$('#password-div').hide();
+		}
 	});
 	$('#type').on('change', function(){
+		
 		$('#email').val   ('');
 		$('#password').val('');
 		$('#username').val('');
@@ -107,9 +193,7 @@
 			$('#password-div').show();
 		}
 		else{
-			console.log('setting false');
 			$('#email').prop('required', false);
-			console.log($('#email').prop('required'));   
 			$('#email-div').hide();
 			$('#password-div').hide();
 		}

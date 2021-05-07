@@ -302,16 +302,25 @@ def addexpense_(data):
     addtransaction_(data)
 
 
-def addnormaluser_(data):
+def add_user_or_employee_(data):
 
-     #Adding user to the Database
+    #Adding user to the Database
     try:
-        print(type(data['type']))
+        person = Person(
+            name        = data['name'],
+            cnic        = data['cnic'],
+            phone       = data['phone'],
+            email       = data['email'] if data['type'] == 1 else db.null(), 
+            comments    = data['comments']            
+        )
+        db.session.add(person)
+        db.session.commit()
+        db.session.refresh(person)
+
         user = User(
-            username = data['username'],
-            email    = data['email']    if data['type'] == 1 else db.null(), 
-            password = data['password'] if data['type'] == 1 else db.null(), 
-            rank     = data['type']
+            password  = data['password'] if data['type'] == 1 else db.null(), 
+            rank      = data['type'],
+            person_id = person.id
         )
         db.session.add(user)
         db.session.commit()
@@ -321,7 +330,12 @@ def addnormaluser_(data):
         return
 
     except sqlalchemy.exc.IntegrityError as ie:
-        flash('User with emil already exists', 'danger')
+        if str(ie).find('person.email') > 0:
+           flash(f"User with email {data['email']} already exists", 'danger')
+        elif str(ie).find('person.cnic') > 0:
+            flash(f"User with CNIC {data['cnic']} already exists", 'danger')
+        elif str(ie).find('person.phone') > 0:
+            flash(f"User with Phone Number {data['phone']} already exists", 'danger')
         return 'duplicate'
 
         
