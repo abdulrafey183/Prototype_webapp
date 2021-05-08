@@ -12,8 +12,9 @@ import os
 
 
 #Setting utility variables
-GET  = 'GET'
-POST = 'POST'
+GET             = 'GET'
+POST            = 'POST'
+defualt_choice  = (None, 'Not Selected')
 
 
 @app.route('/'    , methods= [GET])
@@ -161,7 +162,7 @@ def deleteagent(agent_id):
     #Checking Authorization
     Middleware.authorizeSuperUser(current_user)
 
-    agent = CommissionAgent.query.filter_by(id=agent_id).first()
+    agent = CommissionAgent.query.filter_by(person_id=agent_id).first()
 
     # if no record of buyer with entered id is found
     if agent is None:
@@ -190,7 +191,7 @@ def buyerinfo(buyer_id):
 def agentinfo(agent_id):
 
     agentinfo = True
-    agent     = CommissionAgent.query.filter_by(id=int(agent_id)).first()
+    agent     = CommissionAgent.query.filter_by(person_id=int(agent_id)).first()
 
     if agent is None:
         flash('ERROR: NO Such agent exists', 'danger')
@@ -252,10 +253,10 @@ def editbuyeroragent(id, entity):
     db_entity = None
 
     if entity == 'Buyer':
-        db_entity = Buyer.query.filter_by(id=id).first()
+        db_entity = Buyer.query.filter_by(person_id=id).first()
         active = 'buyer'
     elif entity == 'Commission Agent':
-        db_entity = CommissionAgent.query.filter_by(id=id).first()
+        db_entity = CommissionAgent.query.filter_by(person_id=id).first()
         active = 'CA'
 
     # if no record of entity with entered id is found
@@ -273,7 +274,7 @@ def editbuyeroragent(id, entity):
             return render_template('editbuyerandagent.html', entity=db_entity, form=form)
 
     else:     
-        form.comments.data   = db_entity.comments
+        form.comments.data   = db_entity.person.comments
 
         if entity == 'Buyer':
             form.entity.data = 'Buyer'
@@ -372,7 +373,8 @@ def expenditure_macro_analytics():
 @login_required
 def receivepayment(id):
 
-    try:       
+    try:   
+         
         deal = Deal.query.filter_by(id=id).first()
         form   = ReceivePaymentForm(deal_id=deal.id)
         form.deal_id.choices = [(row[0], row[0]) for row in Deal.query.with_entities(Deal.id).all()]       
@@ -398,11 +400,18 @@ def receivepayment(id):
 @login_required
 def addexpense():
     
-    #ET = Expenditure.query.filter_by(id=id).first()
-    form    = AddExpenseForm()
-    choices = [(row[0], row[1]) for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]
-    choices.insert(0, (None, 'Not Selected'))
-    form.ET_id.choices = choices       
+    
+    ###-----MAKE THIS PRETTY-----###
+    ETs       = [(row[0], row[1]) for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]
+    employees = [(row[0], row[1]) for row in User.query.with_entities(User.id, User.username).filter_by(rank=2).all() ]
+    ETs.insert      (0, defualt_choice)
+    employees.insert(0, defualt_choice)
+
+    form                    = AddExpenseForm()
+    form.employee.choices   = employees
+    form.ET_id.choices      = ETs     
+    print(employees)   
+    ###-----MAKE THIS PRETTY-----###      
 
 
     if form.validate_on_submit():
@@ -453,28 +462,17 @@ def addnormaluser():
 
     #Checking Authorization
     Middleware.authorizeSuperUser(current_user)
-    
-    form = AddNormalUserForm()
+
+    form = AddUserOrEmployeeForm()
     if form.validate_on_submit():
-       
-        #Adding user to the Dataase
-        try:
-            user = User(
-                username = form.username.data,
-                email    = form.email.data, 
-                password = form.password.data or form.password.default,
-                rank     = 1
-            )
-            db.session.add(user)
-            db.session.commit()
-
-        except sqlalchemy.exc.IntegrityError as ie:
-            flash('User with emil already exists', 'danger')
-            return render_template('addnormaluser.html', form=form)
-
-        
-        flash(f'Normal User Created!', 'success')
-        return redirect(url_for('profile'))
+        data = {
+            'type'      : int(form.type.data),
+            'username'  : form.username.data,
+            'email'     : form.email.data,
+            'password'  : form.password.data or '12345'
+        }
+        if addnormaluser_(data) is None:
+            return redirect(url_for('profile'))        
     
     return render_template('addnormaluser.html', form=form)
 
@@ -505,6 +503,12 @@ def logout():
 
 @app.route('/test')
 def test():
+
+    deal = Deal.query.filter_by(id=5).first()
+    print(deal.buyer_object.name)
+    deal = deal.serialize
+    print(deal['buyer_object']['name'])
+
     return render_template('test.html')
 
 
@@ -537,11 +541,12 @@ def filterplot(status):
     return jsonify(json_list=[plot.serialize for plot in plots])
 
 
-@app.route('/rest/buyer/all', methods=[POST])
+@app.route('/rest/buyer/all', methods=[GET, POST])
 @login_required
 def allbuyers():
 
     buyers = Buyer.query.all()
+    print(buyers)
     return jsonify(json_list=[buyer.serialize for buyer in buyers])
 
 
@@ -550,7 +555,6 @@ def allbuyers():
 def allplots():
 
     plots = Plot.query.all()
-    print(len(plots))
     return jsonify(json_list=[plot.serialize for plot in plots])
 
 
@@ -568,6 +572,7 @@ def alldeals():
 def allCAs():
 
     CAs = CommissionAgent.query.all()
+    print(CAs)
     return jsonify(json_list=[CA.serialize for CA in CAs])
 
 

@@ -9,11 +9,31 @@
 			<form method="POST" action="{{ url_for('addnormaluser') }}" class="form-style">
 				<fieldset class="form-group">
 					{{ form.csrf_token }}
-					<legend class="text-orange-1 text-center">Add User</legend>
-					<p class="text-dark-3 text-center">Add new normal user</p>
+					<legend class="text-orange-1 text-center">
+						Add User or Employee
+					</legend>
+					<p class="text-dark-3 text-center">
+						Add a User or an Employee to the System
+					</p>
+
 					<br>
 					<div class="form-group">
+						{{ form.type.label }}
+						{% if form.type.errors %}
+						{{ form.type(class='form-control is-invalid') }}
+						<div class="invalid-feedback">
+							{% for error in form.type.errors %}
+							<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+						{% else %}
+						{{ form.type(class='form-control') }}
+						{% endif %}
+					</div>
+
+					<div class="form-group">
 						{{ form.username.label }}
+
 						{% if form.username.errors %}
 						{{ form.username(class='form-control is-invalid') }}
 						<div class="invalid-feedback">
@@ -24,26 +44,25 @@
 						{% else %}
 						{{ form.username(class='form-control') }}
 						{% endif %}
-
 					</div>
 
-					<div class="form-group">
+					<div class="form-group" id="email-div">
 						{{ form.email.label }}
 
 						{% if form.email.errors %}
-						{{ form.email(class='form-control is-invalid') }}
+						{{ form.email(class='form-control is-invalid', type='email') }}
 						<div class="invalid-feedback">
 							{% for error in form.email.errors %}
 							<span>{{ error }}</span>
 							{% endfor %}
 						</div>
 						{% else %}
-						{{ form.email(class='form-control') }}
+						{{ form.email(class='form-control', type='email') }}
 						{% endif %}
 
 					</div>
 
-					<div class="form-group">
+					<div class="form-group" id="password-div">
 						{{ form.password.label }}
 
 						{% if form.password.errors %}
@@ -71,4 +90,29 @@
 </div>
 <!-- new -->
 
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+	$(function() {
+    	$('#email').prop('required', true);
+	});
+	$('#type').on('change', function(){
+		$('#email').val   ('');
+		$('#password').val('');
+		$('#username').val('');
+		if(this.value == 1){
+			$('#email').prop       ('required', true);
+			$('#email-div').show   ();
+			$('#password-div').show();
+		}
+		else{
+			console.log('setting false');
+			$('#email').prop('required', false);
+			console.log($('#email').prop('required'));   
+			$('#email-div').hide();
+			$('#password-div').hide();
+		}
+	});	
+</script>
 {% endblock %}

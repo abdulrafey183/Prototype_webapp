@@ -31,18 +31,18 @@ class AddandEditForm(FlaskForm):
 	cnic_back    = FileField  ('CNIC Back',     validators=[FileAllowed(['jpeg','png'], 'Image Files Only')])
 	comments     = TextAreaField('Comments',    validators=[])
                            
-#Search Buyer Form
-class SearchBuyerForm(FlaskForm):
+# #Search Buyer Form
+# class SearchBuyerForm(FlaskForm):
 
-	id     = IntegerField('Buyer ID')
-	name   = StringField ('Name')
-	search = SubmitField ('Search Buyer')
+# 	id     = IntegerField('Buyer ID')
+# 	name   = StringField ('Name')
+# 	search = SubmitField ('Search Buyer')
 
-class SearchAgentForm(FlaskForm):
+# class SearchAgentForm(FlaskForm):
 
-	id     = IntegerField('Agent ID')
-	name   = StringField ('Name')
-	search = SubmitField ('Search Agent')
+# 	id     = IntegerField('Agent ID')
+# 	name   = StringField ('Name')
+# 	search = SubmitField ('Search Agent')
 
 #Delete Buyer Form
 class DeleteBuyerForm(FlaskForm):
@@ -85,8 +85,9 @@ class ReceivePaymentForm(AddTransactionForm):
 
 class AddExpenseForm(AddTransactionForm):
 
-	ET_id   = SelectField('Expenditure Type'   , default=None)
-	ET_name = StringField('Create New Expenditure Type', validators=[Length(max=100)])
+	ET_id    = SelectField('Expenditure Type'           , default=None)
+	employee = SelectField  ('Choose Employee')
+	ET_name  = StringField('Create New Expenditure Type', validators=[Length(max=100)])
 
 
 # Add Notes Form
@@ -96,14 +97,14 @@ class AddNotesForm(FlaskForm):
 	content = TextAreaField('Content')
 	add 	= SubmitField  ('Add Note')
 
-#Add Buyer Form
-class AddNormalUserForm(FlaskForm):
+#Add User or Employee Form
+class AddUserOrEmployeeForm(FlaskForm):
 
-	#id 	 = IntegerField('Buyer ID', validators=[DataRequired()])
-	username = StringField  ('Username' , validators=[DataRequired(), Length(min=1, max=50)])
-	email    = StringField  ('Email'    , validators=[DataRequired(), Length(min=1, max=75)])
-	password = PasswordField('Password' , validators=[Length(max=100)], default='12345')
-	create 	 = SubmitField  ('Create User')
+	type     = SelectField  ('Chose Type', choices=[(1, 'User'), (2, 'Employee')], default=1  )
+	username = StringField  ('Username'  , validators=[Length(min=1, max=50), DataRequired()] )
+	email    = StringField  ('Email'     , validators=[Length(min=1, max=75), Optional()] )
+	password = PasswordField('Password'  , validators=[Length(max=100)], default='12345')
+	create 	 = SubmitField  ('Add')
 
 #Set Plot Price Form
 class SetPlotPrice(FlaskForm):

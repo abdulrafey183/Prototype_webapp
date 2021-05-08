@@ -71,7 +71,7 @@ function make_buyer_card(buyer) {
     "' aria-expanded='true' aria-controls='collapseBuyer" +
     buyer.id +
     "'>" +
-    buyer.name +
+    buyer.person.name +
     "</button></h2></div><div id='collapseBuyer" +
     buyer.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
@@ -79,10 +79,10 @@ function make_buyer_card(buyer) {
     buyer.id +
     "'>" +
     buyer.id +
-    "</a></td></tr><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
-    buyer.name +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
+    buyer.person.name +
     "</td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
-    buyer.cnic +
+    buyer.person.cnic +
     '</td></tr></tbody></table></div></div></div></section>' +
     '</div></div></div></div>';
   return str;
@@ -118,22 +118,22 @@ function make_deal_card(deal) {
 function make_CA_card(CA) {
   let str =
     "<div class='accordion' id='accordionExample'><div class='card'><div class='card-header' id='headingOne'><h2 class='mb-0'><button class='btn btn-link btn-block text-left' type='button' data-toggle='collapse' data-target='#collapseBuyer" +
-    CA.id +
+    CA.person.id +
     "' aria-expanded='true' aria-controls='collapseBuyer" +
-    CA.id +
+    CA.person.id +
     "'>" +
-    CA.name +
+    CA.person.name +
     "</button></h2></div><div id='collapseBuyer" +
-    CA.id +
+    CA.person.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
     "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td><a href='/agent/" +
-    CA.id +
+    CA.person.id +
     "'>" +
-    CA.id +
+    CA.person.id +
     "</a></td></tr><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
-    CA.name +
+    CA.person.name +
     "</td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
-    CA.cnic +
+    CA.person.cnic +
     '</td></tr></tbody></table></div></div></div></section>' +
     '</div></div></div></div>';
 

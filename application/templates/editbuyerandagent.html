@@ -33,7 +33,7 @@
                     {% endfor %}
           	      </div>
           	      {% else %}
-                  {{ form.name(class='form-control', value=entity.name) }}
+                  {{ form.name(class='form-control', value=entity.person.name) }}
                   {% endif %}
       	      </div>
 
@@ -47,7 +47,7 @@
                     {% endfor %}
                   </div>
                     {% else %}
-                      {{ form.phone(class='form-control', value=entity.phone) }}
+                      {{ form.phone(class='form-control', value=entity.person.phone) }}
                     {% endif %}
          
                   </div>
@@ -63,7 +63,7 @@
                         {% endfor %}
                       </div>
                     {% else %}
-                      {{ form.email(class='form-control', value=entity.email) }}
+                      {{ form.email(class='form-control', value=entity.person.email) }}
                     {% endif %}         
               </div>
 
@@ -93,7 +93,7 @@
                     {% endfor %}
                   </div>
                 {% else %}
-                  {{ form.cnic(placeholder="Enter numbers only", class='form-control', value=entity.cnic) }}
+                  {{ form.cnic(placeholder="Enter numbers only", class='form-control', value=entity.person.cnic) }}
                 {% endif %}     
           </div>
 
@@ -129,7 +129,7 @@
       if (select == 'Buyer'){
         legend = "Edit Buyer";
         text   = "Edit Buyer Information";
-        action="{{ url_for('editbuyeroragent', id=entity.id, entity='Buyer') }}";
+        action="{{ url_for('editbuyeroragent', id=entity.person.id, entity='Buyer') }}";
         $('#address').prop('required', true)
         $('#buyer-address').show();
         //$('#record-type').val('Buyer')
@@ -138,7 +138,7 @@
       else if (select == 'Commission Agent'){
         legend = "Edit Agent";
         text   = "Edit Agent Information";
-        action="{{ url_for('editbuyeroragent', id=entity.id, entity='Commission Agent') }}";
+        action="{{ url_for('editbuyeroragent', id=entity.person.id, entity='Commission Agent') }}";
         $('#address').prop('required', false)
         $('#buyer-address').hide();
         //$('#record-type').val('Commission Agent')

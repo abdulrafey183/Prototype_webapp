@@ -1,24 +1,46 @@
+INSERT INTO `person` VALUES (1 , 'Faisal Rasool'  , '1111111111111', '03207047670', 'faisal@example.com'    , NULL);
+INSERT INTO `person` VALUES (2 , 'Abdul Rafey'    , '2222222222222', '03207047691', 'rafey@example.com'     , NULL);
+INSERT INTO `person` VALUES (3 , 'Manager 1'      , '3333333333333', '03207047692', 'manager@example.com'   , NULL);
+INSERT INTO `person` VALUES (10, 'Employee 1'     , '4444444444444', '03207047695', 'employee1@example.com' , NULL);
+INSERT INTO `person` VALUES (11, 'Employee 1'     , '5555555555555', '03207047623', 'employee2@example.com' , NULL);
+INSERT INTO `person` VALUES (4 , 'Laraib Arjamand', '3840188588576', '03018109402', 'laraib@example.com'    , NULL);
+INSERT INTO `person` VALUES (5 , 'Bushra Arjamand', '3840188888576', '03018109420', 'bushra@example.com'    , NULL);
+INSERT INTO `person` VALUES (6 , 'Haider Ali'     , '3840188588571', '03018109401', 'haider@example.com'    , NULL);
+INSERT INTO `person` VALUES (7 , 'Khizer Arif'    , '3840188588570', '03018109410', 'khizer@example.com'    , NULL);
+INSERT INTO `person` VALUES (8 , 'Agent 1'        , '3840188588440', '03016109410', 'agent1@example.com'    , NULL);
+INSERT INTO `person` VALUES (9 , 'Agent 2'        , '3740188588440', '03016309410', 'agent2@example.com'    , NULL);
 
-INSERT INTO user 
+
+
+INSERT INTO `user`
+    (`id`, `password`, `rank`, `person_id`)
 VALUES 
-    (1, "faisal@example.com", "Faisal Rasool", "pop", 0),
-    (2, "rafey@example.com" , "Abdul Rafey"  , "pop", 0),
-    (3, "munshi@example.com", "Manager 1"    , "pop", 1)
+    (1, 'pop', 0, 1),
+    (2, 'pop', 0, 2),
+    (3, 'pop', 1, 3),
+    (4, NULL , 2, 10),
+    (5, NULL , 2, 11)
 ;
+
+
 
 INSERT INTO `buyer`
 VALUES
-    (1, 'Laraib Arjamand', '3840188588576', '03018109400', 'laraib@example.com', 'Bhera', null),
-    (2, 'Bushra Arjamand', '3840188588572', '03004264935', 'bushra@example.com', 'Bhera', null),
-    (3, 'Hooria Arjamand', '3840188588579', '03015702001', 'hooria@example.com', 'Bhera', null),
-    (4, 'Asma Arjamand'  , '3840188588571', '03018109401', 'asma@example.com'  , 'Bhera', null)
+    (1, 'Bhera'  , 4),
+    (2, 'Bhera'  , 5),
+    (3, 'Lahore' , 6),
+    (4, 'Karachi', 7)
 ;
 
+
+
 INSERT INTO `commissionagent`
-    (`id`, `name`, `cnic`, `phone`, `email`, `comments`)
-VALUES 
-    (1, 'Abdul Rafey', '1234567890123', '03207047670', 'arafey@example.com', null),
-    (2, 'Abdul Ahad' , '1234567890122', '03207047671', 'ahad@example.com'  , null);
+VALUES
+    (8),
+    (9)
+;
+
+
 
 
 INSERT INTO plot 

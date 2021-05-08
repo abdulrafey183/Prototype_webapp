@@ -11,12 +11,15 @@ from datetime import datetime
 
 
 def login_(email, password):
-
-    user = User.query.filter_by(email=email).first()
-    if (user and user.check_password(password1=password)):
-        login_user(user)
-        flash(f'Welcome {user.username}', 'success')
-        return True
+    
+    try:
+        user = Person.query.filter(Person.email==email).first().user[0] 
+        if (user and user.check_password(password1=password)):
+            login_user(user)
+            flash(f'Welcome {user.person.name}', 'success')
+            return True
+    except IndexError:
+        pass
 
     flash('Invalid username/password combination', 'danger')
     return False
@@ -30,42 +33,48 @@ def editplotprice_(plot_id, price):
     flash('Plot Price Successfully Edited', 'success')
 
 
+def addperson_(person_data):
+
+    person = Person(
+                name    = person_data.name.data,
+                cnic    = person_data.cnic.data,
+                phone   = person_data.phone.data,
+                email   = person_data.email.data,
+                comments= person_data.comments.data if person_data.comments.data else db.null()
+            )
+
+    db.session.add(person)
+    db.session.commit()
+
+    return person.id
+
+    
 def addbuyeroragent_(form_data):
-
+ 
     try:
-        if form_data.entity.data == 'Buyer':
-            if not form_data.address.data:
-                flash(f'Address Field is Empty', 'danger') 
-                return False
+        person_id = addperson_(form_data)
 
+        if form_data.entity.data == 'Buyer':
             entity = Buyer(
-                name       = form_data.name.data,
-                cnic       = form_data.cnic.data,
-                phone      = form_data.phone.data,
-                email      = form_data.email.data,
                 address    = form_data.address.data,
-                comments   = form_data.comments.data if form_data.comments.data else db.null()
+                person_id  = person_id                
             )
 
         elif form_data.entity.data == 'Commission Agent':
-
             entity = CommissionAgent(
-                name       = form_data.name.data,
-                cnic       = form_data.cnic.data,
-                phone      = form_data.phone.data,
-                email      = form_data.email.data,
-                comments   = form_data.comments.data if form_data.comments.data else db.null()
+                person_id = person_id
             )
 
         db.session.add(entity)
         db.session.commit()
 
-        frontfiledata = get_cnic_file_data(entity.id, form_data.cnic.data, form_data.cnic_front.data, 'jpg', 'front', form_data.entity.data)
-        backfiledata  = get_cnic_file_data(entity.id, form_data.cnic.data, form_data.cnic_back.data, 'jpg', 'back', form_data.entity.data)
+        frontfiledata = get_cnic_file_data(person_id, form_data.cnic.data, form_data.cnic_front.data, 'jpg', 'front', form_data.entity.data)
+        backfiledata  = get_cnic_file_data(person_id, form_data.cnic.data, form_data.cnic_back.data, 'jpg', 'back', form_data.entity.data)
 
         addfile_(frontfiledata)
         addfile_(backfiledata)
 
+        flash(f'SUCCESS: A {form_data.entity.data} with id {entity.id} Created', 'success')
         return True
     except sqlalchemy.exc.IntegrityError:
         db.session.rollback()
@@ -76,34 +85,22 @@ def addbuyeroragent_(form_data):
 def editbuyeroragent_(id, form_data):
 
     try:
+        db.session.query(Person).filter_by(id=id).update({
+            'name': form_data.name.data,
+            'cnic': form_data.cnic.data,
+            'phone': form_data.phone.data,
+            'email': form_data.email.data,
+            'comments': form_data.comments.data if form_data.comments.data else db.null()
+        })
+
         if form_data.entity.data == 'Buyer':
             entity_type = 'Buyer'
-            if not form_data.address.data:
-                flash(f'Address Field is Empty', 'danger') 
-                return False
 
             db.session.query(Buyer).filter_by(
-                        id=id
-                        ).update({
-                            'name': form_data.name.data,
-                            'cnic': form_data.cnic.data,
-                            'phone': form_data.phone.data,
-                            'email': form_data.email.data,
-                            'address': form_data.address.data,
-                            'comments': form_data.comments.data if form_data.comments.data else db.null()
-                        })
-
-        elif form_data.entity.data == 'Commission Agent':
+                        person_id=id
+                        ).update({'address': form_data.address.data})
+        else:
             entity_type = 'Commission Agent'
-            db.session.query(CommissionAgent).filter_by(
-                            id=id
-                            ).update({ 
-                                'name'     : form_data.name.data,
-                                'cnic'     : form_data.cnic.data,
-                                'phone'    : form_data.phone.data,
-                                'email'    : form_data.email.data,
-                                'comments' : form_data.comments.data if form_data.comments.data else db.null()
-                            })
 
         db.session.commit()
         flash(f'{form_data.entity.data} Info with id "{id}" Updated', 'success')
@@ -277,16 +274,37 @@ def addexpense_(data):
     addtransaction_(data)
 
 
+def addnormaluser_(data):
+
+     #Adding user to the Database
+    try:
+        print(type(data['type']))
+        user = User(
+            username = data['username'],
+            email    = data['email']    if data['type'] == 1 else db.null(), 
+            password = data['password'] if data['type'] == 1 else db.null(), 
+            rank     = data['type']
+        )
+        db.session.add(user)
+        db.session.commit()
+
+        data['type'] == 1 and flash(f'User Successfully Added to the System'    , 'success')
+        data['type'] == 2 and flash(f'Employee Successfully Added to the System', 'success')
+        return
+
+    except sqlalchemy.exc.IntegrityError as ie:
+        flash('User with emil already exists', 'danger')
+        return 'duplicate'
+
+        
 def addfile_(data):
 
-    if data['cnic']:
-        file = File( filename=data['filename'],
+    file = File( filename=data['filename'],
                      format=data['format'],
                      data=data['data'].read(),
-                     buyer_id=data['buyer_id'] if data['buyer_id'] else db.null(),
-                     agent_id=data['agent_id'] if data['agent_id'] else db.null()
-                    )
+                     person_id=data['person_id'] if data['person_id'] else db.null(),
+                )
 
-        db.session.add(file)
-        db.session.commit()
+    db.session.add(file)
+    db.session.commit()
 

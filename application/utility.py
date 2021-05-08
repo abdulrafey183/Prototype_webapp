@@ -14,11 +14,8 @@ def get_cnic_file_data(id, cnic, data, fileformat, side, entity):
                        'format'   : fileformat, 
                        'filename' : filename, 
                        'data'     : data, 
+                       'person_id': id
                      }
-    if entity == 'Buyer':
-        cnic_file_data.update({'agent_id' : False, 'buyer_id' : id})
-    if entity == 'Commission Agent':
-        cnic_file_data.update({'agent_id' : id, 'buyer_id' : False})
 
     return cnic_file_data
 

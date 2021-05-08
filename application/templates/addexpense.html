@@ -51,6 +51,23 @@
 							{% endif %}
 						</div>
 
+						<div id="employee-div" class="form-group" style="display: none">
+							<br>
+							{{ form.employee.label }}
+							{% if form.employee.errors %}
+							{{ form.employee(class='form-control is-invalid') }}
+							<div class="invalid-feedback">
+								{% for error in form.employee.errors %}
+								<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+							{% else %}
+							{{ form.employee(class='form-control') }}
+							{% endif %}
+						</div>
+
+
+
 						<br>
 						<div class="form-group">
 							{{ form.amount.label }}
@@ -98,7 +115,6 @@
 <script type="text/javascript">
 
 	{% if error %}
-	console.log('popop');
 	$('#ET_id-div').hide();
 	$('#ET_name-div').show();
 	$('#ET_name').prop('required', true); 
@@ -115,6 +131,15 @@
 		$('#ET_name-div').hide();
 		$('#ET_name').val('');  
 		$('#ET_name').prop('required', false);  
+	});
+
+	$('#ET_id').on('change', function(){
+		if(this.value == 1){
+			$('#employee-div').show();
+		}
+		else{
+			$('#employee-div').show();
+		}
 	});
 </script>
 {% endblock %}
