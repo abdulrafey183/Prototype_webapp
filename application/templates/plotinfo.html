@@ -68,7 +68,7 @@
             <tr class="text-dark-3">
               <th scope="row">Coresponding Deal</th>
               <td>
-                <a href="{{ url_for('plotinfo', plot_id=plot.dealid) }}">
+                <a href="{{ url_for('dealinfo', deal_id=plot.deal.id) }}">
                   Deal# {{ plot.deal.id }}
                 </a>
               </td>

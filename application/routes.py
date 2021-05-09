@@ -134,7 +134,7 @@ def editplotprice(plot_id): return editplotprice_(plot_id)
 @login_required
 def editbuyeroragent(id, entity):
 
-    form = AddandEditForm()
+    form = Add()
     db_entity = None
 
     if entity == 'Buyer':
@@ -306,81 +306,6 @@ def addbuyeroragent():
     return render_template('addbuyerandagent.html',  form=form)
 
 
-@app.route('/edit/<entity>/<id>', methods=[GET, POST])
-@login_required
-def editbuyeroragent(id, entity):
-
-    form = AddandEditBuyerorAgentForm()
-    db_entity = None
-
-    if entity == 'Buyer':
-        db_entity = Buyer.query.filter_by(person_id=id).first()
-        active = 'buyer'
-    elif entity == 'Commission Agent':
-        db_entity = CommissionAgent.query.filter_by(person_id=id).first()
-        active = 'CA'
-
-    # if no record of entity with entered id is found
-    if db_entity is None:
-        flash(f'No such {entity} exists!', 'danger')
-        return redirect(url_for('display', active='buyer'))
-    
-    if form.validate_on_submit():
-
-        edit = editbuyeroragent_(id, form)
-
-        if edit:
-            return redirect(url_for('display', active=active))
-        else:
-            return render_template('editbuyerandagent.html', entity=db_entity, form=form)
-
-    else:     
-        form.comments.data   = db_entity.person.comments
-
-        if entity == 'Buyer':
-            form.entity.data = 'Buyer'
-        elif entity == 'Commission Agent':
-            form.entity.data = 'Commission Agent'
-
-        return render_template('editbuyerandagent.html', entity=db_entity, form=form)
-
-
-@app.route('/add/deal', methods=[GET, POST])
-@login_required
-def adddeal():
-
-    ####---MAKE THIS PRETTY---####
-    defualt_choice = (None, 'Not Selected')
-    buyers = [(row[0],          str(row[1])+" - "+str(row[2])) for row in Buyer.query.with_entities(Buyer.id, Buyer.name, Buyer.cnic).all()]
-    CAs    = [(row[0],          str(row[1])+" - "+str(row[2])) for row in CommissionAgent.query.with_entities(CommissionAgent.id, CommissionAgent.name, CommissionAgent.cnic).all()]
-    plots  = [(row[0], "Plot# "+str(row[0])+" - "+str(row[1])) for row in Plot.query.filter_by(status='not sold').with_entities(Plot.id, Plot.address).all()]
-    
-    installment_frequency = [None, "Monthly", "Half Yearly", "Yearly"]
-
-    buyers.insert(0, defualt_choice)
-    CAs.insert(0, defualt_choice)
-    plots.insert(0, defualt_choice)
-    form = AddDealForm()
-    form.buyer_id.choices = buyers
-    form.plot_id.choices  = plots
-    form.CA_id.choices    = CAs
-    form.installment_frequency.choices = installment_frequency
-    ####---MAKE THIS PRETTY---####
-
-    if form.validate_on_submit():
-
-        deal = {
-                'plot_id'                : form.plot_id.data,
-                'buyer_id'               : form.buyer_id.data,
-                'CA_id'                  : form.CA_id.data,
-                'plot_price'             : form.plot_price.data,
-                'c_rate'                 : form.c_rate.data,
-                'first_amount_recieved'  : form.first_amount_recieved.data,
-                'amount_per_installment' : form.amount_per_installment.data,
-                'installment_frequency'  : form.installment_frequency.data,
-                'comments'               : form.comments.data,
-                'attachments'            : form.attachments.data
-               }
 
 
 
@@ -392,13 +317,15 @@ def dealinfo(deal_id):
     deal_id = int(deal_id) 
     deal = Deal.query.filter_by(id=deal_id).first()
 
+    transaction_data = dealanalytics_(deal_id)
+
     if deal is None:
         flash('ERROR: NO Such deal exists', 'danger')
 
-    return render_template('dealinfo.html', deal=deal)
+    return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
 
 
-@app.route('/deal/analytics/<deal_id>')
+'''@app.route('/deal/analytics/<deal_id>')
 @login_required
 def dealanalytics(deal_id):
 
@@ -409,7 +336,7 @@ def dealanalytics(deal_id):
         flash(f'No Transaction for Deal with Id {deal_id}', 'danger')
         return render_template('dealanalytics.html')
 
-    return render_template('dealanalytics.html', transaction=transaction_data)
+    return render_template('dealanalytics.html', transaction=transaction_data)'''
 
 
 @app.route('/analytics/expenditure/macro', methods=[GET, POST])
@@ -619,6 +546,3 @@ def allETs(): return allETs_()
 def getIDfromTable(table, id): return getIDfromTable_(table, id)
 
 ###------------------------REST ROUTES------------------------###
-
-
-

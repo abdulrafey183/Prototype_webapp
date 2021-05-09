@@ -17,14 +17,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="text-dark-3">
+            <!--<tr class="text-dark-3">
               <th scope="row">ID</th>
               {% if agentinfo %}
               <td>{{entity.person.id}}</td>
               {% elif buyerinfo %}
               <td>{{entity.id}}</td>
               {% endif %}
-            </tr>
+            </tr>-->
             <tr class="text-dark-3">
               <th scope="row">Name</th>
               <td>{{entity.person.name}}</td>
@@ -60,7 +60,9 @@
               <th scope="row">Deals</th>
               <td>
                 {% for deal in entity.deals %}
-                {{ deal.id }}
+                <a href='/deal/{{deal.id}}'>
+                Deal#{{ deal.id }}
+                </a>
                 <br>
                 {% endfor %}
               </td>

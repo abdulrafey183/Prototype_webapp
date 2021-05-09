@@ -146,7 +146,7 @@ def addbuyeroragent_(form_data):
         else:
             id = entity.id
 
-        flash(f'SUCCESS: A {form_data.entity.data} with id {id} Created', 'success')
+        flash(f'SUCCESS: {form_data.entity.data} "{form_data.name.data}" added to record', 'success')
         return True
     except sqlalchemy.exc.IntegrityError:
         db.session.rollback()
@@ -175,7 +175,7 @@ def editbuyeroragent_(id, form_data):
             entity_type = 'Commission Agent'
 
         db.session.commit()
-        flash(f'{form_data.entity.data} Info with id "{id}" Updated', 'success')
+        flash(f'SUCCESS: {form_data.entity.data} "{form_data.name.data}" Info with id "{id}" Updated', 'success')
         return True
 
     except sqlalchemy.orm.exc.NoResultFound:
