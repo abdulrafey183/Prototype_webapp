@@ -19,23 +19,27 @@
           <tbody>
             <tr class="text-dark-3">
               <th scope="row">ID</th>
+              {% if agentinfo %}
+              <td>{{entity.person.id}}</td>
+              {% elif buyerinfo %}
               <td>{{entity.id}}</td>
+              {% endif %}
             </tr>
             <tr class="text-dark-3">
               <th scope="row">Name</th>
-              <td>{{entity.name}}</td>
+              <td>{{entity.person.name}}</td>
             </tr>
             <tr class="text-dark-3">
               <th scope="row">CNIC</th>
-              <td>{{entity.cnic}}</td>
+              <td>{{entity.person.cnic}}</td>
             </tr>
             <tr class="text-dark-3">
               <th scope="row">Phone</th>
-              <td>{{entity.phone}}</td>
+              <td>{{entity.person.phone}}</td>
             </tr>
             <tr class="text-dark-3">
               <th scope="row">Email</th>
-              <td>{{entity.email}}</td>
+              <td>{{entity.person.email}}</td>
             </tr>
             {% if buyerinfo %}
             <tr class="text-dark-3">
@@ -45,8 +49,8 @@
             {% endif %}
             <tr class="text-dark-3">
               <th scope="row">Comments</th>
-              {% if entity.comments %}
-              <td>{{entity.comments}}</td>
+              {% if entity.person.comments %}
+              <td>{{entity.person.comments}}</td>
               {% else %}
               <td>No Comments</td>
               {% endif %}
@@ -76,6 +80,8 @@
   </div>
 </section>
 <!-- new -->
+{% endblock %}
+{% block script %}
 <script type="text/javascript">
 
   var title = "";
@@ -85,28 +91,29 @@
     title      = "Buyer Information";
     subtitle   = "All the buyer's information is listed here";
     delete_url = "{{ url_for('deletebuyer', buyer_id=entity.id) }}";
-    edit_url   = "{{ url_for('editbuyer', buyer_id=entity.id) }}";
+    edit_url   = "{{ url_for('editbuyeroragent', id=entity.person.id, entity='Buyer') }}";
     delete_txt = "Delete Buyer";
     edit_txt   = "Edit Buyer";
 
   {% elif agentinfo %}
     title      = "Agent Information";
     subtitle   = "All the agent's information is listed here";
-    delete_url = "{{ url_for('deleteagent', agent_id=entity.id) }}";
-    edit_url   = "{{ url_for('editagent', agent_id=entity.id) }}";
+    delete_url = "{{ url_for('deleteagent', agent_id=entity.person_id) }}";
+    edit_url   = "{{ url_for('editbuyeroragent', id=entity.person.id, entity='Commission Agent') }}";
     delete_txt = "Delete Agent";
     edit_txt   = "Edit Agent";
 
   {% else %}
     title = "{{ url_for('profile') }}";
   {% endif %}
-
-  document.getElementById("title").innerHTML = title;
-  document.getElementById("sub-title").innerHTML = subtitle;
-  document.getElementById("delete-link").text = delete_txt;
-  document.getElementById("edit-link").text = edit_txt
-  document.getElementById("edit-link").setAttribute("href", edit_url);
-  document.getElementById("delete-link").setAttribute("href", delete_url);
+  console.log(title);
+  console.log({{entity.person.id}});
+  $("#title").text(title);
+  $("#sub-title").text(subtitle);
+  $("#delete-link").text(delete_txt);
+  $("#edit-link").text(edit_txt)
+  $("#edit-link").attr("href", edit_url);
+  $("#delete-link").attr("href", delete_url);
   
 
 </script>

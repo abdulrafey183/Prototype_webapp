@@ -33,60 +33,86 @@ def editplotprice_(plot_id, price):
     flash('Plot Price Successfully Edited', 'success')
 
 
-### Buyer ###
-def addbuyer_(buyer_data):
+def addperson_(person_data):
 
+    person = Person(
+                name    = person_data.name.data,
+                cnic    = person_data.cnic.data,
+                phone   = person_data.phone.data,
+                email   = person_data.email.data,
+                comments= person_data.comments.data if person_data.comments.data else db.null()
+            )
+
+    db.session.add(person)
+    db.session.commit()
+
+    return person.id
+
+    
+def addbuyeroragent_(form_data):
+ 
     try:
-        if not buyer_data.address.data:
-            flash(f'Address Field is Empty', 'danger') 
-            return False
+        person_id = addperson_(form_data)
 
-        buyer = Buyer(
-            name       = buyer_data.name.data,
-            cnic       = buyer_data.cnic.data,
-            phone      = buyer_data.phone.data,
-            email      = buyer_data.email.data,
-            address    = buyer_data.address.data,
-            comments   = buyer_data.comments.data if buyer_data.comments.data else db.null()
-        )
+        if form_data.entity.data == 'Buyer':
+            entity = Buyer(
+                address    = form_data.address.data,
+                person_id  = person_id                
+            )
 
-        db.session.add(buyer)
+        elif form_data.entity.data == 'Commission Agent':
+            entity = CommissionAgent(
+                person_id = person_id
+            )
+
+        db.session.add(entity)
         db.session.commit()
 
-        frontfiledata = get_cnic_file_data(buyer.id, buyer_data.cnic.data, buyer_data.cnic_front.data, 'jpg', 'front', 'buyer')
-        backfiledata  = get_cnic_file_data(buyer.id, buyer_data.cnic.data, buyer_data.cnic_back.data, 'jpg', 'back', 'buyer')
+        frontfiledata = get_cnic_file_data(person_id, form_data.cnic.data, form_data.cnic_front.data, 'jpg', 'front', form_data.entity.data)
+        backfiledata  = get_cnic_file_data(person_id, form_data.cnic.data, form_data.cnic_back.data, 'jpg', 'back', form_data.entity.data)
 
         addfile_(frontfiledata)
         addfile_(backfiledata)
 
+        if form_data.entity.data == 'Commission Agent':
+            id = entity.person.id
+        else:
+            id = entity.id
 
-        flash(f'Buyer with id "{buyer.id}" created', 'success')
+        flash(f'SUCCESS: A {form_data.entity.data} with id {id} Created', 'success')
         return True
-
     except sqlalchemy.exc.IntegrityError:
-        flash('ERROR: A buyer with this CNIC already exists!', 'danger')
+        db.session.rollback()
+        flash(f'ERROR: A {form_data.entity.data} with the entered credentials already exists!', 'danger')
         return False
 
 
-def editbuyer_(buyer_id, buyer_data):
+def editbuyeroragent_(id, form_data):
 
     try:
-        db.session.query(Buyer).filter_by(
-            id=buyer_id
-        ).update({
-            'name': buyer_data.name.data,
-            'cnic': buyer_data.cnic.data,
-            'phone': buyer_data.phone.data,
-            'email': buyer_data.email.data,
-            'address': buyer_data.address.data,
-            'comments': buyer_data.comments.data if buyer_data.comments.data else db.null()
+        db.session.query(Person).filter_by(id=id).update({
+            'name': form_data.name.data,
+            'cnic': form_data.cnic.data,
+            'phone': form_data.phone.data,
+            'email': form_data.email.data,
+            'comments': form_data.comments.data if form_data.comments.data else db.null()
         })
+
+        if form_data.entity.data == 'Buyer':
+            entity_type = 'Buyer'
+
+            db.session.query(Buyer).filter_by(
+                        person_id=id
+                        ).update({'address': form_data.address.data})
+        else:
+            entity_type = 'Commission Agent'
+
         db.session.commit()
-        flash(f'Buyer Info with id "{buyer_id}" Updated', 'success')
+        flash(f'{form_data.entity.data} Info with id "{id}" Updated', 'success')
         return True
 
     except sqlalchemy.orm.exc.NoResultFound:
-        flash("ERROR: A buyer with this CNIC already exists!", "danger")
+        flash(f"ERROR: A {entity_type} with this CNIC already exists!", "danger")
         return False
 
 
@@ -97,62 +123,13 @@ def deletebuyer_(buyer):
 
     flash('Buyer Record Deleted!', 'danger')
 
-### Commission Agent ###
-def addagent_(agent_data):
-
-    try:
-        agent = CommissionAgent(
-            name       = agent_data.name.data,
-            cnic       = agent_data.cnic.data,
-            phone      = agent_data.phone.data,
-            email      = agent_data.email.data,
-            comments   = agent_data.comments.data if agent_data.comments.data else db.null()
-        )
-
-        db.session.add(agent)
-        db.session.commit()
-
-        frontfiledata = get_cnic_file_data(agent.id, agent_data.cnic.data, agent_data.cnic_front.data, 'jpg', 'front', 'agent')
-        backfiledata  = get_cnic_file_data(agent.id, agent_data.cnic.data, agent_data.cnic_back.data, 'jpg', 'back', 'agent')
-
-        addfile_(frontfiledata)
-        addfile_(backfiledata)
-
-        flash(f'Agent with id "{agent.id}" created', 'success')
-        return True
-
-    except sqlalchemy.exc.IntegrityError:
-        flash('ERROR: An Agent with this CNIC already exists!', 'danger')
-        return False
-
-
-def editagent_(agent_id, agent_data):
-
-    try:
-        db.session.query(CommissionAgent).filter_by(
-                            id=agent_id
-                            ).update({ 
-                                'name'     : agent_data.name.data,
-                                'cnic'     : agent_data.cnic.data,
-                                'phone'    : agent_data.phone.data,
-                                'email'    : agent_data.email.data,
-                                'comments' : agent_data.comments.data if agent_data.comments.data else db.null()
-        })
-
-        db.session.commit()
-        flash(f"Agent Info with id '{agent_id}' Updated", 'success')
-        return True
-
-    except sqlalchemy.orm.exc.NoResultFound:
-        flash("ERROR: A agent with this CNIC already exists!", "danger")
-        return False
-
 
 def deleteagent_(agent):
     db.session.delete(agent)
     db.session.commit()
 
     flash('Agent Record Deleted!', 'danger')
+
 
 def adddeal_(deal_data):
 
@@ -341,14 +318,12 @@ def add_user_or_employee_(data):
         
 def addfile_(data):
 
-    if data['cnic']:
-        file = File( filename=data['filename'],
+    file = File( filename=data['filename'],
                      format=data['format'],
                      data=data['data'].read(),
-                     buyer_id=data['buyer_id'] if data['buyer_id'] else db.null(),
-                     agent_id=data['agent_id'] if data['agent_id'] else db.null()
-                    )
+                     person_id=data['person_id'] if data['person_id'] else db.null(),
+                )
 
-        db.session.add(file)
-        db.session.commit()
+    db.session.add(file)
+    db.session.commit()
 

@@ -14,11 +14,8 @@ def get_cnic_file_data(id, cnic, data, fileformat, side, entity):
                        'format'   : fileformat, 
                        'filename' : filename, 
                        'data'     : data, 
+                       'person_id': id
                      }
-    if entity == 'buyer':
-        cnic_file_data.update({'agent_id' : False, 'buyer_id' : id})
-    if entity == 'agent':
-        cnic_file_data.update({'agent_id' : id, 'buyer_id' : False})
 
     return cnic_file_data
 
@@ -69,7 +66,7 @@ def calc_avg_installment_freq(transaction):
     if not installment_freq:
         return
 
-    avg_installment_freq = mean(installment_freq)
+    avg_installment_freq = math.ceil(mean(installment_freq))
 
     if avg_installment_freq > 0:
         return str(avg_installment_freq) + " Day(s)"
@@ -81,7 +78,7 @@ def calc_time_in_hours(transaction):
 
     installment_freq     = [((j.date_time - i.date_time).seconds)//3600 for i, j in zip(transaction[:-1], transaction[1:])]
 
-    avg_installment_freq = mean(installment_freq)
+    avg_installment_freq = math.ceil(mean(installment_freq))
 
     if avg_installment_freq > 0:
         return str(avg_installment_freq) + " Hours"
@@ -93,7 +90,7 @@ def calc_time_in_minutes(transaction):
 
     installment_freq     = [((j.date_time - i.date_time).seconds)//60%60 for i, j in zip(transaction[:-1], transaction[1:])]
 
-    avg_installment_freq = mean(installment_freq)
+    avg_installment_freq = math.ceil(mean(installment_freq))
 
     return str(avg_installment_freq) + " Minutes"
 

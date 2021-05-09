@@ -6,13 +6,23 @@
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-12 col-md-6">    
-      <form method="POST" action="" enctype="multipart/form-data" class="form-style">
+      <form method="POST" action="{{ url_for('addbuyeroragent') }}" enctype="multipart/form-data" class="form-style">
         <fieldset class="form-group">
           {{ form.csrf_token }}
-          <legend class="text-orange-1 text-center" id="title">Heading
+          <legend class="text-orange-1 text-center" id="title">Add Buyer or Commission Agent
           </legend>
-          <p id="sub-text" class="text-dark-3 text-center">Add new buyer</p>
-          <br>
+          <p id="sub-text" class="text-dark-3 text-center">Add new Buyer or Commission Agent Record</p>
+          <br> 
+          {{form.errors}}
+          <div id="ET_id-div">
+              {{ form.entity.label }}
+              {{ form.entity(class='form-control', id='record-type') }}
+              <a class="span-link" id="new">
+                Select Entity to Add
+              </a>
+              <br>
+          </div>            
+
     		  <div class="form-group">
             	{{ form.name.label }}
               
@@ -58,8 +68,7 @@
                 {% endif %}
             </div>
 
-            {% if addbuyer %}
-            <div class="form-group">
+            <div id="buyer-address" class="form-group">
                 {{ form.address.label }}
 
                 {% if form.address.errors %}
@@ -73,7 +82,6 @@
                 {{ form.address(class='form-control') }}
                 {% endif %}       
             </div>
-            {% endif %}
 	      
       		  <div class="form-group">
               	{{ form.cnic.label(class='cnic-label') }}
@@ -144,28 +152,36 @@
       <div class="col-md-3"></div>
   </div>
 </div>
+{% endblock %}
 
-  <script type="text/javascript">
+{% block script %}
+<script type="text/javascript">
+  
+  /** Setting Form Input based on the Dropdown Value **/
 
-      var action = "";
-      var legend = "";
+  $('.form-control-file').prop('required', true)
 
-      {% if addbuyer %}
-        action = "{{ url_for('addbuyer') }}";
-        legend = "Add Buyer";
-        text   = "Add new Buyer";
-      {% elif addagent %}
-        action = "{{ url_for('addagent') }}";
-        legend = "Add Agent";
-        text   = "Add new Commission Agent";
-      {% else %}
-        action = "{{ url_for('profile')}}";
-      {% endif %}
+  $('#record-type').on('change', function(){
+    var select =  $('#record-type').find(":selected").val();
+    console.log(select);
+  
+    if(select == 'Buyer'){
+      $('#address').prop('required', true)
+      $('#buyer-address').show();
+    }
+    else if(select == 'Commission Agent'){
+      $('#address').prop('required', false)
+      $('#buyer-address').hide();
+    }
+  });
 
-      document.getElementsByTagName("form")[0].setAttribute("action", action);    
-      document.getElementById("title").innerHTML = legend;
-      document.getElementById("sub-text").innerHTML = text;
-      
-  </script>
+  if($('#record-type').find(":selected").val() == 'Commission Agent'){
+      $('#address').prop('required', false)
+      $('#buyer-address').hide();
+    }
+
+
+</script>
+
 {% endblock %}
 

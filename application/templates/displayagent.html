@@ -68,7 +68,7 @@
 
       {% endif %}
         
-        <button class="btn btn-outline-secondary btn-sm  ml-2"><a href="{{ url_for('editagent', agent_id=agent.id) }}">Edit Agent Info</a></button>
+        <button class="btn btn-outline-secondary btn-sm  ml-2"><a href="{{ url_for('editbuyeroragent', id=agent.id, entity='Commission Agent') }}">Edit Agent Info</a></button>
         
     </div>
     <br><br>

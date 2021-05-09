@@ -260,15 +260,11 @@ class File(db.Model):
 
     @property
     def serialize(self):
-        '''
-        Return object data in easily serializable format
-        '''
         return {
             'id'       : self.id,
             'filename' : self.filename,               
             'format'   : self.format,
             'data'     : self.data,
             'deal_id'  : self.deal_id,
-            'buyer_id' : self.buyer_id,
-            'agent_id' : self.agent_id
+            'person_id': self.person_id,
         }
