@@ -116,9 +116,6 @@ def display():
     if active[-1] == '+':
         active = active[:-1]
         flash('Chose a Deal to Recieve Payment', 'info')
-    elif active[-1] == '!':
-        active = active[:-1]
-        flash('Chose Expenditure Type of Expense', 'info')
     elif active[-1] == "~":
         active = active[:-1]
         flash('Chose a Deal to View its Analytics', 'info')
@@ -402,15 +399,14 @@ def addexpense():
     
     
     ###-----MAKE THIS PRETTY-----###
-    ETs       = [(row[0], row[1]) for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]
-    employees = [(row[0], row[1]) for row in User.query.with_entities(User.id, User.username).filter_by(rank=2).all() ]
+    ETs       = [(row[0], row[1])            for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]
+    employees = [(user.id, user.person.name) for user in User.query.filter_by(rank=2).all() ]
     ETs.insert      (0, defualt_choice)
     employees.insert(0, defualt_choice)
 
     form                    = AddExpenseForm()
     form.employee.choices   = employees
-    form.ET_id.choices      = ETs     
-    print(employees)   
+    form.ET_id.choices      = ETs        
     ###-----MAKE THIS PRETTY-----###      
 
 
@@ -456,25 +452,31 @@ def addnotes():
     return render_template('addnotes.html', form=form)
 
 
-@app.route('/add/normaluser', methods=[GET, POST])
+@app.route('/add/user-or-employee', methods=[GET, POST])
 @login_required
-def addnormaluser():
+def add_user_or_employee():
 
     #Checking Authorization
     Middleware.authorizeSuperUser(current_user)
 
     form = AddUserOrEmployeeForm()
+    form.name.label = 'Username'
     if form.validate_on_submit():
         data = {
             'type'      : int(form.type.data),
-            'username'  : form.username.data,
+            'name'  : form.name.data,
             'email'     : form.email.data,
-            'password'  : form.password.data or '12345'
+            'password'  : form.password.data or '12345',
+            'cnic'      : form.cnic.data,
+            'phone'     : form.phone.data,
+            'cnic_front': form.cnic_front.data,
+            'cnic_back' : form.cnic_back.data,
+            'comments'  : form.comments.data or db.null()
         }
-        if addnormaluser_(data) is None:
+        if add_user_or_employee_(data) is None:
             return redirect(url_for('profile'))        
     
-    return render_template('addnormaluser.html', form=form)
+    return render_template('add-user-or-employee.html', form=form)
 
 
 @app.route("/add/expendituretype", methods=[GET, POST])
@@ -537,7 +539,6 @@ def search():
 def filterplot(status):
 
     plots = Plot.query.all() if status=='all' else Plot.query.filter_by(status=status).all()
-
     return jsonify(json_list=[plot.serialize for plot in plots])
 
 

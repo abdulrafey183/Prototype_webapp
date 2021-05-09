@@ -35,29 +35,28 @@ function make_plot_card(plot) {
     '</td></tr>';
 
   if (!plot.price)
-    str +=
-      "<tr class='text-dark-3'><th scope='row'>Price</th><td><span style='color: red;'>Not Set</span></td></tr>";
+    str += "<tr class='text-dark-3'><th scope='row'>Price</th><td><span style='color: red;'>Not Set</span></td></tr>";
   else
-    str +=
-      "<tr class='text-dark-3'><th scope='row'>Price</th><td>" +
-      plot.price +
-      '</td></tr>';
+    str +=  "<tr class='text-dark-3'><th scope='row'>Price</th><td>" +
+            plot.price +
+            "</td></tr>";
 
-  str +=
-    "<tr class='text-dark-3'><th scope='row'>Size</th><td>" +
-    plot.size +
-    "</td></tr><tr class='text-dark-3'><th scope='row'>Comments</th><td>" +
-    plot.comments +
-    '</td></tr>';
+  str +=    "<tr class='text-dark-3'><th scope='row'>Size</th><td>" +
+            plot.size +
+            "</td></tr>";
 
-  if (plot.deal) {
-    str +=
-      "<tr class='text-dark-3'><th scope='row'>Deal</th><td><a href='/dealinfo/" +
-      plot.deal.id +
-      "'>" +
-      plot.deal.id +
-      '</a></td></tr>';
-  }
+  if (plot.deal)
+    str +=  "<tr class='text-dark-3'><th scope='row'>Deal</th><td><a href='/deal/" +
+            plot.deal.id +
+            "'>" +
+            "Deal# " + plot.deal.id +
+            "</a></td></tr>";
+  
+
+  str +=    "<tr class='text-dark-3'><th scope='row'>" +
+            "<span><a href='/plot/" + plot.id + "''>Show Details</a></span>" +
+            "</tr>"
+             
 
   return (
     str + '</tbody></table></div></div></div></section></div></div></div></div>'

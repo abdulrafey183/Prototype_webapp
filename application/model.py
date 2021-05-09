@@ -14,7 +14,8 @@ class User(db.Model, UserMixin):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
 
     #Relationships:
-    notes = db.relationship("Notes", backref="user_object", lazy=True)
+    notes    = db.relationship("Notes" , backref="user", lazy=True)
+    salaries = db.relationship("Salary", backref="user", lazy=True)
 
     #A method used to check password during login 
     def check_password(self, password1):    	
@@ -35,7 +36,7 @@ class Person(db.Model):
     name            = db.Column(db.String(75) , nullable=False)
     cnic            = db.Column(db.String(16) , nullable=False, unique=True)
     phone           = db.Column(db.String(11) , nullable=False, unique=True)
-    email           = db.Column(db.String(75) , nullable=False, unique=True)
+    email           = db.Column(db.String(75) , nullable=True , unique=True)
     comments        = db.Column(db.Text       , nullable=True , default=db.null())
 
     #Relationships
@@ -157,10 +158,10 @@ class Deal(db.Model):
     id                     = db.Column(db.Integer     , primary_key=True)
     status                 = db.Column(db.String(20)  , nullable=False)
     signing_date           = db.Column(db.String(20)  , nullable=False)
-    amount_per_installment = db.Column(db.Integer     , nullable=True, default=db.null())
-    installment_frequency  = db.Column(db.String(20)  , nullable=True, default=db.null())
-    commission_rate        = db.Column(db.Float       , nullable=True, default=db.null())
-    comments               = db.Column(db.Text        , nullable=True, default=db.null())
+    amount_per_installment = db.Column(db.Integer     , nullable=False, default=db.null())
+    installment_frequency  = db.Column(db.String(20)  , nullable=False, default=db.null())
+    commission_rate        = db.Column(db.Float       , nullable=True , default=db.null())
+    comments               = db.Column(db.Text        , nullable=True , default=db.null())
 
     #ForeginKey Columns:
     commission_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.person_id'), nullable=True,  default=db.null())
@@ -199,6 +200,15 @@ class Transaction(db.Model):
     #ForeginKey Columns:
     deal_id         = db.Column(db.Integer, db.ForeignKey('deal.id'))
     expenditure_id  = db.Column(db.Integer, db.ForeignKey('expenditure.id'))
+
+    #Relationships
+    salaries = db.relationship("Salary", backref="transaction", lazy=True)
+
+
+class Salary(db.Model):
+
+    employee_id    = db.Column(db.Integer, db.ForeignKey('user.id')       , primary_key=True)
+    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), primary_key=True)
 
 
 class Notes(db.Model):
@@ -250,9 +260,6 @@ class File(db.Model):
 
     @property
     def serialize(self):
-        '''
-        Return object data in easily serializable format
-        '''
         return {
             'id'       : self.id,
             'filename' : self.filename,               
@@ -261,8 +268,3 @@ class File(db.Model):
             'deal_id'  : self.deal_id,
             'person_id': self.person_id,
         }
-    
-     
-    
-
-
