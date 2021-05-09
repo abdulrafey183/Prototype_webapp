@@ -65,7 +65,7 @@ function make_plot_card(plot) {
 
 function make_buyer_card(buyer) {
   var deal_ids = '';
-  for(var deal of buyer.deals){ deal_ids += ' <a href="/deal/' + deal.id + '">' + deal.id + '</a>'; }
+  for(var deal of buyer.deals){ deal_ids += ' <a href="/deal/' + deal.id + '">Deal#' + deal.id + '</a><br>'; }
 
   let str =
     "<div class='accordion' id='accordionExample'><div class='card'><div class='card-header' id='headingOne'><h2 class='mb-0'><button class='btn btn-link btn-block text-left' type='button' data-toggle='collapse' data-target='#collapseBuyer" +
@@ -146,10 +146,13 @@ function make_CA_card(CA) {
     "</td></tr><tr class='text-dark-3'><th scope='row'>Phone</th><td>" +
     CA.person.phone +
     "</td></tr><tr class='text-dark-3'><th scope='row'>Email</th><td>" +
-    CA.person.email +
-    "</td></tr><tr class='text-dark-3'><th scope='row'>Deals</th><td>" +
-    deal_ids +
-    '</td></tr></tbody></table><a href="/agent/' +
+    CA.person.email + "</td></tr>";
+
+  if(deal_ids != 'None'){
+    str += "<tr class='text-dark-3'><th scope='row'>Deals</th><td>" + deal_ids + "</td></tr>";
+  }
+  str +=
+    '</tbody></table><a href="/agent/' +
     CA.person.id + '">Show Details</a></div></div></div></section>' +
     '</div></div></div></div>';
 

@@ -230,7 +230,7 @@ def editplotprice(plot_id):
 @login_required
 def addbuyeroragent():
 
-    form = AddandEditForm()
+    form = AddandEditBuyerorAgentForm()
 
     if form.validate_on_submit():
         entity = form.entity.data
@@ -246,7 +246,7 @@ def addbuyeroragent():
 @login_required
 def editbuyeroragent(id, entity):
 
-    form = AddandEditForm()
+    form = AddandEditBuyerorAgentForm()
     db_entity = None
 
     if entity == 'Buyer':
