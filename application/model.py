@@ -264,7 +264,6 @@ class File(db.Model):
             'id'       : self.id,
             'filename' : self.filename,               
             'format'   : self.format,
-            'data'     : self.data,
             'deal_id'  : self.deal_id,
             'person_id': self.person_id,
         }

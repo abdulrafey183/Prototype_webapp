@@ -115,7 +115,7 @@ class AddNotesForm(FlaskForm):
 class SetPlotPrice(FlaskForm):
 	
 	address = SelectField   ('Address', choices=[row[0] for row in Plot.query.with_entities(Plot.address).all()])
-	price   = IntegerField  ('Price',  validators=[DataRequired()])
+	price   = IntegerField  ('Price',  validators=[DataRequired(), number_range(min=0) ])
 	set     = SubmitField   ('Set Price')
 
 #Add Expenditure Type Form
