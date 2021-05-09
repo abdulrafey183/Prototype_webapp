@@ -1,14 +1,15 @@
-from flask              import Blueprint, redirect, render_template, flash, request, session, url_for, abort, jsonify
-from flask_login        import login_required, logout_user, current_user, login_user
+from flask              import abort
+from flask_login        import login_required
 from flask_sqlalchemy   import sqlalchemy
 
 from .controller        import *
-from .forms             import *
-from .middleware        import Middleware
+#from .forms             import *
+# from .middleware        import Middleware
 from .                  import login_manager
 from .                  import admin
 
 import os
+
 
 
 #Setting utility variables
@@ -16,55 +17,159 @@ GET             = 'GET'
 POST            = 'POST'
 defualt_choice  = (None, 'Not Selected')
 
+###------------------------NORMAL ROUTES------------------------###
 
 @app.route('/'    , methods= [GET])
 @app.route('/home', methods= [GET])
-def home():
-    return render_template('home.html')
+def home(): return render_template('home.html')
 
 
 @app.route('/about', methods= [GET])
-def about():
-    return render_template('about.html',  User= User)
+def about(): return render_template('about.html',  User= User)
 
 
-#This function should return the user for the user_id
+@app.route('/map', methods=[GET])
+@login_required
+def map(): return render_template('map.html')
+
+
 @login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+def load_user(user_id): return User.query.get(int(user_id))
 
 
 @login_manager.unauthorized_handler
-def unauthorized():
-    '''
-    Redirect unauthorized users to Login page.
-    '''
-    flash('You must be logged in to access that page', 'danger')
-    return redirect(url_for('login'))
+def unauthorized(): return unauthorized_()
 
 
 @app.route('/login', methods=[GET, POST])
-def login():
+def login(): return login_()
 
-    if current_user.is_authenticated:
-        flash('You are already logged in', 'info')
-        return redirect(url_for('profile'))  
 
-    form = LoginForm()
-    if form.validate_on_submit():        
-        if login_(form.email.data, form.password.data):
-            return redirect(url_for('profile'))
-
-        return redirect(url_for('login'))  
-
-    return render_template('loginpage.html', form=form)
+@app.route("/logout", methods=[GET])
+@login_required
+def logout(): return logout_()
 
 
 @app.route('/profile', methods=[GET, POST])
 @login_required
-def profile(): 
-    user_notes = Notes.query.filter_by(user_id=current_user.id).order_by(Notes.date_time.desc()).limit(4)
-    return render_template('profile.html', current_user=current_user, user_notes=user_notes)
+def profile(): return profile_()
+
+
+@app.route('/display')
+@login_required
+def display(): return display_()
+
+
+@app.route('/download/<id>', methods=[GET])
+def download(id): return download_(id)  
+
+###------------------------END NORMAL ROUTES------------------------###
+
+
+
+###------------------------ADD ROUTES------------------------###
+
+@app.route('/add')
+@login_required
+def add(): return render_template('add.html')
+
+
+@app.route('/add/deal', methods=[GET, POST])
+@login_required
+def adddeal():
+
+    ####---MAKE THIS PRETTY---####
+    buyers = [(buyer.id    , str(buyer.person.name)+" - "+str(buyer.person.cnic)) for buyer in Buyer.query.all()]
+    CAs    = [(CA.person_id, str(CA.person.name)   +" - "+str(CA.person.cnic))    for CA in CommissionAgent.query.all()]
+    
+    plots  = [(row[0], "Plot# "+str(row[0])+" - "+str(row[1])) for row in Plot.query.filter_by(status='not sold').with_entities(Plot.id, Plot.address).all()]
+    
+    installment_frequency = [None, "Monthly", "Half Yearly", "Yearly"]
+
+    buyers.insert(0, defualt_choice)
+    CAs.insert(0, defualt_choice)
+    plots.insert(0, defualt_choice)
+    form = AddDealForm()
+    form.buyer_id.choices = buyers
+    form.plot_id.choices  = plots
+    form.CA_id.choices    = CAs
+    form.installment_frequency.choices = installment_frequency
+    ####---MAKE THIS PRETTY---####
+
+    if form.validate_on_submit():
+
+        deal = {
+                'plot_id'                : form.plot_id.data,
+                'buyer_id'               : form.buyer_id.data,
+                'CA_id'                  : form.CA_id.data,
+                'plot_price'             : form.plot_price.data,
+                'c_rate'                 : form.c_rate.data,
+                'first_amount_recieved'  : form.first_amount_recieved.data,
+                'amount_per_installment' : form.amount_per_installment.data,
+                'installment_frequency'  : form.installment_frequency.data,
+                'comments'               : form.comments.data,
+                'attachments'            : form.attachments.data
+               }
+
+        if adddeal_(deal):
+            return render_template('adddeal.html', form= form)
+            
+        return redirect(url_for('profile'))
+
+    return render_template('adddeal.html', form= form)
+
+
+###------------------------END ADD ROUTES------------------------###
+
+
+
+###------------------------EDIT ROUTES------------------------###
+
+@app.route("/edit/plotprice/<plot_id>", methods=[GET, POST])
+@login_required
+def editplotprice(plot_id): return editplotprice_(plot_id)
+
+
+@app.route('/edit/<entity>/<id>', methods=[GET, POST])
+@login_required
+def editbuyeroragent(id, entity):
+
+    form = AddandEditForm()
+    db_entity = None
+
+    if entity == 'Buyer':
+        db_entity = Buyer.query.filter_by(person_id=id).first()
+        active = 'buyer'
+    elif entity == 'Commission Agent':
+        db_entity = CommissionAgent.query.filter_by(person_id=id).first()
+        active = 'CA'
+
+    # if no record of entity with entered id is found
+    if db_entity is None:
+        flash(f'No such {entity} exists!', 'danger')
+        return redirect(url_for('display', active='buyer'))
+    
+    if form.validate_on_submit():
+
+        edit = editbuyeroragent_(id, form)
+
+        if edit:
+            return redirect(url_for('display', active=active))
+        else:
+            return render_template('editbuyerandagent.html', entity=db_entity, form=form)
+
+    else:     
+        form.comments.data   = db_entity.person.comments
+
+        if entity == 'Buyer':
+            form.entity.data = 'Buyer'
+        elif entity == 'Commission Agent':
+            form.entity.data = 'Commission Agent'
+
+        return render_template('editbuyerandagent.html', entity=db_entity, form=form)
+
+###------------------------EDIT ROUTES------------------------###
+
 
 
 @app.route('/notes/<note_id>', methods=[GET])
@@ -88,40 +193,17 @@ def allnotes():
     notes = Notes.query.filter_by(user_id=current_user.id).order_by(Notes.date_time.desc())
     return render_template('allnotes.html', notes=notes)
 
-@app.route('/map', methods=[GET])
-@login_required
-def map():
-    return render_template('map.html')
 
 
-@app.route('/add')
-@login_required
-def add():
-    return render_template('add.html')
+
 
 
 @app.route('/analytics')
 @login_required
 def analytics():
     return render_template('analytics.html')
-
-
-@app.route('/display')
-@login_required
-def display():
    
-    active = request.args.get("active") or "buyer"
-    filterPlotForm = FilterPlotForm()
-
-    if active[-1] == '+':
-        active = active[:-1]
-        flash('Chose a Deal to Recieve Payment', 'info')
-    elif active[-1] == "~":
-        active = active[:-1]
-        flash('Chose a Deal to View its Analytics', 'info')
-
-    return render_template('display.html', active=active, filterPlotForm=filterPlotForm)
-
+    
 
 @app.route("/display/agents")
 @login_required
@@ -206,25 +288,7 @@ def plotinfo(plot_id):
         
     return render_template('plotinfo.html', plot=plot)
 
-
-@app.route("/edit/plotprice/<plot_id>", methods=[GET, POST])
-@login_required
-def editplotprice(plot_id):
     
-    #Checking Authorization
-    Middleware.authorizeSuperUser(current_user)
-    
-    plot = Plot.query.filter_by(id=plot_id).first()
-    if plot.status != 'not sold':
-        flash('Plot Price Cannot be Changed Because Plot is in a Deal', 'danger')
-        return redirect(url_for('plotinfo', plot_id=plot_id))
-
-    form = SetPlotPrice(address=plot.address)
-    if form.validate_on_submit():
-        editplotprice_(plot_id, form.price.data)
-        return redirect(url_for('plotinfo', plot_id=plot_id))
-
-    return render_template('editplotprice.html', plot=plot, form=form)
 
 @app.route('/add/buyeroragent', methods=[GET, POST])
 @login_required
@@ -242,88 +306,8 @@ def addbuyeroragent():
     return render_template('addbuyerandagent.html',  form=form)
 
 
-@app.route('/edit/<entity>/<id>', methods=[GET, POST])
-@login_required
-def editbuyeroragent(id, entity):
-
-    form = AddandEditForm()
-    db_entity = None
-
-    if entity == 'Buyer':
-        db_entity = Buyer.query.filter_by(person_id=id).first()
-        active = 'buyer'
-    elif entity == 'Commission Agent':
-        db_entity = CommissionAgent.query.filter_by(person_id=id).first()
-        active = 'CA'
-
-    # if no record of entity with entered id is found
-    if db_entity is None:
-        flash(f'No such {entity} exists!', 'danger')
-        return redirect(url_for('display', active='buyer'))
-    
-    if form.validate_on_submit():
-
-        edit = editbuyeroragent_(id, form)
-
-        if edit:
-            return redirect(url_for('display', active=active))
-        else:
-            return render_template('editbuyerandagent.html', entity=db_entity, form=form)
-
-    else:     
-        form.comments.data   = db_entity.person.comments
-
-        if entity == 'Buyer':
-            form.entity.data = 'Buyer'
-        elif entity == 'Commission Agent':
-            form.entity.data = 'Commission Agent'
-
-        return render_template('editbuyerandagent.html', entity=db_entity, form=form)
 
 
-@app.route('/add/deal', methods=[GET, POST])
-@login_required
-def adddeal():
-
-    ####---MAKE THIS PRETTY---####
-    defualt_choice = (None, 'Not Selected')
-    buyers = [(row[0],          str(row[1])+" - "+str(row[2])) for row in Buyer.query.with_entities(Buyer.id, Buyer.name, Buyer.cnic).all()]
-    CAs    = [(row[0],          str(row[1])+" - "+str(row[2])) for row in CommissionAgent.query.with_entities(CommissionAgent.id, CommissionAgent.name, CommissionAgent.cnic).all()]
-    plots  = [(row[0], "Plot# "+str(row[0])+" - "+str(row[1])) for row in Plot.query.filter_by(status='not sold').with_entities(Plot.id, Plot.address).all()]
-    
-    installment_frequency = [None, "Monthly", "Half Yearly", "Yearly"]
-
-    buyers.insert(0, defualt_choice)
-    CAs.insert(0, defualt_choice)
-    plots.insert(0, defualt_choice)
-    form = AddDealForm()
-    form.buyer_id.choices = buyers
-    form.plot_id.choices  = plots
-    form.CA_id.choices    = CAs
-    form.installment_frequency.choices = installment_frequency
-    ####---MAKE THIS PRETTY---####
-
-    if form.validate_on_submit():
-
-        deal = {
-                'plot_id'                : form.plot_id.data,
-                'buyer_id'               : form.buyer_id.data,
-                'CA_id'                  : form.CA_id.data,
-                'plot_price'             : form.plot_price.data,
-                'c_rate'                 : form.c_rate.data,
-                'first_amount_recieved'  : form.first_amount_recieved.data,
-                'amount_per_installment' : form.amount_per_installment.data,
-                'installment_frequency'  : form.installment_frequency.data,
-                'comments'               : form.comments.data,
-                'attachments'            : form.attachments.data
-               }
-
-        if adddeal_(deal):
-            return render_template('adddeal.html', form= form)
-            
-        return redirect(url_for('profile'))
-
-    return render_template('adddeal.html', form= form)
 
 
 @app.route('/deal/<deal_id>')
@@ -495,22 +479,9 @@ def addexpendituretype():
     return render_template('addexpendituretype.html', form=form)
 
 
-@app.route("/logout", methods=[GET])
-@login_required
-def logout():
-    logout_user()
-    flash('User logged out', 'info')
-    return redirect(url_for('home'))
-
 
 @app.route('/test')
 def test():
-
-    deal = Deal.query.filter_by(id=5).first()
-    print(deal.buyer_object.name)
-    deal = deal.serialize
-    print(deal['buyer_object']['name'])
-
     return render_template('test.html')
 
 
@@ -534,63 +505,45 @@ def search():
     return render_template('test.html', buyers= buyers, plots= plots)
 
 
+ 
+###------------------------REST ROUTES------------------------###
+
+
 @app.route('/rest/filterplot/<status>', methods=[POST])
 @login_required
-def filterplot(status):
-
-    plots = Plot.query.all() if status=='all' else Plot.query.filter_by(status=status).all()
-    return jsonify(json_list=[plot.serialize for plot in plots])
+def filterplot(status): return filterplot_(status)
 
 
-@app.route('/rest/buyer/all', methods=[GET, POST])
+@app.route('/rest/buyer/all', methods=[POST])
 @login_required
-def allbuyers():
-
-    buyers = Buyer.query.all()
-    print(buyers)
-    return jsonify(json_list=[buyer.serialize for buyer in buyers])
-
+def allbuyers(): return allbuyers_()
+    
 
 @app.route('/rest/plot/all', methods=[POST])
 @login_required
-def allplots():
+def allplots(): return allplots_()
 
-    plots = Plot.query.all()
-    return jsonify(json_list=[plot.serialize for plot in plots])
-
-
+    
 @app.route('/rest/deal/all', methods=[POST])
 @login_required
-def alldeals():
-
-    deals = Deal.query.all()
-    return jsonify(json_list=[deal.serialize for deal in deals])
-
+def alldeals(): return alldeals_()
 
 
 @app.route('/rest/CA/all', methods=[POST])
 @login_required
-def allCAs():
-
-    CAs = CommissionAgent.query.all()
-    print(CAs)
-    return jsonify(json_list=[CA.serialize for CA in CAs])
+def allCAs(): return allCAs_()
 
 
 @app.route('/rest/ET/all', methods=[POST])
 @login_required
-def allETs():
-
-    ETs = Expenditure.query.all()
-    return jsonify(json_list=[ET.serialize for ET in ETs])
+def allETs(): return allETs_()
 
 
 @app.route('/rest/<table>/<id>', methods=[GET, POST])
 @login_required
-def getIDfromTable(table, id):
+def getIDfromTable(table, id): return getIDfromTable_(table, id)
 
-    exec(f"locals()['temp'] = {table}.query.filter_by(id={id}).first()")
-    
-    return jsonify(json_list=[locals()['temp'].serialize])
+###------------------------REST ROUTES------------------------###
+
 
 

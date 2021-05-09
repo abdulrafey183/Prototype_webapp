@@ -17,60 +17,84 @@
             </tr>
           </thead>
           <tbody>
+
           	<tr class="text-dark-3">
               <th scope="row">ID</th>
               <td>{{deal.id}}</td>
             </tr>
+
             {% if deal.buyer_id %}
             <tr class="text-dark-3">
               <th scope="row">Buyer Id</th>
               <td>{{deal.buyer_id}}</td>
             </tr>
             {% endif %}
+
             {% if deal.commission_agent_id %}
             <tr class="text-dark-3">
               <th scope="row">Commission Agent Id</th>
               <td>{{deal.commission_agent_id}}</td>
             </tr>
             {% endif %}
+
             {% if deal.plot_id %}
             <tr class="text-dark-3">
               <th scope="row">Plot Id</th>
               <td>{{deal.plot_id}}</td>
             </tr>
             {% endif %}
+
             <tr class="text-dark-3">
               <th scope="row">Status</th>
               <td>{{deal.status}}</td>
             </tr>
+
             <tr class="text-dark-3">
               <th scope="row">Signing Date</th>
               <td>{{deal.signing_date}}</td>
             </tr>
+
             {% if deal.amount_per_installment %}
             <tr class="text-dark-3">
               <th scope="row">Amount Per Installment</th>
               <td>{{deal.amount_per_installment}}</td>
             </tr>
             {% endif %}
+
             {% if installment_frequency %}
             <tr class="text-dark-3">
               <th scope="row">Installment Frequency</th>
               <td>{{deal.installment_frequency}}</td>
             </tr>
             {% endif %}
+
             {% if commission_rate %}
             <tr class="text-dark-3">
               <th scope="row">Commission Rate</th>
               <td>{{deal.commission_rate}}</td>
             </tr>
             {% endif %}
+
             {% if comments %}
             <tr class="text-dark-3">
               <th scope="row">Comments</th>
               <td>{{deal.comments}}</td>
             </tr>
             {% endif %}
+
+            {% if deal.files[0] %}
+            <tr class="text-dark-3">
+              <th scope="row">Attachments</th>
+              <td>
+              {% for file in deal.files %}
+                <a href="{{ url_for('download', id=file.id) }}">
+                  {{ file.filename }}
+                </a><br>
+              {% endfor %}
+              </td>
+            </tr>
+            {% endif %}
+
           </tbody>
         </table>
       </div>
