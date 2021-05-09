@@ -9,9 +9,9 @@
       <form method="POST" action="{{ url_for('addbuyeroragent') }}" enctype="multipart/form-data" class="form-style">
         <fieldset class="form-group">
           {{ form.csrf_token }}
-          <legend class="text-orange-1 text-center" id="title">Add Buyer/Commission Agent
+          <legend class="text-orange-1 text-center" id="title">Add Buyer or Commission Agent
           </legend>
-          <p id="sub-text" class="text-dark-3 text-center">Add new Buyer/Commission Agent Record</p>
+          <p id="sub-text" class="text-dark-3 text-center">Add new Buyer or Commission Agent Record</p>
           <br> 
           {{form.errors}}
           <div id="ET_id-div">
@@ -174,6 +174,12 @@
       $('#buyer-address').hide();
     }
   });
+
+  if($('#record-type').find(":selected").val() == 'Commission Agent'){
+      $('#address').prop('required', false)
+      $('#buyer-address').hide();
+    }
+
 
 </script>
 

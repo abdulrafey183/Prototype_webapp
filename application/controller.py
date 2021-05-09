@@ -74,7 +74,12 @@ def addbuyeroragent_(form_data):
         addfile_(frontfiledata)
         addfile_(backfiledata)
 
-        flash(f'SUCCESS: A {form_data.entity.data} with id {entity.id} Created', 'success')
+        if form_data.entity.data == 'Commission Agent':
+            id = entity.person.id
+        else:
+            id = entity.id
+
+        flash(f'SUCCESS: A {form_data.entity.data} with id {id} Created', 'success')
         return True
     except sqlalchemy.exc.IntegrityError:
         db.session.rollback()

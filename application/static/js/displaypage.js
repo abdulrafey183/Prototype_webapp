@@ -65,6 +65,9 @@ function make_plot_card(plot) {
 }
 
 function make_buyer_card(buyer) {
+  var deal_ids = '';
+  for(var deal of buyer.deals){ deal_ids += ' <a href="/deal/' + deal.id + '">' + deal.id + '</a>'; }
+
   let str =
     "<div class='accordion' id='accordionExample'><div class='card'><div class='card-header' id='headingOne'><h2 class='mb-0'><button class='btn btn-link btn-block text-left' type='button' data-toggle='collapse' data-target='#collapseBuyer" +
     buyer.id +
@@ -75,16 +78,20 @@ function make_buyer_card(buyer) {
     "</button></h2></div><div id='collapseBuyer" +
     buyer.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
-    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td>" + "<a href='/buyer/" +
-    buyer.id +
-    "'>" +
-    buyer.id +
-    "</td></tr><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
+    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody<tr class='text-dark-3'><th scope='row'>Name</th><td>" +
     buyer.person.name +
     "</td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
     buyer.person.cnic +
-    '</td></tr></tbody></table></div></div></div></section>' +
+    '</td></tr><tr class="text-dark-3"><th scope="row">Phone</th><td>' +
+    buyer.person.phone +
+    '</td></tr><tr class="text-dark-3"><th scope="row">Email</th><td>' +
+    buyer.person.email +
+    '</td></tr><tr class="text-dark-3"><th scope="row">Deals</th><td>' +
+    deal_ids + '</td></tr>' +
+    '</tbody></table><a href="/buyer/' +
+    buyer.id + '">Show Details</a></div></div></div></section>' +
     '</div></div></div></div>';
+    console.log(buyer.deals);
   return str;
 }
 
@@ -116,6 +123,13 @@ function make_deal_card(deal) {
   return str; 
 }
 function make_CA_card(CA) {
+
+  var deal_ids = '';
+  if(CA.deals != null)
+    for(var deal of CA.deals){ deal_ids += ' <a href="/deal/' + deal.id + '">' + deal.id + '</a>'; }
+  else
+    deal_ids = 'None';
+
   let str =
     "<div class='accordion' id='accordionExample'><div class='card'><div class='card-header' id='headingOne'><h2 class='mb-0'><button class='btn btn-link btn-block text-left' type='button' data-toggle='collapse' data-target='#collapseBuyer" +
     CA.person.id +
@@ -126,15 +140,18 @@ function make_CA_card(CA) {
     "</button></h2></div><div id='collapseBuyer" +
     CA.person.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
-    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td><a href='/agent/" +
-    CA.person.id +
-    "'>" +
-    CA.person.id +
-    "</a></td></tr><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
+    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
     CA.person.name +
     "</td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
     CA.person.cnic +
-    '</td></tr></tbody></table></div></div></div></section>' +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Phone</th><td>" +
+    CA.person.phone +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Email</th><td>" +
+    CA.person.email +
+    "</td></tr><tr class='text-dark-3'><th scope='row'>Deals</th><td>" +
+    deal_ids +
+    '</td></tr></tbody></table><a href="/agent/' +
+    CA.person.id + '">Show Details</a></div></div></div></section>' +
     '</div></div></div></div>';
 
   return str;
