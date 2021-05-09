@@ -53,7 +53,7 @@ class Person(db.Model):
             'phone'             : self.phone,
             'email'             : self.email,
             'comments'          : self.comments,
-            'files'             : [ file.serialize for file in self.files ] if len(self.files) else None
+            #'files'             : [ file.serialize for file in self.files ] if len(self.files) else None
         }
 
 
