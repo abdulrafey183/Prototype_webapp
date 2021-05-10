@@ -411,6 +411,7 @@ def filterplot_(status):
 def allbuyers_():
 
     buyers = Buyer.query.all()
+    print(buyers)
     return jsonify(json_list=[buyer.serialize for buyer in buyers])
 
 

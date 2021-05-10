@@ -65,7 +65,10 @@ function make_plot_card(plot) {
 
 function make_buyer_card(buyer) {
   var deal_ids = '';
-  for(var deal of buyer.deals){ deal_ids += ' <a href="/deal/' + deal.id + '">Deal#' + deal.id + '</a><br>'; }
+  if(buyer.deals != null)
+    for(var deal of buyer.deals){ deal_ids += ' <a href="/deal/' + deal.id + '">Deal#' + deal.id + '</a><br>'; }
+  else
+    deal_ids = 'None';
 
   let str =
     "<div class='accordion' id='accordionExample'><div class='card'><div class='card-header' id='headingOne'><h2 class='mb-0'><button class='btn btn-link btn-block text-left' type='button' data-toggle='collapse' data-target='#collapseBuyer" +
@@ -85,12 +88,15 @@ function make_buyer_card(buyer) {
     buyer.person.phone +
     '</td></tr><tr class="text-dark-3"><th scope="row">Email</th><td>' +
     buyer.person.email +
-    '</td></tr><tr class="text-dark-3"><th scope="row">Deals</th><td>' +
-    deal_ids + '</td></tr>' +
-    '</tbody></table><a href="/buyer/' +
+    '</td></tr>';
+
+    if(deal_ids != 'None'){
+      str += '<tr class="text-dark-3"><th scope="row">Deals</th><td>' + deal_ids + '</td></tr>';
+    }
+    str += '</tbody></table><a href="/buyer/' +
     buyer.id + '">Show Details</a></div></div></div></section>' +
     '</div></div></div></div>';
-    console.log(buyer.deals);
+
   return str;
 }
 
@@ -200,6 +206,7 @@ function getall(name) {
   clicked(name || 'buyer');
   $.post('/rest/' + name + '/all', function (data) {
     inject_div(name, data.json_list);
+    console.log(data.json_list);
   });
 }
 
