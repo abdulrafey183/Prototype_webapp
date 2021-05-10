@@ -3,7 +3,9 @@ from flask      import flash
 from wtforms    import ValidationError
 from statistics import mean
 
-from .model import *
+from .model     import *
+
+from datetime   import datetime
 
 import math
 import re
@@ -35,6 +37,64 @@ def addfile(id, cnic, file, side):
 
     db.session.add(file)
     db.session.commit()
+
+
+def create_transaction(amount, comments, deal_id, expenditure_id):
+    """
+    Utility Function that adds a row to the Transaction Table and returns the 
+    primary key of that row
+    """
+
+    transaction = Transaction(
+            amount         = amount,
+            date_time      = datetime.now(),
+            comments       = comments,
+            deal_id        = deal_id,
+            expenditure_id = expenditure_id
+    )
+
+    db.session.add(transaction)
+    db.session.commit()
+    db.session.refresh(transaction)
+
+    return transaction.id
+
+
+def create_salary(employee_id, transaction_id):
+    """
+    Utility Function that adds a row to the Salary Table and returns the 
+    primary key of that row
+    """
+
+    salary = Salary(
+        employee_id    = employee_id,
+        transaction_id = transaction_id
+    )
+
+    db.session.add(salary)
+    db.session.commit()
+    db.session.refresh(salary)
+
+    return salary.id
+
+
+def create_commission(commission_agent_id, transaction_id):
+    """
+    Utility Function that adds a row to the commission Table and returns the 
+    primary key of that row
+    """
+
+    commission = Commission(
+        commission_agent_id = commission_agent_id,
+        transaction_id      = transaction_id
+    )
+
+    db.session.add(commission)
+    db.session.commit()
+    db.session.refresh(commission)
+
+    return commission.id
+
 
 def get_cnic_file_data(id, cnic, data, fileformat, side, entity):
 

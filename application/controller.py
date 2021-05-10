@@ -4,13 +4,12 @@ from flask_login        import login_user, current_user, logout_user
 from flask_sqlalchemy   import sqlalchemy
 from sqlalchemy.exc     import IntegrityError
 
-from .model             import *
+# from .model             import *
 from .utility           import *
 from .forms             import *
 from .middleware        import Middleware
 
 
-from datetime import datetime
 from io       import  BytesIO
 
 
@@ -107,6 +106,50 @@ def editplotprice_(plot_id):
 ###------------------------END EDIT ROUTES------------------------###
 
 ###------------------------ADD ROUTES------------------------###
+
+def addbuyeroragent_():
+
+    form = AddandEditBuyerorAgentForm()
+
+    if form.validate_on_submit():
+
+        try:
+            entity = form.entity.data
+            person_id = addperson(form)
+
+            if entity == 'Buyer':
+                active = 'buyer'
+                db_entity = Buyer(
+                    address    = form.address.data,
+                    person_id  = person_id                
+                )
+
+            elif entity == 'Commission Agent':
+                active = 'CA'
+                db_entity = CommissionAgent(
+                    person_id = person_id
+                )
+
+            db.session.add(db_entity)
+            db.session.commit()
+
+            addfile(person_id, form.cnic.data, form.cnic_front.data, 'front')
+            addfile(person_id, form.cnic.data, form.cnic_back.data, 'back')
+
+            if entity == 'Commission Agent':
+                id = db_entity.person.id
+            else:
+                id = db_entity.id
+
+            flash(f'SUCCESS: {entity} "{form.name.data}" added to record', 'success')
+            return redirect(url_for('display', active=active))
+        
+        except sqlalchemy.exc.IntegrityError:
+            db.session.rollback()
+            flash(f'ERROR: A {entity} with the entered credentials already exists!', 'danger')
+    
+    return render_template('addbuyerandagent.html',  form=form)
+
 
 def adddeal_():
 
@@ -205,51 +248,92 @@ def adddeal_():
     return render_template('adddeal.html', form= form)
 
 
+def addexpense_():
 
-###------------------------END ADD ROUTES------------------------###
+    ETs       = [(ET.id  , ET.name)            for ET   in Expenditure.query.all()         ]
+    employees = [(user.id, user.person.name)   for user in User.query.filter(User.rank>0).all() ]
+    deals     = [(deal.id, f"Deal# {deal.id}") for deal in Deal.query.filter(Deal.commission_agent_id).all()                ]
     
-def addbuyeroragent_():
+    ETs.insert      (0, defualt_choice)
+    employees.insert(0, defualt_choice)
+    deals.insert    (0, defualt_choice)
 
-    form = AddandEditBuyerorAgentForm()
+    form                    = AddExpenseForm()
+
+    form.ET_id.choices      = ETs
+    form.employee.choices   = employees
+    form.deal.choices       = deals
 
     if form.validate_on_submit():
 
-        try:
-            entity = form.entity.data
-            person_id = addperson(form)
-
-            if entity == 'Buyer':
-                active = 'buyer'
-                db_entity = Buyer(
-                    address    = form.address.data,
-                    person_id  = person_id                
-                )
-
-            elif entity == 'Commission Agent':
-                active = 'CA'
-                db_entity = CommissionAgent(
-                    person_id = person_id
-                )
-
-            db.session.add(db_entity)
-            db.session.commit()
-
-            addfile(person_id, form.cnic.data, form.cnic_front.data, 'front')
-            addfile(person_id, form.cnic.data, form.cnic_back.data, 'back')
-
-            if entity == 'Commission Agent':
-                id = db_entity.person.id
-            else:
-                id = db_entity.id
-
-            flash(f'SUCCESS: {entity} "{form.name.data}" added to record', 'success')
-            return redirect(url_for('display', active=active))
+        data = {
+            'type'        : 'ET',
+            'name'        : form.ET_name.data,
+            'id'          : (form.ET_id.data=='None'    and form.ET_id.data) or int(form.ET_id.data),
+            'comments'    : form.comments.data,
+            'amount'      : form.amount.data,
+            'employee_id' : (form.employee.data!='None' and int(form.employee.data)) or None,
+            'deal_id'     : (form.deal.data!='None'     and int(form.deal.data))     or None
+        }
         
-        except sqlalchemy.exc.IntegrityError:
-            db.session.rollback()
-            flash(f'ERROR: A {entity} with the entered credentials already exists!', 'danger')
+        if data['name']:
+            temp = addexpenditure_({'name': data['name'], 'flash': True})
+            if temp is None:
+                return render_template('addexpense.html', form=form, duplicateError=True)
+            else:
+                data['id'] = temp
+        else:
+            if data['id'] == 'None':
+                flash('No Expenditure Type Selected', 'danger')
+                return render_template('addexpense.html', form=form)
+
+        #Checking if no employee is selected while paying salary
+        if (data['id'] == 1) and (data['employee_id'] is None):
+            flash('No Employee Selected', 'danger')
+            return render_template('addexpense.html', form=form)
+
+        #checking if no dea is selected while paying commission
+        elif (data['id'] == 2) and (data['deal_id'] is None):
+            flash('No Deal Selected', 'danger')
+            return render_template('addexpense.html', form=form)
+
+        addtransaction_(data)
+        return redirect(url_for('profile'))
+
+    return render_template('addexpense.html', form=form)
+
+
+###------------------------END ADD ROUTES------------------------###
+
+
+
+###------------------------INFO ROUTES------------------------###
+
+def noteinfo_(note_id):
+    pass
+
+
+def buyerinfo_(buyer_id):
+    pass
+
+
+def agentinfo_(agent_id):
+    pass
+
+def plotinfo_(plot_id):
+    plot = Plot.query.filter_by(id=int(plot_id) ).first()
+    if plot is None:
+        flash('No Such plot exists', 'danger')
+        return redirect(url_for('display', active='plot'))
+        
+    return render_template('plotinfo.html', plot=plot)
+
+
+def dealinfo_(deal_id):
+    pass
+
+###------------------------END INFO ROUTES------------------------###
     
-    return render_template('addbuyerandagent.html',  form=form)
 
 
 def editbuyeroragent_(id, entity):
@@ -360,35 +444,27 @@ def dealanalytics_(deal_id):
 
 def addtransaction_(data):
 
-    transaction = Transaction(
-            amount         = data['amount'],
-            date_time      = datetime.now(),
-            comments       = data['comments'] or db.null(),
-            deal_id        = ((data['type'] == 'deal') and data['id']) or db.null(),
-            expenditure_id = ((data['type'] == 'ET')   and data['id']) or db.null()
-        )
+    transaction_id = create_transaction(
+        data['amount'],
+        data['comments'] or db.null(),
+        ((data['type'] == 'deal') and data['id']) or db.null(),
+        ((data['type'] == 'ET')   and data['id']) or db.null()
+    )
 
-    db.session.add(transaction)
-    db.session.commit()
+
+    #If transaction is a Salary
+    if (data['type'] == 'ET') and data['employee_id']:
+        create_salary(data['employee_id'], transaction_id)
+        
+    #If transaction is a Commission
+    elif (data['type'] == 'ET') and data['deal_id']:
+        CA_id = Deal.query.get(data['deal_id']).commissionagent.person_id
+        create_commission(CA_id, transaction_id)        
+
 
     data['type'] == 'deal' and flash('Received Payment Successfuly Added to System', 'success')
     data['type'] == 'ET'   and flash('Expense Successfully Added to System'        , 'success')
 
-
-def addexpense_(data):
-
-    if data['name']:
-        temp = addexpenditure_({'name': data['name'], 'flash': True})
-        if temp is None:
-            return 'duplicate'
-        else:
-            data['id'] = temp
-    else:
-        if data['id'] == 'None':
-            flash('No Expenditure Type Selected', 'danger')
-            return 'not selected'
-
-    addtransaction_(data)
 
 
 def add_user_or_employee_(data):

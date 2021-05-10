@@ -83,6 +83,9 @@ def addbuyeroragent(): return addbuyeroragent_()
 def adddeal(): return adddeal_()           
 
 
+@app.route('/add/transaction/expense', methods=[GET, POST])
+@login_required
+def addexpense(): return addexpense_()
 ###------------------------END ADD ROUTES------------------------###
 
 
@@ -99,9 +102,11 @@ def editplotprice(plot_id): return editplotprice_(plot_id)
 def editbuyeroragent(id, entity): return editbuyeroragent_(id, entity)
 
 
-###------------------------EDIT ROUTES------------------------###
+###------------------------END EDIT ROUTES------------------------###
 
 
+
+###------------------------INFO ROUTES------------------------###
 
 @app.route('/notes/<note_id>', methods=[GET])
 @login_required
@@ -118,14 +123,59 @@ def noteinfo(note_id):
     return render_template('noteinfo.html', note=note)
 
 
+@app.route('/buyer/<buyer_id>')
+@login_required
+def buyerinfo(buyer_id):
+   
+    buyerinfo = True
+    buyer     = Buyer.query.filter_by(id=int(buyer_id) ).first()
+
+    if buyer is None:
+        flash('ERROR: NO Such buyer exists', 'danger')
+        
+    return render_template('agentandbuyerinfo.html', entity=buyer, buyerinfo=buyerinfo)
+
+
+@app.route('/agent/<agent_id>')
+@login_required
+def agentinfo(agent_id):
+
+    agentinfo = True
+    agent     = CommissionAgent.query.filter_by(person_id=int(agent_id)).first()
+
+    if agent is None:
+        flash('ERROR: NO Such agent exists', 'danger')
+        
+    return render_template('agentandbuyerinfo.html', entity=agent, agentinfo=agentinfo)
+
+
+@app.route('/plot/<plot_id>')
+@login_required
+def plotinfo(plot_id): return plotinfo_(plot_id)
+
+
+@app.route('/deal/<deal_id>')
+@login_required
+def dealinfo(deal_id):
+
+    deal_id = int(deal_id) 
+    deal = Deal.query.filter_by(id=deal_id).first()
+
+    transaction_data = dealanalytics_(deal_id)
+
+    if deal is None:
+        flash('ERROR: NO Such deal exists', 'danger')
+
+    return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
+###------------------------END INFO ROUTES------------------------###
+
+
+
 @app.route('/notes/all', methods=[GET])
 @login_required
 def allnotes():
     notes = Notes.query.filter_by(user_id=current_user.id).order_by(Notes.date_time.desc())
     return render_template('allnotes.html', notes=notes)
-
-
-
 
 
 
@@ -183,57 +233,6 @@ def deleteagent(agent_id):
     return redirect(url_for('display'))
 
 
-@app.route('/buyer/<buyer_id>')
-@login_required
-def buyerinfo(buyer_id):
-   
-    buyerinfo = True
-    buyer     = Buyer.query.filter_by(id=int(buyer_id) ).first()
-
-    if buyer is None:
-        flash('ERROR: NO Such buyer exists', 'danger')
-        
-    return render_template('agentandbuyerinfo.html', entity=buyer, buyerinfo=buyerinfo)
-
-
-@app.route('/agent/<agent_id>')
-@login_required
-def agentinfo(agent_id):
-
-    agentinfo = True
-    agent     = CommissionAgent.query.filter_by(person_id=int(agent_id)).first()
-
-    if agent is None:
-        flash('ERROR: NO Such agent exists', 'danger')
-        
-    return render_template('agentandbuyerinfo.html', entity=agent, agentinfo=agentinfo)
-
-
-@app.route('/plot/<plot_id>')
-@login_required
-def plotinfo(plot_id):
-    
-    plot = Plot.query.filter_by(id=int(plot_id) ).first()
-    if plot is None:
-        flash('ERROR: NO Such plot exists', 'danger')
-        
-    return render_template('plotinfo.html', plot=plot)
-
-
-@app.route('/deal/<deal_id>')
-@login_required
-def dealinfo(deal_id):
-
-    deal_id = int(deal_id) 
-    deal = Deal.query.filter_by(id=deal_id).first()
-
-    transaction_data = dealanalytics_(deal_id)
-
-    if deal is None:
-        flash('ERROR: NO Such deal exists', 'danger')
-
-    return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
-
 
 '''@app.route('/deal/analytics/<deal_id>')
 @login_required
@@ -268,7 +267,7 @@ def receivepayment(id):
 
     try:   
          
-        deal = Deal.query.filter_by(id=id).first()
+        deal = Deal.query.get(id)
         form   = ReceivePaymentForm(deal_id=deal.id)
         form.deal_id.choices = [(row[0], "DEAL# " + str(row[0])) for row in Deal.query.with_entities(Deal.id).all()]       
            
@@ -289,40 +288,7 @@ def receivepayment(id):
     return render_template('receivepayment.html', form=form)
 
 
-@app.route('/add/transaction/expense', methods=[GET, POST])
-@login_required
-def addexpense():
-    
-    
-    ###-----MAKE THIS PRETTY-----###
-    ETs       = [(row[0], row[1])            for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]
-    employees = [(user.id, user.person.name) for user in User.query.filter_by(rank=2).all() ]
-    ETs.insert      (0, defualt_choice)
-    employees.insert(0, defualt_choice)
 
-    form                    = AddExpenseForm()
-    form.employee.choices   = employees
-    form.ET_id.choices      = ETs        
-    ###-----MAKE THIS PRETTY-----###      
-
-
-    if form.validate_on_submit():
-        data = {
-            'type'      : 'ET',
-            'name'      : form.ET_name.data,
-            'id'        : form.ET_id.data,
-            'comments'  : form.comments.data,
-            'amount'    : form.amount.data
-        }
-        temp = addexpense_(data)
-        if temp == 'duplicate':
-            return render_template('addexpense.html', form=form, error=True)
-        elif temp == 'not selected':
-            return render_template('addexpense.html', form=form)
-        
-        return redirect(url_for('profile'))        
-
-    return render_template('addexpense.html', form=form)
 
 
 @app.route('/add/notes', methods=[GET, POST])

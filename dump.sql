@@ -64,8 +64,9 @@ VALUES
 INSERT INTO `expenditure`
 VALUES
     (1, 'Salary'),
-    (2, 'Office Expenses'),
-    (3, 'Miscellaneous')
+    (2, 'Commission'),
+    (3, 'Office Expenses'),
+    (4, 'Miscellaneous')
 ;
 
 

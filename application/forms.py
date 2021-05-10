@@ -54,14 +54,14 @@ class DeleteBuyerForm(FlaskForm):
 #Add Deal Form 
 class AddDealForm(FlaskForm):
 	
-	buyer_id 				= SelectField		('Select Buyer'			        , default=None, validators=[DataRequired()])
-	plot_id 				= SelectField   	('Select Plot' 			        , default=None, validators=[DataRequired()])
-	c_rate					= FloatField		('Commission Rate'		        , default=0   , validators=[number_range(min=0, max=1)])
-	CA_id 					= SelectField		('Select Commission Agent'      , default=None)
-	plot_price				= IntegerField		('Plot Price'                   , default=0)
-	first_amount_recieved 	= IntegerField  	('First Paid Amount (optional)' , default=0)
-	amount_per_installment 	= IntegerField  	('Expected Amount per Installment (optional)', default=0)
-	installment_frequency 	= SelectField   	('Expected Number of Installments per Year (optional)', default=None)
+	buyer_id 				= SelectField		('Select Buyer'			          , default=None, validators=[DataRequired()])
+	plot_id 				= SelectField   	('Select Plot' 			          , default=None, validators=[DataRequired()])
+	c_rate					= FloatField		('Commission Rate'		          , default=0   , validators=[number_range(min=0, max=1)])
+	CA_id 					= SelectField		('Select Commission Agent'        , default=None)
+	plot_price				= IntegerField		('Plot Price'                     , default=0)
+	first_amount_recieved 	= IntegerField  	('First Paid Amount (optional)'   , default=0)
+	amount_per_installment 	= IntegerField  	('Expected Amount per Installment', default=0   , validators=[DataRequired()])
+	installment_frequency 	= IntegerField   	('Expected Time between Installments(weeks)'    , validators=[DataRequired()])
 	comments 				= TextAreaField 	('Comments')
 	attachments 			= MultipleFileField	('Attachments')
 	submit 					= SubmitField   	('Create Deal')
@@ -83,8 +83,10 @@ class ReceivePaymentForm(AddTransactionForm):
 
 class AddExpenseForm(AddTransactionForm):
 
-	ET_id    = SelectField('Expenditure Type'           , default=None)
-	employee = SelectField  ('Choose Employee')
+	ET_id    = SelectField('Expenditure Type', default=None)
+	employee = SelectField('Choose Employee')
+	deal     = SelectField('Choose Deal')
+
 	ET_name  = StringField('Create New Expenditure Type', validators=[Length(max=100)])
 
 

@@ -210,13 +210,15 @@ class Transaction(db.Model):
 
 class Salary(db.Model):
 
-    employee_id    = db.Column(db.Integer, db.ForeignKey('user.id')       , primary_key=True)
-    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), primary_key=True)
+    id             = db.Column(db.Integer , primary_key=True)
+    employee_id    = db.Column(db.Integer, db.ForeignKey('user.id'))
+    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'))
 
 class Commission(db.Model):
 
-    commission_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.person_id') , primary_key=True)
-    transaction_id      = db.Column(db.Integer, db.ForeignKey('transaction.id')     , primary_key=True)
+    id                  = db.Column(db.Integer , primary_key=True)
+    commission_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.person_id'))
+    transaction_id      = db.Column(db.Integer, db.ForeignKey('transaction.id'))
 
 
 class Notes(db.Model):
