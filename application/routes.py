@@ -74,6 +74,11 @@ def download(id): return download_(id)
 def add(): return render_template('add.html')
 
 
+@app.route('/add/buyeroragent', methods=[GET, POST])
+@login_required
+def addbuyeroragent(): return addbuyeroragent_()
+
+
 @app.route('/add/deal', methods=[GET, POST])
 @login_required
 def adddeal():
@@ -132,41 +137,8 @@ def editplotprice(plot_id): return editplotprice_(plot_id)
 
 @app.route('/edit/<entity>/<id>', methods=[GET, POST])
 @login_required
-def editbuyeroragent(id, entity):
+def editbuyeroragent(id, entity): return editbuyeroragent_(id, entity)
 
-    form = Add()
-    db_entity = None
-
-    if entity == 'Buyer':
-        db_entity = Buyer.query.filter_by(person_id=id).first()
-        active = 'buyer'
-    elif entity == 'Commission Agent':
-        db_entity = CommissionAgent.query.filter_by(person_id=id).first()
-        active = 'CA'
-
-    # if no record of entity with entered id is found
-    if db_entity is None:
-        flash(f'No such {entity} exists!', 'danger')
-        return redirect(url_for('display', active='buyer'))
-    
-    if form.validate_on_submit():
-
-        edit = editbuyeroragent_(id, form)
-
-        if edit:
-            return redirect(url_for('display', active=active))
-        else:
-            return render_template('editbuyerandagent.html', entity=db_entity, form=form)
-
-    else:     
-        form.comments.data   = db_entity.person.comments
-
-        if entity == 'Buyer':
-            form.entity.data = 'Buyer'
-        elif entity == 'Commission Agent':
-            form.entity.data = 'Commission Agent'
-
-        return render_template('editbuyerandagent.html', entity=db_entity, form=form)
 
 ###------------------------EDIT ROUTES------------------------###
 
@@ -287,27 +259,6 @@ def plotinfo(plot_id):
         flash('ERROR: NO Such plot exists', 'danger')
         
     return render_template('plotinfo.html', plot=plot)
-
-    
-
-@app.route('/add/buyeroragent', methods=[GET, POST])
-@login_required
-def addbuyeroragent():
-
-    form = AddandEditBuyerorAgentForm()
-
-    if form.validate_on_submit():
-        entity = form.entity.data
-        if addbuyeroragent_(form):
-            return redirect(url_for('profile'))
-        else:
-            return(render_template('addbuyerandagent.html',  form=form))
-
-    return render_template('addbuyerandagent.html',  form=form)
-
-
-
-
 
 
 @app.route('/deal/<deal_id>')

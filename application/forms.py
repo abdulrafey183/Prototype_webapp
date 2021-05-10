@@ -21,8 +21,8 @@ class AddPersonForm(FlaskForm):
 	email        = StringField  ('Email',       validators=[DataRequired(), Length(max=75)])
 	cnic 	     = StringField  ('CNIC',        validators=[DataRequired(), Length(min=13, max=13), validate_phone_and_cnic])
 	phone        = StringField  ('Phone',       validators=[DataRequired(), Length(min=11, max=11), validate_phone_and_cnic])
-	cnic_front   = FileField    ('CNIC Front',  validators=[DataRequired(), FileAllowed(['jpeg','png', 'jpg', 'pdf'], 'File Format Not Allowed')])
-	cnic_back    = FileField    ('CNIC Back',   validators=[DataRequired(), FileAllowed(['jpeg','png', 'jpg', 'pdf'], 'File Format Not Allowed')])
+	cnic_front   = FileField    ('CNIC Front',  validators=[FileAllowed(['jpeg','png', 'jpg', 'pdf'], 'File Format Not Allowed')])
+	cnic_back    = FileField    ('CNIC Back',   validators=[FileAllowed(['jpeg','png', 'jpg', 'pdf'], 'File Format Not Allowed')])
 	
 	comments     = TextAreaField('Comments',    validators=[])
 
