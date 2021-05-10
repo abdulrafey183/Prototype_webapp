@@ -22,7 +22,7 @@ def unauthorized_():
     flash('You must be logged in to access that page', 'danger')
     return redirect(url_for('login'))
 
-
+ 
 def login_():
 
     if current_user.is_authenticated:
@@ -207,90 +207,108 @@ def adddeal_():
 
 
 ###------------------------END ADD ROUTES------------------------###
+    
+def addbuyeroragent_():
 
-def addperson_(person_data):
+    form = AddandEditBuyerorAgentForm()
 
-    person = Person(
-                name    = person_data.name.data,
-                cnic    = person_data.cnic.data,
-                phone   = person_data.phone.data,
-                email   = person_data.email.data,
-                comments= person_data.comments.data if person_data.comments.data else db.null()
-            )
+    if form.validate_on_submit():
 
-    db.session.add(person)
-    db.session.commit()
+        try:
+            entity = form.entity.data
+            person_id = addperson(form)
 
-    return person.id
+            if entity == 'Buyer':
+                active = 'buyer'
+                db_entity = Buyer(
+                    address    = form.address.data,
+                    person_id  = person_id                
+                )
+
+            elif entity == 'Commission Agent':
+                active = 'CA'
+                db_entity = CommissionAgent(
+                    person_id = person_id
+                )
+
+            db.session.add(db_entity)
+            db.session.commit()
+
+            addfile(person_id, form.cnic.data, form.cnic_front.data, 'front')
+            addfile(person_id, form.cnic.data, form.cnic_back.data, 'back')
+
+            if entity == 'Commission Agent':
+                id = db_entity.person.id
+            else:
+                id = db_entity.id
+
+            flash(f'SUCCESS: {entity} "{form.name.data}" added to record', 'success')
+            return redirect(url_for('display', active=active))
+        
+        except sqlalchemy.exc.IntegrityError:
+            db.session.rollback()
+            flash(f'ERROR: A {entity} with the entered credentials already exists!', 'danger')
+    
+    return render_template('addbuyerandagent.html',  form=form)
+
+
+def editbuyeroragent_(id, entity):
+
+    form = AddandEditBuyerorAgentForm()
+    db_entity = None
+
+    if entity == 'Buyer':
+        db_entity = Buyer.query.filter_by(person_id=id).first()
+        active = 'buyer'
+    elif entity == 'Commission Agent':
+        db_entity = CommissionAgent.query.filter_by(person_id=id).first()
+        active = 'CA'
+
+    # if no record of entity with entered id is found
+    if db_entity is None:
+        flash(f'No such {entity} exists!', 'danger')
+        return redirect(url_for('display', active=active))
+    
+    if form.validate_on_submit():
+
+        try:
+            db.session.query(Person).filter_by(id=id).update({
+                'name': form.name.data,
+                'cnic': form.cnic.data,
+                'phone': form.phone.data,
+                'email': form.email.data,
+                'comments': form.comments.data if form.comments.data else db.null()
+            })
+
+            if form.entity.data == 'Buyer':
+                entity_type = 'Buyer'
+
+                db.session.query(Buyer).filter_by(
+                            person_id=id
+                            ).update({'address': form.address.data})
+            else:
+                entity_type = 'Commission Agent'
+
+            db.session.commit()
+            flash(f'SUCCESS: {form.entity.data} "{form.name.data}" Info with id "{id}" Updated', 'success')
+            return redirect(url_for('display', active=active))
+
+        except sqlalchemy.orm.exc.NoResultFound:
+            flash(f"ERROR: A {entity_type} with this CNIC already exists!", "danger")
+            return render_template('editbuyerandagent.html', entity=db_entity, form=form)
+            
+
+    else:     
+        form.comments.data   = db_entity.person.comments
+
+        if entity == 'Buyer':
+            form.entity.data = 'Buyer'
+        elif entity == 'Commission Agent':
+            form.entity.data = 'Commission Agent'
+
+        return render_template('editbuyerandagent.html', entity=db_entity, form=form)
 
     
-def addbuyeroragent_(form_data):
- 
-    try:
-        person_id = addperson_(form_data)
-
-        if form_data.entity.data == 'Buyer':
-            entity = Buyer(
-                address    = form_data.address.data,
-                person_id  = person_id                
-            )
-
-        elif form_data.entity.data == 'Commission Agent':
-            entity = CommissionAgent(
-                person_id = person_id
-            )
-
-        db.session.add(entity)
-        db.session.commit()
-
-        frontfiledata = get_cnic_file_data(person_id, form_data.cnic.data, form_data.cnic_front.data, 'jpg', 'front', form_data.entity.data)
-        backfiledata  = get_cnic_file_data(person_id, form_data.cnic.data, form_data.cnic_back.data, 'jpg', 'back', form_data.entity.data)
-
-        addfile_(frontfiledata)
-        addfile_(backfiledata)
-
-        if form_data.entity.data == 'Commission Agent':
-            id = entity.person.id
-        else:
-            id = entity.id
-
-        flash(f'SUCCESS: {form_data.entity.data} "{form_data.name.data}" added to record', 'success')
-        return True
-    except sqlalchemy.exc.IntegrityError:
-        db.session.rollback()
-        flash(f'ERROR: A {form_data.entity.data} with the entered credentials already exists!', 'danger')
-        return False
-
-
-def editbuyeroragent_(id, form_data):
-
-    try:
-        db.session.query(Person).filter_by(id=id).update({
-            'name': form_data.name.data,
-            'cnic': form_data.cnic.data,
-            'phone': form_data.phone.data,
-            'email': form_data.email.data,
-            'comments': form_data.comments.data if form_data.comments.data else db.null()
-        })
-
-        if form_data.entity.data == 'Buyer':
-            entity_type = 'Buyer'
-
-            db.session.query(Buyer).filter_by(
-                        person_id=id
-                        ).update({'address': form_data.address.data})
-        else:
-            entity_type = 'Commission Agent'
-
-        db.session.commit()
-        flash(f'SUCCESS: {form_data.entity.data} "{form_data.name.data}" Info with id "{id}" Updated', 'success')
-        return True
-
-    except sqlalchemy.orm.exc.NoResultFound:
-        flash(f"ERROR: A {entity_type} with this CNIC already exists!", "danger")
-        return False
-
-
 def deletebuyer_(buyer):
 
     db.session.delete(buyer)
@@ -411,19 +429,6 @@ def add_user_or_employee_(data):
         elif str(ie).find('person.phone') > 0:
             flash(f"User with Phone Number {data['phone']} already exists", 'danger')
         return 'duplicate'
-
-        
-def addfile_(data):
-
-    file = File(
-        filename    = data['filename'],
-        format      = data['format'],
-        data        = data['data'].read(),
-        person_id   = data['person_id'] or db.null(),
-    )
-
-    db.session.add(file)
-    db.session.commit()
 
 
 ###------------------------REST ROUTES------------------------###

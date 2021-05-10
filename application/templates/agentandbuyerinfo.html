@@ -47,12 +47,10 @@
               <td>{{entity.address}}</td>
             </tr>
             {% endif %}
+            {% if entity.person.comments %}
             <tr class="text-dark-3">
               <th scope="row">Comments</th>
-              {% if entity.person.comments %}
               <td>{{entity.person.comments}}</td>
-              {% else %}
-              <td>No Comments</td>
               {% endif %}
               {% if entity.deals %}
             </tr>

@@ -21,8 +21,8 @@ class AddPersonForm(FlaskForm):
 	email        = StringField  ('Email',       validators=[DataRequired(), Length(max=75)])
 	cnic 	     = StringField  ('CNIC',        validators=[DataRequired(), Length(min=13, max=13), validate_phone_and_cnic])
 	phone        = StringField  ('Phone',       validators=[DataRequired(), Length(min=11, max=11), validate_phone_and_cnic])
-	cnic_front   = FileField    ('CNIC Front',  validators=[DataRequired(), FileAllowed(['jpeg','png', 'jpg', 'pdf'], 'File Format Not Allowed')])
-	cnic_back    = FileField    ('CNIC Back',   validators=[DataRequired(), FileAllowed(['jpeg','png', 'jpg', 'pdf'], 'File Format Not Allowed')])
+	cnic_front   = FileField    ('CNIC Front',  validators=[FileAllowed(['jpeg','png', 'jpg', 'pdf'], 'File Format Not Allowed')])
+	cnic_back    = FileField    ('CNIC Back',   validators=[FileAllowed(['jpeg','png', 'jpg', 'pdf'], 'File Format Not Allowed')])
 	
 	comments     = TextAreaField('Comments',    validators=[])
 
@@ -44,18 +44,6 @@ class AddandEditBuyerorAgentForm(AddPersonForm):
 	entity       = SelectField('Add Record As', choices=['Buyer', 'Commission Agent'], default='Buyer', validators=[DataRequired()])
 	address      = StringField('Address',       validators=[])
 	
-# #Search Buyer Form
-# class SearchBuyerForm(FlaskForm):
-
-# 	id     = IntegerField('Buyer ID')
-# 	name   = StringField ('Name')
-# 	search = SubmitField ('Search Buyer')
-
-# class SearchAgentForm(FlaskForm):
-
-# 	id     = IntegerField('Agent ID')
-# 	name   = StringField ('Name')
-# 	search = SubmitField ('Search Agent')
 
 #Delete Buyer Form
 class DeleteBuyerForm(FlaskForm):
@@ -66,9 +54,6 @@ class DeleteBuyerForm(FlaskForm):
 #Add Deal Form 
 class AddDealForm(FlaskForm):
 	
-	#buyer_id 				= IntegerField  ('Buyer ID'              , validators=[DataRequired()])
-	#plot_id 				= IntegerField  ('Plot ID'               , validators=[DataRequired()])
-
 	buyer_id 				= SelectField		('Select Buyer'			        , default=None, validators=[DataRequired()])
 	plot_id 				= SelectField   	('Select Plot' 			        , default=None, validators=[DataRequired()])
 	c_rate					= FloatField		('Commission Rate'		        , default=0   , validators=[number_range(min=0, max=1)])

@@ -3,15 +3,43 @@ from flask      import flash
 from wtforms    import ValidationError
 from statistics import mean
 
+from .model import *
+
 import math
 import re
 
-def get_cnic_file_data(id, cnic, data, fileformat, side, entity):
+def addperson(person_data):
+
+    person = Person(
+                name    = person_data.name.data,
+                cnic    = person_data.cnic.data,
+                phone   = person_data.phone.data,
+                email   = person_data.email.data,
+                comments= person_data.comments.data if person_data.comments.data else db.null()
+            )
+
+    db.session.add(person)
+    db.session.commit()
+
+    return person.id
+
+def addfile(id, cnic, file, side):
 
     filename   = cnic + '_' + side
 
-    cnic_file_data = { 'cnic'     : True, 
-                       'format'   : fileformat, 
+    file = File(    filename=filename,
+                    format=file.filename.split('.')[-1],
+                    data=file.read(),
+                    person_id=id,
+                )
+
+    db.session.add(file)
+    db.session.commit()
+
+def get_cnic_file_data(id, cnic, data, fileformat, side, entity):
+
+
+    cnic_file_data = { 'format'   : fileformat, 
                        'filename' : filename, 
                        'data'     : data, 
                        'person_id': id

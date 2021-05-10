@@ -106,7 +106,9 @@ class CommissionAgent(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True, nullable=False)
 
     #Relationships:
-    deals = db.relationship("Deal", backref='commissionagent', lazy=True)
+    deals       = db.relationship("Deal"      , backref='commissionagent', lazy=True)
+    commissions = db.relationship("Commission", backref="commissionagent", lazy=True)
+
 
     @property
     def serialize(self):
@@ -202,13 +204,19 @@ class Transaction(db.Model):
     expenditure_id  = db.Column(db.Integer, db.ForeignKey('expenditure.id'))
 
     #Relationships
-    salaries = db.relationship("Salary", backref="transaction", lazy=True)
+    salaries    = db.relationship("Salary"    , backref="transaction", lazy=True)
+    commissions = db.relationship("Commission", backref="transaction", lazy=True)
 
 
 class Salary(db.Model):
 
     employee_id    = db.Column(db.Integer, db.ForeignKey('user.id')       , primary_key=True)
     transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), primary_key=True)
+
+class Commission(db.Model):
+
+    commission_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.person_id') , primary_key=True)
+    transaction_id      = db.Column(db.Integer, db.ForeignKey('transaction.id')     , primary_key=True)
 
 
 class Notes(db.Model):

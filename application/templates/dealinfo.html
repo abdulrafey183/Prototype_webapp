@@ -11,8 +11,16 @@
           <thead>
             <tr>
               <th scope="col" colspan="2">
-                <h1 id="title" class="text-orange-1 text-center">Deal Information</h1>
-                <p id="sub-title" class="text-dark-3 text-center">All the Deal information is listed here</p>
+                <h1 id="title" class="text-orange-1 text-center">
+                  Deal Information
+                </h1>
+                <p id="sub-title" class="text-dark-3 text-center">
+                  All the Deal information is listed here
+                </p>
+                <br>
+                <h2 id="sub-title" class="text-orange-2 text-center">
+                  Deal# {{ deal.id }}
+                </h2>
               </th>
             </tr>
           </thead>
@@ -45,7 +53,8 @@
             <tr class="text-dark-3">
               <th scope="row">Plot Address</th>
               <td>
-                <a href='/plot/{{deal.plot_id}}'>{{deal.plot.address}}
+                <a href='/plot/{{deal.plot_id}}'>
+                  Plot# {{deal.plot.id}} - {{deal.plot.address}}
                 </a>
               </td>
             </tr>
