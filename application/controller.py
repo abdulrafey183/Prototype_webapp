@@ -13,6 +13,10 @@ from .middleware        import Middleware
 from datetime import datetime
 from io       import  BytesIO
 
+
+defualt_choice  = (None, 'Not Selected')
+
+
 ###------------------------NORMAL ROUTES------------------------###
 def unauthorized_():
     flash('You must be logged in to access that page', 'danger')
@@ -99,6 +103,110 @@ def editplotprice_(plot_id):
         return redirect(url_for('plotinfo', plot_id=plot_id))
 
     return render_template('editplotprice.html', plot=plot, form=form)
+
+###------------------------END EDIT ROUTES------------------------###
+
+###------------------------ADD ROUTES------------------------###
+
+def adddeal_():
+
+    buyers = [(buyer.id    , str(buyer.person.name)+" - "+str(buyer.person.cnic)) for buyer in Buyer.query.all()]
+    CAs    = [(CA.person_id, str(CA.person.name)   +" - "+str(CA.person.cnic))    for CA    in CommissionAgent.query.all()]    
+    plots  = [(plot.id     , "Plot# "+str(plot.id) +" - "+plot.address)           for plot  in Plot.query.filter_by(status='not sold').all()]
+    
+    installment_frequency = [None, "Monthly", "Half Yearly", "Yearly"]
+
+    buyers.insert(0, defualt_choice)
+    CAs.insert   (0, defualt_choice)
+    plots.insert (0, defualt_choice)
+
+    form = AddDealForm()
+
+    form.buyer_id.choices = buyers
+    form.plot_id.choices  = plots
+    form.CA_id.choices    = CAs
+
+    form.installment_frequency.choices = installment_frequency
+
+    if form.validate_on_submit():
+
+        plot  = Plot.query.filter_by(id=form.plot_id.data).first()
+        buyer = Buyer.query.filter_by(id=form.buyer_id.data).first()
+        CA    = CommissionAgent.query.filter_by(person_id=form.CA_id.data).first()
+
+        if plot is None:
+            flash('No Plot Selected', 'danger')
+            return render_template('adddeal.html', form= form)
+        elif buyer is None:
+            flash('No Buyer Selected', 'danger')
+            return render_template('adddeal.html', form= form)
+
+
+        # Setting the plot price according to the price provided by user
+        db.session.query(Plot).filter_by(id=form.plot_id.data).update(
+            {'price': form.plot_price.data})
+        db.session.commit()
+        db.session.refresh(plot)
+
+        # UPDATING CORESPONDING PLOT AND DEAL STATUS
+        if (form.first_amount_recieved.data == plot.price):
+            plot.status = 'sold'
+            deal_status = 'completed'
+        else:
+            plot.status = 'in a deal'
+            deal_status = 'on going'
+
+        db.session.add(plot)
+
+
+        # Creating Deal and adding to Database
+        deal = Deal(
+            status                  = deal_status,
+            signing_date            = datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
+            amount_per_installment  = form.amount_per_installment.data  or db.null(),
+            installment_frequency   = form.installment_frequency.data   or db.null(),
+            commission_rate         = form.c_rate.data                  or db.null(),
+            comments                = form.comments.data                or db.null(),
+            buyer_id                = form.buyer_id.data,
+            plot_id                 = form.plot_id.data,
+            commission_agent_id     = (CA and CA.person_id) or db.null(),
+        )
+
+        db.session.add(deal)
+        db.session.commit()
+        db.session.refresh(deal)
+
+        # Adding Deal Attachments to the Database
+        for attachment in form.attachments.data:
+            file = File(
+                filename    = attachment.filename,
+                format      = attachment.filename.split('.')[-1],
+                data        = attachment.read(),
+                deal_id     = deal.id,
+                person_id   = db.null()
+            )
+            db.session.add(file)
+
+        # Creating corresponding transaction and adding to Database
+        transaction = Transaction(
+            amount          = form.first_amount_recieved.data,
+            date_time       = datetime.now(),
+            comments        = f'Initial Transaction for Deal {deal.id}',
+            deal_id         = deal.id,
+            expenditure_id  = db.null()
+        )
+
+        db.session.add(transaction)
+        db.session.commit()
+
+        flash(f'Deal with ID {deal.id} successfully created!', 'success')
+        return redirect(url_for('profile'))
+
+    return render_template('adddeal.html', form= form)
+
+
+
+###------------------------END ADD ROUTES------------------------###
 
 def addperson_(person_data):
 
@@ -198,82 +306,6 @@ def deleteagent_(agent):
     flash('Agent Record Deleted!', 'danger')
 
 
-def adddeal_(deal_data):
-
-    plot = Plot.query.filter_by(id=deal_data['plot_id']).first()
-    buyer = Buyer.query.filter_by(id=deal_data['buyer_id']).first()
-    CA = CommissionAgent.query.filter_by(person_id=deal_data['CA_id']).first()
-
-    if plot is None:
-        flash('No Plot Selected', 'danger')
-        return 'plot error'
-    elif buyer is None:
-        flash('No Buyer Selected', 'danger')
-        return 'buyer error'
-
-    print(
-        f"------------------------\nPLOT ID: {plot}\nBUYER ID: {buyer}\nCA ID: {CA}\n------------------------")
-
-    # Setting the plot price according to the price provided by user
-    db.session.query(Plot).filter_by(id=deal_data['plot_id']).update(
-        {'price': deal_data['plot_price']})
-    db.session.commit()
-    db.session.refresh(plot)
-
-    # UPDATING CORESPONDING PLOT AND DEAL STATUS
-    if (deal_data['first_amount_recieved'] == plot.price):
-        plot.status = 'sold'
-        deal_status = 'completed'
-    else:
-        plot.status = 'in a deal'
-        deal_status = 'on going'
-
-    db.session.add(plot)
-
-    print(plot.status, deal_status)
-
-    # Creating Deal and adding to Database
-    deal = Deal(
-        status                  = deal_status,
-        signing_date            = datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
-        amount_per_installment  = deal_data['amount_per_installment'] if deal_data['amount_per_installment'] else db.null(),
-        installment_frequency   = deal_data['installment_frequency']  if deal_data['installment_frequency']  else db.null(),
-        commission_rate         = deal_data['c_rate'] if deal_data['c_rate'] else db.null(),
-        comments                = deal_data['comments'] if deal_data['comments'] else db.null(),
-        buyer_id                = deal_data['buyer_id'],
-        plot_id                 = deal_data['plot_id'],
-        commission_agent_id     = CA.person_id if CA else db.null(),
-    )
-
-    db.session.add(deal)
-    db.session.commit()
-    db.session.refresh(deal)
-
-    # Adding Deal Attachments to the Database
-    for attachment in deal_data['attachments']:
-        file = File(
-            filename    = attachment.filename,
-            format      = attachment.filename.split('.')[-1],
-            data        = attachment.read(),
-            deal_id     = deal.id,
-            person_id   = db.null()
-        )
-        db.session.add(file)
-
-    # Creating corresponding transaction and adding to Database
-    transaction = Transaction(
-        amount          = deal_data['first_amount_recieved'],
-        date_time       = datetime.now(),
-        comments        = f'Initial Transaction for Deal {deal.id}',
-        deal_id         = deal.id,
-        expenditure_id  = db.null()
-    )
-
-    db.session.add(transaction)
-    db.session.commit()
-
-    flash(f'Deal with ID {deal.id} successfully created!', 'success')
-
 
 def addexpenditure_(data):
 
@@ -314,8 +346,8 @@ def addtransaction_(data):
             amount         = data['amount'],
             date_time      = datetime.now(),
             comments       = data['comments'] or db.null(),
-            deal_id        = data['id'] if data['type'] == 'deal' else db.null(),
-            expenditure_id = data['id'] if data['type'] == 'ET'   else db.null()
+            deal_id        = ((data['type'] == 'deal') and data['id']) or db.null(),
+            expenditure_id = ((data['type'] == 'ET')   and data['id']) or db.null()
         )
 
     db.session.add(transaction)
@@ -333,18 +365,18 @@ def addexpense_(data):
             return 'duplicate'
         else:
             data['id'] = temp
-            # addtransaction_(data)
     else:
         if data['id'] == 'None':
             flash('No Expenditure Type Selected', 'danger')
             return 'not selected'
-        # else:
-        #     addtransaction_(data)
 
     addtransaction_(data)
 
 
 def add_user_or_employee_(data):
+
+    #####  CURRENTLY NOT ADDING USER CNIC FILES, WILL DO IT LATER 
+
 
     #Adding user to the Database
     try:
@@ -383,11 +415,12 @@ def add_user_or_employee_(data):
         
 def addfile_(data):
 
-    file = File( filename=data['filename'],
-                     format=data['format'],
-                     data=data['data'].read(),
-                     person_id=data['person_id'] if data['person_id'] else db.null(),
-                )
+    file = File(
+        filename    = data['filename'],
+        format      = data['format'],
+        data        = data['data'].read(),
+        person_id   = data['person_id'] or db.null(),
+    )
 
     db.session.add(file)
     db.session.commit()
@@ -403,32 +436,27 @@ def filterplot_(status):
 
 def allbuyers_():
 
-    buyers = Buyer.query.all()
-    return jsonify(json_list=[buyer.serialize for buyer in buyers])
+    return jsonify(json_list=[buyer.serialize for buyer in Buyer.query.all()])
 
 
 def allplots_():
 
-    plots = Plot.query.all()
-    return jsonify(json_list=[plot.serialize for plot in plots])
+    return jsonify(json_list=[plot.serialize for plot in Plot.query.all()])
 
 
 def alldeals_():
 
-    deals = Deal.query.all()
-    return jsonify(json_list=[deal.serialize for deal in deals])
+    return jsonify(json_list=[deal.serialize for deal in Deal.query.all()])
 
 
 def allCAs_():
 
-    CAs = CommissionAgent.query.all()
-    return jsonify(json_list=[CA.serialize for CA in CAs])
+    return jsonify(json_list=[CA.serialize for CA in CommissionAgent.query.all()])
 
 
 def allETs_():
 
-    ETs = Expenditure.query.all()
-    return jsonify(json_list=[ET.serialize for ET in ETs])
+    return jsonify(json_list=[ET.serialize for ET in Expenditure.query.all()])
 
 
 def getIDfromTable_(table, id):

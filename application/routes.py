@@ -15,7 +15,6 @@ import os
 #Setting utility variables
 GET             = 'GET'
 POST            = 'POST'
-defualt_choice  = (None, 'Not Selected')
 
 ###------------------------NORMAL ROUTES------------------------###
 
@@ -76,47 +75,7 @@ def add(): return render_template('add.html')
 
 @app.route('/add/deal', methods=[GET, POST])
 @login_required
-def adddeal():
-
-    ####---MAKE THIS PRETTY---####
-    buyers = [(buyer.id    , str(buyer.person.name)+" - "+str(buyer.person.cnic)) for buyer in Buyer.query.all()]
-    CAs    = [(CA.person_id, str(CA.person.name)   +" - "+str(CA.person.cnic))    for CA in CommissionAgent.query.all()]
-    
-    plots  = [(row[0], "Plot# "+str(row[0])+" - "+str(row[1])) for row in Plot.query.filter_by(status='not sold').with_entities(Plot.id, Plot.address).all()]
-    
-    installment_frequency = [None, "Monthly", "Half Yearly", "Yearly"]
-
-    buyers.insert(0, defualt_choice)
-    CAs.insert(0, defualt_choice)
-    plots.insert(0, defualt_choice)
-    form = AddDealForm()
-    form.buyer_id.choices = buyers
-    form.plot_id.choices  = plots
-    form.CA_id.choices    = CAs
-    form.installment_frequency.choices = installment_frequency
-    ####---MAKE THIS PRETTY---####
-
-    if form.validate_on_submit():
-
-        deal = {
-                'plot_id'                : form.plot_id.data,
-                'buyer_id'               : form.buyer_id.data,
-                'CA_id'                  : form.CA_id.data,
-                'plot_price'             : form.plot_price.data,
-                'c_rate'                 : form.c_rate.data,
-                'first_amount_recieved'  : form.first_amount_recieved.data,
-                'amount_per_installment' : form.amount_per_installment.data,
-                'installment_frequency'  : form.installment_frequency.data,
-                'comments'               : form.comments.data,
-                'attachments'            : form.attachments.data
-               }
-
-        if adddeal_(deal):
-            return render_template('adddeal.html', form= form)
-            
-        return redirect(url_for('profile'))
-
-    return render_template('adddeal.html', form= form)
+def adddeal(): return adddeal_()           
 
 
 ###------------------------END ADD ROUTES------------------------###
@@ -545,4 +504,4 @@ def allETs(): return allETs_()
 @login_required
 def getIDfromTable(table, id): return getIDfromTable_(table, id)
 
-###------------------------REST ROUTES------------------------###
+###------------------------END REST ROUTES------------------------###
