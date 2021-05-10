@@ -64,6 +64,7 @@ function make_plot_card(plot) {
 }
 
 function make_buyer_card(buyer) {
+  
   var deal_ids = '';
   if(buyer.deals != null)
     for(var deal of buyer.deals){ deal_ids += ' <a href="/deal/' + deal.id + '">Deal#' + deal.id + '</a><br>'; }
