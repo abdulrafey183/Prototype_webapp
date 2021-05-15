@@ -344,18 +344,22 @@ def addexpenditure_(data):
         flash(f'Expenditure Type \'{ data["name"] }\' Already Exists', 'danger')
 
    
-def dealanalytics_(deal_id):
+def dealinfo_(deal_id):
 
-    deal        = Deal.query.filter_by(id=deal_id).first()
+    deal = Deal.query.filter_by(id=deal_id).first()
+    if deal is None:
+        flash('ERROR: NO Such deal exists', 'danger')
+        return redirect(url_for('display', active='deal'))
+
+
     transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
-    plot        = Plot.query.filter_by(id=deal.plot_id).first()
-
-    if not transaction:
-        return
+    if transaction is None:
+        pass
 
     else:
+        plot        = Plot.query.filter_by(id=deal.plot_id).first()
         transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
-        return transaction_data
+        return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
 
 
 def addtransaction_(data):

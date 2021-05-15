@@ -222,17 +222,10 @@ def plotinfo(plot_id):
 
 @app.route('/deal/<deal_id>')
 @login_required
-def dealinfo(deal_id):
+def dealinfo(deal_id): return dealinfo_(deal_id)
 
-    deal_id = int(deal_id) 
-    deal = Deal.query.filter_by(id=deal_id).first()
-
-    transaction_data = dealanalytics_(deal_id)
-
-    if deal is None:
-        flash('ERROR: NO Such deal exists', 'danger')
-
-    return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
+    
+    #transaction_data = dealinfo_(deal_id)
 
 
 '''@app.route('/deal/analytics/<deal_id>')
