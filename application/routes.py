@@ -179,6 +179,10 @@ def dealinfo(deal_id):
         flash('ERROR: NO Such deal exists', 'danger')
 
     return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
+
+@app.route('/employee/<employee_id>')
+@login_required
+def employeeinfo(employee_id): return employeeinfo_(employee_id)
 ###------------------------END INFO ROUTES------------------------###
 
 
@@ -321,6 +325,11 @@ def allCAs(): return allCAs_()
 @app.route('/rest/ET/all', methods=[POST])
 @login_required
 def allETs(): return allETs_()
+
+
+@app.route('/rest/employee/all', methods=[GET, POST])
+@login_required
+def allEmployees(): return allEmployees_()
 
 
 @app.route('/rest/<table>/<id>', methods=[GET, POST])

@@ -63,7 +63,7 @@ class AddDealForm(FlaskForm):
 	amount_per_installment 	= IntegerField  	('Expected Amount per Installment', default=0   , validators=[DataRequired()])
 	installment_frequency 	= IntegerField   	('Expected Time between Installments(weeks)'    , validators=[DataRequired()])
 	comments 				= TextAreaField 	('Comments')
-	attachments 			= MultipleFileField	('Attachments')
+	attachments 			= MultipleFileField	('Attachments', validators=[FileAllowed(['jpeg','png', 'jpg', 'pdf', 'txt', 'doc', 'docx', 'csv', 'xls', 'xlsx'], 'File Format Not Allowed')])
 	submit 					= SubmitField   	('Create Deal')
 	
 	

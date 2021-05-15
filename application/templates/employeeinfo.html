@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<!-- new -->
+<section class="my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-9">
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th scope="col" colspan="2">
+                <h1 id="title" class="text-orange-1 text-center">
+                  Employee Information
+                </h1>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+
+          	<tr class="text-dark-3">
+              <th scope="row">Name</th>
+              <td>{{ employee.person.name }}</td>
+            </tr>
+
+            {% if employee.rank == 1 %}
+            <tr class="text-dark-3">
+              <th scope="row">Type</th>
+              <td>User</td>
+            </tr>
+            <tr class="text-dark-3">
+              <th scope="row">Email Address</th>
+              <td>{{ employee.person.email }}</td>
+            </tr>
+            {% endif %}
+
+            {% if employee.rank == 2 %}
+            <tr class="text-dark-3">
+              <th scope="row">Type</th>
+              <td>Employee</td>
+            </tr>
+            {% endif %}
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -19,6 +19,9 @@
 		<button id="ET-button" class="btn mx-1 py-2 px-2" onclick="getall('ET')">
 			<div class="d-flex flex-column"><i class="far fa-credit-card mb-1"></i><small>Expenditure Types</small></div>
 		</button>
+		<button id="employee-button" class="btn mx-1 py-2 px-2" onclick="getall('employee')">
+			Employees
+		</button>
 	</div>
 </div>
 
@@ -71,6 +74,13 @@
 		<span>
 			<a href="{{ url_for('addexpendituretype') }}">Add New Expenditure Type</a>
 		</span>
+	</div>
+
+	<!-- Employees -->
+	<!-- Div to display Employees -->
+	<div id="employee-div">
+		<div id="employee-info">
+		</div>
 	</div>
 </div>
 {% endblock %}
