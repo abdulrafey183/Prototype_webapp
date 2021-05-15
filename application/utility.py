@@ -1,14 +1,17 @@
-from flask      import current_app as app
-from flask      import flash
-from wtforms    import ValidationError
-from statistics import mean
+from flask              import current_app as app
+from flask              import flash
+from wtforms            import ValidationError
+from sqlalchemy.exc     import IntegrityError
 
 from .model     import *
 
 from datetime   import datetime
+from statistics import mean
 
 import math
 import re
+
+
 
 def addperson(person_data):
 
@@ -94,6 +97,50 @@ def create_commission(commission_agent_id, transaction_id):
     db.session.refresh(commission)
 
     return commission.id
+
+
+def addtransaction_utility(data):
+
+    transaction_id = create_transaction(
+        data['amount'],
+        data['comments'] or db.null(),
+        ((data['type'] == 'deal') and data['id']) or db.null(),
+        ((data['type'] == 'ET')   and data['id']) or db.null()
+    )
+
+
+    #If transaction is a Salary
+    if (data['type'] == 'ET') and data['employee_id']:
+        create_salary(data['employee_id'], transaction_id)
+        
+    #If transaction is a Commission
+    elif (data['type'] == 'ET') and data['deal_id']:
+        CA_id = Deal.query.get(data['deal_id']).commissionagent.person_id
+        create_commission(CA_id, transaction_id)        
+
+
+    data['type'] == 'deal' and flash('Received Payment Successfuly Added to System', 'success')
+    data['type'] == 'ET'   and flash('Expense Successfully Added to System'        , 'success')
+
+
+def addexpendituretype_utility(data):
+
+    try: 
+        type = Expenditure(
+                    name=data['name']
+                )
+        db.session.add(type)
+        db.session.commit()
+        db.session.refresh(type)
+
+        if data['flash']:
+            flash(f'New Expenditure Type \'{type.name}\' Created', 'success')
+
+        return type.id
+
+    except IntegrityError as ie:
+        flash(f'Expenditure Type \'{ data["name"] }\' Already Exists', 'danger')
+
 
 
 def get_cnic_file_data(id, cnic, data, fileformat, side, entity):

@@ -16,7 +16,7 @@ from io       import  BytesIO
 defualt_choice  = (None, 'Not Selected')
 
 
-###------------------------NORMAL ROUTES------------------------###
+###------------------------START NORMAL ROUTES------------------------###
 def unauthorized_():
     flash('You must be logged in to access that page', 'danger')
     return redirect(url_for('login'))
@@ -105,7 +105,7 @@ def editplotprice_(plot_id):
 
 ###------------------------END EDIT ROUTES------------------------###
 
-###------------------------ADD ROUTES------------------------###
+###------------------------START ADD ROUTES------------------------###
 
 def addbuyeroragent_():
 
@@ -277,7 +277,7 @@ def addexpense_():
         }
         
         if data['name']:
-            temp = addexpenditure_({'name': data['name'], 'flash': True})
+            temp = addexpendituretype_utility({'name': data['name'], 'flash': True})
             if temp is None:
                 return render_template('addexpense.html', form=form, duplicateError=True)
             else:
@@ -297,20 +297,151 @@ def addexpense_():
             flash('No Deal Selected', 'danger')
             return render_template('addexpense.html', form=form)
 
-        addtransaction_(data)
+        addtransaction_utility(data)
         return redirect(url_for('profile'))
 
     return render_template('addexpense.html', form=form)
+
+
+def add_user_or_employee_():
+
+    #####  CURRENTLY NOT ADDING USER CNIC FILES, WILL DO IT LATER
+
+    #Checking Authorization
+    Middleware.authorizeSuperUser(current_user)
+
+    form = AddUserOrEmployeeForm()
+    form.name.label = 'Username'
+
+    if form.validate_on_submit():
+
+        data = {
+            'type'      : int(form.type.data),
+            'name'  : form.name.data,
+            'email'     : form.email.data,
+            'password'  : form.password.data or '12345',
+            'cnic'      : form.cnic.data,
+            'phone'     : form.phone.data,
+            'cnic_front': form.cnic_front.data,
+            'cnic_back' : form.cnic_back.data,
+            'comments'  : form.comments.data or db.null()
+        }
+
+
+        #Adding user to the Database
+        try:
+            person = Person(
+                name        = data['name'],
+                cnic        = data['cnic'],
+                phone       = data['phone'],
+                email       = data['email'] if data['type'] == 1 else db.null(), 
+                comments    = data['comments']            
+            )
+            db.session.add(person)
+            db.session.commit()
+            db.session.refresh(person)
+
+            user = User(
+                password  = data['password'] if data['type'] == 1 else db.null(), 
+                rank      = data['type'],
+                person_id = person.id
+            )
+            db.session.add(user)
+            db.session.commit()
+
+            data['type'] == 1 and flash(f'User Successfully Added to the System'    , 'success')
+            data['type'] == 2 and flash(f'Employee Successfully Added to the System', 'success')
+            return redirect(url_for('profile'))
+
+        except sqlalchemy.exc.IntegrityError as ie:
+            if str(ie).find('person.email') > 0:
+               flash(f"User with email {data['email']} already exists", 'danger')
+            elif str(ie).find('person.cnic') > 0:
+                flash(f"User with CNIC {data['cnic']} already exists", 'danger')
+            elif str(ie).find('person.phone') > 0:
+                flash(f"User with Phone Number {data['phone']} already exists", 'danger')
+
+    return render_template('add-user-or-employee.html', form=form)
+
+
+def receivepayment_(id):
+
+    try:   
+         
+        deal  = Deal.query.get(id)
+        form   = ReceivePaymentForm(deal_id=deal.id)
+        form.deal_id.choices = [(row[0], "DEAL# " + str(row[0])) for row in Deal.query.with_entities(Deal.id).all()]       
+           
+    except AttributeError as ae:
+        abort(404)
+
+    if form.validate_on_submit():
+        data = {
+            'type': 'deal',
+            'id'  : form.deal_id.data,
+            'comments': form.comments.data,
+            'amount': form.amount.data
+        }
+        addtransaction_utility(data)
+
+        return redirect(url_for('profile'))        
+
+    return render_template('receivepayment.html', form=form)
+
+
+def addnotes_():
+
+    form = AddNotesForm()
+    if form.validate_on_submit():
+        note = Notes(
+            title = form.title.data,
+            content = form.content.data if form.content.data else db.null(),
+            date_time = datetime.now(),
+            user_id = current_user.id
+        )
+
+        db.session.add(note)
+        db.session.commit()
+
+        flash(f'Note Added!', 'success')
+        return redirect(url_for('profile'))
+
+
+    return render_template('addnotes.html', form=form)
+
+
+def addexpendituretype_():
+
+    form = AddExpendituretypeForm()
+    if form.validate_on_submit():
+        data = {
+            'name'  : form.name.data,
+            'flash' : True 
+        }
+        if addexpendituretype_utility(data) is not None: 
+            return redirect(url_for('display', active="ET"))
+
+    return render_template('addexpendituretype.html', form=form)
 
 
 ###------------------------END ADD ROUTES------------------------###
 
 
 
-###------------------------INFO ROUTES------------------------###
+###------------------------START INFO ROUTES------------------------###
 
 def noteinfo_(note_id):
-    pass
+    
+    note = Notes.query.filter_by(id=note_id).first()
+
+    if note is None:
+        flash(f'No such note exists!', 'danger')
+        return redirect(url_for('profile'))
+
+    if note.user_id != current_user.id:
+        abort(403)
+
+    return render_template('noteinfo.html', note=note)
 
 
 def buyerinfo_(buyer_id):
@@ -408,25 +539,6 @@ def deleteagent_(agent):
     flash('Agent Record Deleted!', 'danger')
 
 
-
-def addexpenditure_(data):
-
-    try: 
-        type = Expenditure(
-                    name=data['name']
-                )
-        db.session.add(type)
-        db.session.commit()
-        db.session.refresh(type)
-
-        if data['flash']:
-            flash(f'New Expenditure Type \'{type.name}\' Created', 'success')
-
-        return type.id
-
-    except IntegrityError as ie:
-        flash(f'Expenditure Type \'{ data["name"] }\' Already Exists', 'danger')
-
    
 def dealanalytics_(deal_id):
 
@@ -442,72 +554,7 @@ def dealanalytics_(deal_id):
         return transaction_data
 
 
-def addtransaction_(data):
-
-    transaction_id = create_transaction(
-        data['amount'],
-        data['comments'] or db.null(),
-        ((data['type'] == 'deal') and data['id']) or db.null(),
-        ((data['type'] == 'ET')   and data['id']) or db.null()
-    )
-
-
-    #If transaction is a Salary
-    if (data['type'] == 'ET') and data['employee_id']:
-        create_salary(data['employee_id'], transaction_id)
-        
-    #If transaction is a Commission
-    elif (data['type'] == 'ET') and data['deal_id']:
-        CA_id = Deal.query.get(data['deal_id']).commissionagent.person_id
-        create_commission(CA_id, transaction_id)        
-
-
-    data['type'] == 'deal' and flash('Received Payment Successfuly Added to System', 'success')
-    data['type'] == 'ET'   and flash('Expense Successfully Added to System'        , 'success')
-
-
-
-def add_user_or_employee_(data):
-
-    #####  CURRENTLY NOT ADDING USER CNIC FILES, WILL DO IT LATER 
-
-
-    #Adding user to the Database
-    try:
-        person = Person(
-            name        = data['name'],
-            cnic        = data['cnic'],
-            phone       = data['phone'],
-            email       = data['email'] if data['type'] == 1 else db.null(), 
-            comments    = data['comments']            
-        )
-        db.session.add(person)
-        db.session.commit()
-        db.session.refresh(person)
-
-        user = User(
-            password  = data['password'] if data['type'] == 1 else db.null(), 
-            rank      = data['type'],
-            person_id = person.id
-        )
-        db.session.add(user)
-        db.session.commit()
-
-        data['type'] == 1 and flash(f'User Successfully Added to the System'    , 'success')
-        data['type'] == 2 and flash(f'Employee Successfully Added to the System', 'success')
-        return
-
-    except sqlalchemy.exc.IntegrityError as ie:
-        if str(ie).find('person.email') > 0:
-           flash(f"User with email {data['email']} already exists", 'danger')
-        elif str(ie).find('person.cnic') > 0:
-            flash(f"User with CNIC {data['cnic']} already exists", 'danger')
-        elif str(ie).find('person.phone') > 0:
-            flash(f"User with Phone Number {data['phone']} already exists", 'danger')
-        return 'duplicate'
-
-
-###------------------------REST ROUTES------------------------###
+###------------------------START REST ROUTES------------------------###
 
 def filterplot_(status):
 
