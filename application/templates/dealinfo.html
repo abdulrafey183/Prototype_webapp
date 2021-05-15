@@ -26,11 +26,6 @@
           </thead>
           <tbody> 
 
-          	<!--<tr class="text-dark-3">
-              <th scope="row">ID</th>
-              <td>{{deal.id}}</td>
-            </tr>-->
-
             {% if deal.buyer_id %}
             <tr class="text-dark-3">
               <th scope="row">Buyer</th>
@@ -118,11 +113,7 @@
   </div>
 </section>
 
-{% if not transaction %}
-<div class="alert alert-danger" role="alert">
-  No transaction history found
-</div>
-{% else %}
+{% if transaction %}
 <section class="my-5">
   <div class="container">
     <div class="row">

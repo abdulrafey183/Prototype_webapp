@@ -17,14 +17,6 @@
             </tr>
           </thead>
           <tbody>
-            <!--<tr class="text-dark-3">
-              <th scope="row">ID</th>
-              {% if agentinfo %}
-              <td>{{entity.person.id}}</td>
-              {% elif buyerinfo %}
-              <td>{{entity.id}}</td>
-              {% endif %}
-            </tr>-->
             <tr class="text-dark-3">
               <th scope="row">Name</th>
               <td>{{entity.person.name}}</td>
@@ -70,10 +62,7 @@
         </table>
       </div>
       <div class="col-12 col-md-3 notes-icon"><i class="fas fa-user-tie"></i></div>
-      <div class="row pl-5 pb-4 border-bottom border-secondary"> 
-      {% if not current_user.rank %}
-        <button id="delete-btn" class="btn btn-outline-danger btn-sm"><a href="" id="delete-link">Delete Agent</a></button>
-      {% endif %}        
+      <div class="row pl-5 pb-4 border-bottom border-secondary">        
         <button id="edit-btn" class="btn btn-outline-secondary btn-sm  ml-2"><a href="" id="edit-link">Edit Agent Info</a></button>        
     </div>
     </div>

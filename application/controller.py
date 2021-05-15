@@ -4,20 +4,19 @@ from flask_login        import login_user, current_user, logout_user
 from flask_sqlalchemy   import sqlalchemy
 from sqlalchemy.exc     import IntegrityError
 
-from .model             import *
+# from .model             import *
 from .utility           import *
 from .forms             import *
 from .middleware        import Middleware
 
 
-from datetime import datetime
 from io       import  BytesIO
 
 
 defualt_choice  = (None, 'Not Selected')
 
 
-###------------------------NORMAL ROUTES------------------------###
+###------------------------START NORMAL ROUTES------------------------###
 def unauthorized_():
     flash('You must be logged in to access that page', 'danger')
     return redirect(url_for('login'))
@@ -106,7 +105,51 @@ def editplotprice_(plot_id):
 
 ###------------------------END EDIT ROUTES------------------------###
 
-###------------------------ADD ROUTES------------------------###
+###------------------------START ADD ROUTES------------------------###
+
+def addbuyeroragent_():
+
+    form = AddandEditBuyerorAgentForm()
+
+    if form.validate_on_submit():
+
+        try:
+            entity = form.entity.data
+            person_id = addperson(form)
+
+            if entity == 'Buyer':
+                active = 'buyer'
+                db_entity = Buyer(
+                    address    = form.address.data,
+                    person_id  = person_id                
+                )
+
+            elif entity == 'Commission Agent':
+                active = 'CA'
+                db_entity = CommissionAgent(
+                    person_id = person_id
+                )
+
+            db.session.add(db_entity)
+            db.session.commit()
+
+            addfile(person_id, form.cnic.data, form.cnic_front.data, 'front')
+            addfile(person_id, form.cnic.data, form.cnic_back.data, 'back')
+
+            if entity == 'Commission Agent':
+                id = db_entity.person.id
+            else:
+                id = db_entity.id
+
+            flash(f'SUCCESS: {entity} "{form.name.data}" added to record', 'success')
+            return redirect(url_for('display', active=active))
+        
+        except sqlalchemy.exc.IntegrityError:
+            db.session.rollback()
+            flash(f'ERROR: A {entity} with the entered credentials already exists!', 'danger')
+    
+    return render_template('addbuyerandagent.html',  form=form)
+
 
 def adddeal_():
 
@@ -205,51 +248,250 @@ def adddeal_():
     return render_template('adddeal.html', form= form)
 
 
+def addexpense_():
 
-###------------------------END ADD ROUTES------------------------###
+    ETs       = [(ET.id  , ET.name)            for ET   in Expenditure.query.all()         ]
+    employees = [(user.id, user.person.name)   for user in User.query.filter(User.rank>0).all() ]
+    deals     = [(deal.id, f"Deal# {deal.id}") for deal in Deal.query.filter(Deal.commission_agent_id).all()                ]
     
-def addbuyeroragent_():
+    ETs.insert      (0, defualt_choice)
+    employees.insert(0, defualt_choice)
+    deals.insert    (0, defualt_choice)
 
-    form = AddandEditBuyerorAgentForm()
+    form                    = AddExpenseForm()
+
+    form.ET_id.choices      = ETs
+    form.employee.choices   = employees
+    form.deal.choices       = deals
 
     if form.validate_on_submit():
 
+        data = {
+            'type'        : 'ET',
+            'name'        : form.ET_name.data,
+            'id'          : (form.ET_id.data=='None'    and form.ET_id.data) or int(form.ET_id.data),
+            'comments'    : form.comments.data,
+            'amount'      : form.amount.data,
+            'employee_id' : (form.employee.data!='None' and int(form.employee.data)) or None,
+            'deal_id'     : (form.deal.data!='None'     and int(form.deal.data))     or None
+        }
+        
+        if data['name']:
+            temp = addexpendituretype_utility({'name': data['name'], 'flash': True})
+            if temp is None:
+                return render_template('addexpense.html', form=form, duplicateError=True)
+            else:
+                data['id'] = temp
+        else:
+            if data['id'] == 'None':
+                flash('No Expenditure Type Selected', 'danger')
+                return render_template('addexpense.html', form=form)
+
+        #Checking if no employee is selected while paying salary
+        if (data['id'] == 1) and (data['employee_id'] is None):
+            flash('No Employee Selected', 'danger')
+            return render_template('addexpense.html', form=form)
+
+        #checking if no dea is selected while paying commission
+        elif (data['id'] == 2) and (data['deal_id'] is None):
+            flash('No Deal Selected', 'danger')
+            return render_template('addexpense.html', form=form)
+
+        addtransaction_utility(data)
+        return redirect(url_for('profile'))
+
+    return render_template('addexpense.html', form=form)
+
+
+def add_user_or_employee_():
+
+    #####  CURRENTLY NOT ADDING USER CNIC FILES, WILL DO IT LATER
+
+    #Checking Authorization
+    Middleware.authorizeSuperUser(current_user)
+
+    form = AddUserOrEmployeeForm()
+    form.name.label = 'Username'
+
+    if form.validate_on_submit():
+
+        data = {
+            'type'      : int(form.type.data),
+            'name'  : form.name.data,
+            'email'     : form.email.data,
+            'password'  : form.password.data or '12345',
+            'cnic'      : form.cnic.data,
+            'phone'     : form.phone.data,
+            'cnic_front': form.cnic_front.data,
+            'cnic_back' : form.cnic_back.data,
+            'comments'  : form.comments.data or db.null()
+        }
+
+
+        #Adding user to the Database
         try:
-            entity = form.entity.data
-            person_id = addperson(form)
+            person = Person(
+                name        = data['name'],
+                cnic        = data['cnic'],
+                phone       = data['phone'],
+                email       = data['email'] if data['type'] == 1 else db.null(), 
+                comments    = data['comments']            
+            )
+            db.session.add(person)
+            db.session.commit()
+            db.session.refresh(person)
 
-            if entity == 'Buyer':
-                active = 'buyer'
-                db_entity = Buyer(
-                    address    = form.address.data,
-                    person_id  = person_id                
-                )
-
-            elif entity == 'Commission Agent':
-                active = 'CA'
-                db_entity = CommissionAgent(
-                    person_id = person_id
-                )
-
-            db.session.add(db_entity)
+            user = User(
+                password  = data['password'] if data['type'] == 1 else db.null(), 
+                rank      = data['type'],
+                person_id = person.id
+            )
+            db.session.add(user)
             db.session.commit()
 
-            addfile(person_id, form.cnic.data, form.cnic_front.data, 'front')
-            addfile(person_id, form.cnic.data, form.cnic_back.data, 'back')
+            data['type'] == 1 and flash(f'User Successfully Added to the System'    , 'success')
+            data['type'] == 2 and flash(f'Employee Successfully Added to the System', 'success')
+            return redirect(url_for('profile'))
 
-            if entity == 'Commission Agent':
-                id = db_entity.person.id
-            else:
-                id = db_entity.id
+        except sqlalchemy.exc.IntegrityError as ie:
+            if str(ie).find('person.email') > 0:
+               flash(f"User with email {data['email']} already exists", 'danger')
+            elif str(ie).find('person.cnic') > 0:
+                flash(f"User with CNIC {data['cnic']} already exists", 'danger')
+            elif str(ie).find('person.phone') > 0:
+                flash(f"User with Phone Number {data['phone']} already exists", 'danger')
 
-            flash(f'SUCCESS: {entity} "{form.name.data}" added to record', 'success')
-            return redirect(url_for('display', active=active))
-        
-        except sqlalchemy.exc.IntegrityError:
-            db.session.rollback()
-            flash(f'ERROR: A {entity} with the entered credentials already exists!', 'danger')
+    return render_template('add-user-or-employee.html', form=form)
+
+
+def receivepayment_(id):
+
+    try:   
+         
+        deal  = Deal.query.get(id)
+        form   = ReceivePaymentForm(deal_id=deal.id)
+        form.deal_id.choices = [(row[0], "DEAL# " + str(row[0])) for row in Deal.query.with_entities(Deal.id).all()]       
+           
+    except AttributeError as ae:
+        abort(404)
+
+    if form.validate_on_submit():
+        data = {
+            'type': 'deal',
+            'id'  : form.deal_id.data,
+            'comments': form.comments.data,
+            'amount': form.amount.data
+        }
+        addtransaction_utility(data)
+
+        return redirect(url_for('profile'))        
+
+    return render_template('receivepayment.html', form=form)
+
+
+def addnotes_():
+
+    form = AddNotesForm()
+    if form.validate_on_submit():
+        note = Notes(
+            title = form.title.data,
+            content = form.content.data if form.content.data else db.null(),
+            date_time = datetime.now(),
+            user_id = current_user.id
+        )
+
+        db.session.add(note)
+        db.session.commit()
+
+        flash(f'Note Added!', 'success')
+        return redirect(url_for('profile'))
+
+
+    return render_template('addnotes.html', form=form)
+
+
+def addexpendituretype_():
+
+    form = AddExpendituretypeForm()
+    if form.validate_on_submit():
+        data = {
+            'name'  : form.name.data,
+            'flash' : True 
+        }
+        if addexpendituretype_utility(data) is not None: 
+            return redirect(url_for('display', active="ET"))
+
+    return render_template('addexpendituretype.html', form=form)
+
+
+###------------------------END ADD ROUTES------------------------###
+
+
+
+###------------------------START INFO ROUTES------------------------###
+
+def noteinfo_(note_id):
     
-    return render_template('addbuyerandagent.html',  form=form)
+    note = Notes.query.filter_by(id=note_id).first()
+
+    if note is None:
+        flash(f'No such note exists!', 'danger')
+        return redirect(url_for('profile'))
+
+    if note.user_id != current_user.id:
+        abort(403)
+
+    return render_template('noteinfo.html', note=note)
+
+
+def buyerinfo_(buyer_id):
+    buyerinfo = True
+    buyer     = Buyer.query.filter_by(id=int(buyer_id) ).first()
+
+    if buyer is None:
+        flash('ERROR: NO Such buyer exists', 'danger')
+        
+    return render_template('agentandbuyerinfo.html', entity=buyer, buyerinfo=buyerinfo)
+
+def agentinfo_(agent_id):
+    agentinfo = True
+    agent     = CommissionAgent.query.filter_by(person_id=int(agent_id)).first()
+
+    if agent is None:
+        flash('ERROR: NO Such agent exists', 'danger')
+        
+    return render_template('agentandbuyerinfo.html', entity=agent, agentinfo=agentinfo)
+
+def plotinfo_(plot_id):
+    plot = Plot.query.filter_by(id=int(plot_id) ).first()
+    if plot is None:
+        flash('No Such plot exists', 'danger')
+        return redirect(url_for('display', active='plot'))
+        
+    return render_template('plotinfo.html', plot=plot)
+
+
+def dealinfo_(deal_id):
+
+    deal = Deal.query.filter_by(id=deal_id).first()
+    if deal is None:
+        flash('ERROR: NO Such deal exists', 'danger')
+        return redirect(url_for('display', active='deal'))
+
+    plot        = Plot.query.filter_by(id=deal.plot_id).first()
+    transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
+    
+    if not transaction:
+        transaction_data = None
+        return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
+
+    else:
+        print(transaction)        
+        transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
+        return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
+
+###------------------------END INFO ROUTES------------------------###
+    
 
 
 def editbuyeroragent_(id, entity):
@@ -311,131 +553,43 @@ def editbuyeroragent_(id, entity):
     
 def deletebuyer_(buyer):
 
+    #Checking Authorization
+    Middleware.authorizeSuperUser(current_user)
+
+    buyer = Buyer.query.filter_by(id=buyer_id).first()
+
+    # if no record of buyer with entered id is found
+    if buyer is None:
+        flash(f'No such buyer exists!', 'danger')
+        return redirect(url_for("display"))
+
     db.session.delete(buyer)
     db.session.commit()
 
     flash('Buyer Record Deleted!', 'danger')
+    return redirect(url_for('display', active='buyer'))
 
 
 def deleteagent_(agent):
+
+    #Checking Authorization
+    Middleware.authorizeSuperUser(current_user)
+
+    agent = CommissionAgent.query.filter_by(person_id=agent_id).first()
+
+    # if no record of buyer with entered id is found
+    if agent is None:
+        flash(f'No such agent exists!', 'danger')
+        return redirect(url_for('display', active='CA'))
+
     db.session.delete(agent)
     db.session.commit()
 
     flash('Agent Record Deleted!', 'danger')
+    return redirect(url_for('display'))
 
 
-
-def addexpenditure_(data):
-
-    try: 
-        type = Expenditure(
-                    name=data['name']
-                )
-        db.session.add(type)
-        db.session.commit()
-        db.session.refresh(type)
-
-        if data['flash']:
-            flash(f'New Expenditure Type \'{type.name}\' Created', 'success')
-
-        return type.id
-
-    except IntegrityError as ie:
-        flash(f'Expenditure Type \'{ data["name"] }\' Already Exists', 'danger')
-
-   
-def dealinfo_(deal_id):
-
-    deal = Deal.query.filter_by(id=deal_id).first()
-    if deal is None:
-        flash('ERROR: NO Such deal exists', 'danger')
-        return redirect(url_for('display', active='deal'))
-
-
-    transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
-    if transaction is None:
-        pass
-
-    else:
-        plot        = Plot.query.filter_by(id=deal.plot_id).first()
-        transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
-        return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
-
-
-def addtransaction_(data):
-
-    transaction = Transaction(
-            amount         = data['amount'],
-            date_time      = datetime.now(),
-            comments       = data['comments'] or db.null(),
-            deal_id        = ((data['type'] == 'deal') and data['id']) or db.null(),
-            expenditure_id = ((data['type'] == 'ET')   and data['id']) or db.null()
-        )
-
-    db.session.add(transaction)
-    db.session.commit()
-
-    data['type'] == 'deal' and flash('Received Payment Successfuly Added to System', 'success')
-    data['type'] == 'ET'   and flash('Expense Successfully Added to System'        , 'success')
-
-
-def addexpense_(data):
-
-    if data['name']:
-        temp = addexpenditure_({'name': data['name'], 'flash': True})
-        if temp is None:
-            return 'duplicate'
-        else:
-            data['id'] = temp
-    else:
-        if data['id'] == 'None':
-            flash('No Expenditure Type Selected', 'danger')
-            return 'not selected'
-
-    addtransaction_(data)
-
-
-def add_user_or_employee_(data):
-
-    #####  CURRENTLY NOT ADDING USER CNIC FILES, WILL DO IT LATER 
-
-
-    #Adding user to the Database
-    try:
-        person = Person(
-            name        = data['name'],
-            cnic        = data['cnic'],
-            phone       = data['phone'],
-            email       = data['email'] if data['type'] == 1 else db.null(), 
-            comments    = data['comments']            
-        )
-        db.session.add(person)
-        db.session.commit()
-        db.session.refresh(person)
-
-        user = User(
-            password  = data['password'] if data['type'] == 1 else db.null(), 
-            rank      = data['type'],
-            person_id = person.id
-        )
-        db.session.add(user)
-        db.session.commit()
-
-        data['type'] == 1 and flash(f'User Successfully Added to the System'    , 'success')
-        data['type'] == 2 and flash(f'Employee Successfully Added to the System', 'success')
-        return
-
-    except sqlalchemy.exc.IntegrityError as ie:
-        if str(ie).find('person.email') > 0:
-           flash(f"User with email {data['email']} already exists", 'danger')
-        elif str(ie).find('person.cnic') > 0:
-            flash(f"User with CNIC {data['cnic']} already exists", 'danger')
-        elif str(ie).find('person.phone') > 0:
-            flash(f"User with Phone Number {data['phone']} already exists", 'danger')
-        return 'duplicate'
-
-
-###------------------------REST ROUTES------------------------###
+###------------------------START REST ROUTES------------------------###
 
 def filterplot_(status):
 

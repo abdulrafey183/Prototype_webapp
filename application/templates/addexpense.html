@@ -66,7 +66,20 @@
 							{% endif %}
 						</div>
 
-
+						<div id="deal-div" class="form-group" style="display: none">
+							<br>
+							{{ form.deal.label }}
+							{% if form.deal.errors %}
+							{{ form.deal(class='form-control is-invalid') }}
+							<div class="invalid-feedback">
+								{% for error in form.deal.errors %}
+								<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+							{% else %}
+							{{ form.deal(class='form-control') }}
+							{% endif %}
+						</div>
 
 						<br>
 						<div class="form-group">
@@ -114,31 +127,52 @@
 {% block script %}
 <script type="text/javascript">
 
-	{% if error %}
-	$('#ET_id-div').hide();
+	//Ready Funstion
+	$(function() {
+		
+    	if ($('#ET_id').val() == 1){		//Salary is Selected as Expenditure Type
+    		$('#employee-div').show();
+    	}
+    	else if ($('#ET_id').val() == 2){	//Commission is Selected as Expenditure Type
+    		$('#deal-div').show();
+    	}
+    });	
+
+	{% if duplicateError %}
+	$('#ET_id-div'  ).hide();
 	$('#ET_name-div').show();
-	$('#ET_name').prop('required', true); 
+	$('#ET_name'    ).prop('required', true); 
 	{% endif %}
 
+
 	$('#new').on('click', function(){
-		$('#ET_id-div').hide();
+		$('#ET_id-div'   ).hide();
+		$('#employee-div').hide();
+		$('#deal-div'    ).hide();
+
 		$('#ET_name-div').show();
-		$('#ET_id').val('None'); 
-		$('#ET_name').prop('required', true); 
+		$('#ET_id'      ).val('None'); 
+		$('#ET_name'    ).prop('required', true); 
 	});
 	$('#back').on('click', function(){
-		$('#ET_id-div').show();
+		$('#ET_id-div'  ).show();
 		$('#ET_name-div').hide();
-		$('#ET_name').val('');  
-		$('#ET_name').prop('required', false);  
+		$('#ET_name'    ).val('');  
+		$('#ET_name'    ).prop('required', false);  
 	});
 
 	$('#ET_id').on('change', function(){
 		if(this.value == 1){
+			$('#deal-div').hide();
 			$('#employee-div').show();
 		}
+		else if(this.value == 2){
+			$('#employee-div').hide();
+			$('#deal-div').show();
+		}
 		else{
-			$('#employee-div').show();
+			$('#employee-div').hide();
+			$('#deal-div').hide();
 		}
 	});
 </script>

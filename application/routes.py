@@ -16,7 +16,8 @@ import os
 GET             = 'GET'
 POST            = 'POST'
 
-###------------------------NORMAL ROUTES------------------------###
+
+###------------------------START NORMAL ROUTES------------------------###
 
 @app.route('/'    , methods= [GET])
 @app.route('/home', methods= [GET])
@@ -66,7 +67,7 @@ def download(id): return download_(id)
 
 
 
-###------------------------ADD ROUTES------------------------###
+###------------------------START ADD ROUTES------------------------###
 
 @app.route('/add')
 @login_required
@@ -83,11 +84,35 @@ def addbuyeroragent(): return addbuyeroragent_()
 def adddeal(): return adddeal_()           
 
 
+@app.route('/add/transaction/expense', methods=[GET, POST])
+@login_required
+def addexpense(): return addexpense_()
+
+
+@app.route('/add/user-or-employee', methods=[GET, POST])
+@login_required
+def add_user_or_employee(): return add_user_or_employee_()
+
+
+@app.route('/add/transaction/receivepayment/<id>', methods=[GET, POST])
+@login_required
+def receivepayment(id): return receivepayment_(id)
+
+
+@app.route('/add/notes', methods=[GET, POST])
+@login_required
+def addnotes(): return addnotes_()
+
+
+@app.route("/add/expendituretype", methods=[GET, POST])
+@login_required
+def addexpendituretype(): return addexpendituretype_()
+
 ###------------------------END ADD ROUTES------------------------###
 
 
 
-###------------------------EDIT ROUTES------------------------###
+###------------------------START EDIT ROUTES------------------------###
 
 @app.route("/edit/plotprice/<plot_id>", methods=[GET, POST])
 @login_required
@@ -99,24 +124,38 @@ def editplotprice(plot_id): return editplotprice_(plot_id)
 def editbuyeroragent(id, entity): return editbuyeroragent_(id, entity)
 
 
-###------------------------EDIT ROUTES------------------------###
+###------------------------END EDIT ROUTES------------------------###
 
 
+
+###------------------------START INFO ROUTES------------------------###
 
 @app.route('/notes/<note_id>', methods=[GET])
 @login_required
-def noteinfo(note_id):
-    note = Notes.query.filter_by(id=note_id).first()
+def noteinfo(note_id): return noteinfo_(note_id)
 
-    if note is None:
-        flash(f'No such note exists!', 'danger')
-        return redirect(url_for('profile'))
 
-    if note.user_id != current_user.id:
-        abort(403)
+@app.route('/buyer/<buyer_id>')
+@login_required
+def buyerinfo(buyer_id): return buyerinfo_(buyer_id)
+   
+    
+@app.route('/agent/<agent_id>')
+@login_required
+def agentinfo(agent_id): return agentinfo_(agent_id)
 
-    return render_template('noteinfo.html', note=note)
 
+@app.route('/plot/<plot_id>')
+@login_required
+def plotinfo(plot_id): return plotinfo_(plot_id)
+
+
+@app.route('/deal/<deal_id>')
+@login_required
+def dealinfo(deal_id): return dealinfo_(deal_id)
+
+
+###------------------------END INFO ROUTES------------------------###
 
 @app.route('/notes/all', methods=[GET])
 @login_required
@@ -126,13 +165,13 @@ def allnotes():
 
 
 
-
-
-
 @app.route('/analytics')
 @login_required
 def analytics():
-    return render_template('analytics.html')
+
+    form = MacroAnalyticsForm()
+
+    return render_template('analytics.html', form=form)
    
     
 
@@ -149,240 +188,12 @@ def displayagents():
 
 @app.route("/delete/buyer/<buyer_id>", methods=[POST, GET])
 @login_required
-def deletebuyer(buyer_id):
-
-    #Checking Authorization
-    Middleware.authorizeSuperUser(current_user)
-
-    buyer = Buyer.query.filter_by(id=buyer_id).first()
-
-    # if no record of buyer with entered id is found
-    if buyer is None:
-        flash(f'No such buyer exists!', 'danger')
-        return redirect(url_for("display"))
-
-    deletebuyer_(buyer)
-    return redirect(url_for('display', active='buyer'))
+def deletebuyer(buyer_id): return deletebuyer_(buyer_id)
 
 
 @app.route("/delete/agent/<agent_id>", methods=[POST, GET])
 @login_required
-def deleteagent(agent_id):
-
-    #Checking Authorization
-    Middleware.authorizeSuperUser(current_user)
-
-    agent = CommissionAgent.query.filter_by(person_id=agent_id).first()
-
-    # if no record of buyer with entered id is found
-    if agent is None:
-        flash(f'No such agent exists!', 'danger')
-        return redirect(url_for('display', active='CA'))
-
-    deleteagent_(agent)
-    return redirect(url_for('display'))
-
-
-@app.route('/buyer/<buyer_id>')
-@login_required
-def buyerinfo(buyer_id):
-   
-    buyerinfo = True
-    buyer     = Buyer.query.filter_by(id=int(buyer_id) ).first()
-
-    if buyer is None:
-        flash('ERROR: NO Such buyer exists', 'danger')
-        
-    return render_template('agentandbuyerinfo.html', entity=buyer, buyerinfo=buyerinfo)
-
-
-@app.route('/agent/<agent_id>')
-@login_required
-def agentinfo(agent_id):
-
-    agentinfo = True
-    agent     = CommissionAgent.query.filter_by(person_id=int(agent_id)).first()
-
-    if agent is None:
-        flash('ERROR: NO Such agent exists', 'danger')
-        
-    return render_template('agentandbuyerinfo.html', entity=agent, agentinfo=agentinfo)
-
-
-@app.route('/plot/<plot_id>')
-@login_required
-def plotinfo(plot_id):
-    
-    plot = Plot.query.filter_by(id=int(plot_id) ).first()
-    if plot is None:
-        flash('ERROR: NO Such plot exists', 'danger')
-        
-    return render_template('plotinfo.html', plot=plot)
-
-
-@app.route('/deal/<deal_id>')
-@login_required
-def dealinfo(deal_id): return dealinfo_(deal_id)
-
-    
-    #transaction_data = dealinfo_(deal_id)
-
-
-'''@app.route('/deal/analytics/<deal_id>')
-@login_required
-def dealanalytics(deal_id):
-
-    deal_id = int(deal_id)
-    transaction_data = dealanalytics_(deal_id)
-
-    if transaction_data is None:
-        flash(f'No Transaction for Deal with Id {deal_id}', 'danger')
-        return render_template('dealanalytics.html')
-
-    return render_template('dealanalytics.html', transaction=transaction_data)'''
-
-
-@app.route('/analytics/expenditure/macro', methods=[GET, POST])
-@login_required
-def expenditure_macro_analytics():    
-
-    form = MacroAnalyticsForm()
-    if form.validate_on_submit():
-        print("\n\n\n", form.shortcuts.data)
-        print(form.start.data)
-        print(form.end.data, "\n\n\n")
-
-    return render_template('expenditure-macro-analytics.html', form=form)
-
-
-@app.route('/add/transaction/receivepayment/<id>', methods=[GET, POST])
-@login_required
-def receivepayment(id):
-
-    try:   
-         
-        deal = Deal.query.filter_by(id=id).first()
-        form   = ReceivePaymentForm(deal_id=deal.id)
-        form.deal_id.choices = [(row[0], "DEAL# " + str(row[0])) for row in Deal.query.with_entities(Deal.id).all()]       
-           
-    except AttributeError as ae:
-        abort(404)
-
-    if form.validate_on_submit():
-        data = {
-            'type': 'deal',
-            'id'  : form.deal_id.data,
-            'comments': form.comments.data,
-            'amount': form.amount.data
-        }
-        addtransaction_(data)
-        
-        return redirect(url_for('profile'))        
-
-    return render_template('receivepayment.html', form=form)
-
-
-@app.route('/add/transaction/expense', methods=[GET, POST])
-@login_required
-def addexpense():
-    
-    
-    ###-----MAKE THIS PRETTY-----###
-    ETs       = [(row[0], row[1])            for row in Expenditure.query.with_entities(Expenditure.id, Expenditure.name).all()]
-    employees = [(user.id, user.person.name) for user in User.query.filter_by(rank=2).all() ]
-    ETs.insert      (0, defualt_choice)
-    employees.insert(0, defualt_choice)
-
-    form                    = AddExpenseForm()
-    form.employee.choices   = employees
-    form.ET_id.choices      = ETs        
-    ###-----MAKE THIS PRETTY-----###      
-
-
-    if form.validate_on_submit():
-        data = {
-            'type'      : 'ET',
-            'name'      : form.ET_name.data,
-            'id'        : form.ET_id.data,
-            'comments'  : form.comments.data,
-            'amount'    : form.amount.data
-        }
-        temp = addexpense_(data)
-        if temp == 'duplicate':
-            return render_template('addexpense.html', form=form, error=True)
-        elif temp == 'not selected':
-            return render_template('addexpense.html', form=form)
-        
-        return redirect(url_for('profile'))        
-
-    return render_template('addexpense.html', form=form)
-
-
-@app.route('/add/notes', methods=[GET, POST])
-@login_required
-def addnotes():
-
-    form = AddNotesForm()
-    if form.validate_on_submit():
-        note = Notes(
-            title = form.title.data,
-            content = form.content.data if form.content.data else db.null(),
-            date_time = datetime.now(),
-            user_id = current_user.id
-        )
-
-        db.session.add(note)
-        db.session.commit()
-
-        flash(f'Note Added!', 'success')
-        return redirect(url_for('profile'))
-
-
-    return render_template('addnotes.html', form=form)
-
-
-@app.route('/add/user-or-employee', methods=[GET, POST])
-@login_required
-def add_user_or_employee():
-
-    #Checking Authorization
-    Middleware.authorizeSuperUser(current_user)
-
-    form = AddUserOrEmployeeForm()
-    form.name.label = 'Username'
-    if form.validate_on_submit():
-        data = {
-            'type'      : int(form.type.data),
-            'name'  : form.name.data,
-            'email'     : form.email.data,
-            'password'  : form.password.data or '12345',
-            'cnic'      : form.cnic.data,
-            'phone'     : form.phone.data,
-            'cnic_front': form.cnic_front.data,
-            'cnic_back' : form.cnic_back.data,
-            'comments'  : form.comments.data or db.null()
-        }
-        if add_user_or_employee_(data) is None:
-            return redirect(url_for('profile'))        
-    
-    return render_template('add-user-or-employee.html', form=form)
-
-
-@app.route("/add/expendituretype", methods=[GET, POST])
-@login_required
-def addexpendituretype():
-
-    form = AddExpendituretypeForm()
-    if form.validate_on_submit():
-        data = {
-            'name'  : form.name.data,
-            'flash' : True 
-        }
-        if addexpenditure_(data) is not None: 
-            return redirect(url_for('display', active="ET"))
-
-    return render_template('addexpendituretype.html', form=form)
-
+def deleteagent(agent_id): return deleteagent_(agent_id)
 
 
 @app.route('/test')
