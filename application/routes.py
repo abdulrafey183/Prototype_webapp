@@ -155,6 +155,10 @@ def plotinfo(plot_id): return plotinfo_(plot_id)
 def dealinfo(deal_id): return dealinfo_(deal_id)
 
 
+@app.route('/expenditure/<expenditure_id>')
+@login_required
+def expenditureinfo(expenditure_id): return expenditureinfo_(expenditure_id)
+
 ###------------------------END INFO ROUTES------------------------###
 
 @app.route('/notes/all', methods=[GET])

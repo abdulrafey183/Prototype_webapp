@@ -1,0 +1,144 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<!-- new -->
+<section class="my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-9">
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th scope="col" colspan="2">
+                <h1 id="title" class="text-orange-1 text-center">
+                  Expenditure Information
+                </h1>
+                <p id="sub-title" class="text-dark-3 text-center">
+                  All the expenditure information is listed here
+                </p>
+                <br>
+                <h2 id="sub-title" class="text-orange-2 text-center">
+                  Expenditure# {{ expenditure.id }}
+                </h2>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+              <h3>Expense Type: {{expenditure.name}}</h3>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if transaction %}
+<section class="my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th scope="col" colspan="4">
+                <h1 class="text-orange-1 text-center">Transaction Summary</h1>
+                <p class="text-dark-3 text-center">The details of the transactions are listed here</p>
+                <p class="text-orange-3 text-center">expenditure Id: {{ transaction["expenditure_id"] }}</p>
+                <p class="text-orange-3 text-center">Number of Installments: {{
+                  transaction["total_installments"] }}</p>
+              </th>
+            </tr>
+          </thead>
+          <tr>
+            <th>Transaction No.</th>
+            <th>Date</th>
+            <th>Transaction Amount</th>
+            <th>Comments</th>
+          </tr>
+
+          {% for transaction in transaction["transactions"]%}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ transaction.date_time }}</td>
+            <td>{{ transaction.amount }}</td>
+            {% if transaction.comments %}
+            <td>{{ transaction.comments }}</td>
+            {% else %}
+            <td>No Comments</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-9">
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th scope="col" colspan="2">
+                <h1 class="text-orange-1 text-center">Transaction Analytics</h1>
+                <p class="text-dark-3 text-center">The summary of the transactions are listed here</p>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if transaction["avg_installment_freq"] %}
+            <tr class="text-dark-3">
+              <th scope="row">Installment Frequency</th>
+              <td>{{ transaction["avg_installment_freq"] }}</td>
+            </tr>
+            {% endif %}
+            <tr class="text-dark-3">
+              <th scope="row">Amount Paid</th>
+              <td>{{ transaction["amount_paid"] }}</td>
+            </tr>
+            <tr class="text-dark-3">
+              <th scope="row">Amount Left</th>
+              <td>{{ transaction["amount_left"] }}</td>
+            </tr>
+            {% if transaction["total_installments"] > 1 %}
+            <tr class="text-dark-3">
+              <th scope="row">Average Amount Paid per Installment</th>
+              <td>{{ transaction["avg_amount_paid"] }}</td>
+            </tr>
+            {% if transaction["expected_amount"] %}
+            <tr class="text-dark-3">
+              <th scope="row">Expected Amount Paid per Installment</th>
+              <td>{{ transaction["expected_amount"] }}</td>
+            </tr>
+            {% endif %}
+            <tr class="text-dark-3">
+              <th scope="row">Predicted Amount for Next Installments</th>
+              <td>{{ transaction["predicted_amount"] }} per installment</td>
+            </tr>
+            <tr class="text-dark-3">
+              <th scope="row">Predicted Number of Installments Left</th>
+              <td>{{ transaction["installment_left"] }}</td>
+            </tr>
+            {% if transaction["expected_time_left"] %}
+            <tr class="text-dark-3">
+              <th scope="row">Expected Time Left</th>
+              <td>{{ transaction["expected_time_left"] }}</td>
+            </tr>
+            {% endif %}
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col-12 col-md-3 notes-icon"><i class="fas fa-coins"></i></div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- new -->
+{% endblock %}
+

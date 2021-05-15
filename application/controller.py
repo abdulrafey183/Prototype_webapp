@@ -486,9 +486,28 @@ def dealinfo_(deal_id):
         return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
 
     else:
-        print(transaction)        
         transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
         return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
+
+
+def expenditureinfo_(expenditure_id):
+
+    expenditure = Expenditure.query.filter_by(id=expenditure_id).first()
+    if expenditure is None:
+        flash('ERROR: NO Such expenditure exists', 'danger')
+        return redirect(url_for('display', active='expenditure'))
+
+    transaction = Transaction.query.filter_by(expenditure_id=expenditure_id).order_by(Transaction.date_time).all()
+    
+    if not transaction:
+        transaction_data = None
+        return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
+
+    else:
+        transaction_data = calc_transaction_analytics(expenditure_id, transaction, plot)
+        return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
+
+
 
 ###------------------------END INFO ROUTES------------------------###
     
