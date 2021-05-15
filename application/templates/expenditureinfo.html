@@ -12,100 +12,22 @@
             <tr>
               <th scope="col" colspan="2">
                 <h1 id="title" class="text-orange-1 text-center">
-                  Deal Information
+                  Expenditure Information
                 </h1>
                 <p id="sub-title" class="text-dark-3 text-center">
-                  All the Deal information is listed here
+                  All the expenditure information is listed here
                 </p>
                 <br>
                 <h2 id="sub-title" class="text-orange-2 text-center">
-                  Deal# {{ deal.id }}
+                  Expenditure# {{ expenditure.id }}
                 </h2>
               </th>
             </tr>
           </thead>
-          <tbody> 
-
-            {% if deal.buyer_id %}
-            <tr class="text-dark-3">
-              <th scope="row">Buyer</th>
-              <td>
-                <a href='/buyer/{{deal.buyer_id}}'>
-                {{deal.buyer.person.name}}
-                </a>
-              </td>
+          <tbody>
+              <tr>
+              <h3>Expense Type: {{expenditure.name}}</h3>
             </tr>
-            {% endif %}
-
-            {% if deal.commission_agent_id %}
-            <tr class="text-dark-3">
-              <th scope="row">Commission Agent Id</th>
-              <td>{{deal.commission_agent_id}}</td>
-            </tr>
-            {% endif %}
-
-            {% if deal.plot_id %}
-            <tr class="text-dark-3">
-              <th scope="row">Plot Address</th>
-              <td>
-                <a href='/plot/{{deal.plot_id}}'>
-                  Plot# {{deal.plot.id}} - {{deal.plot.address}}
-                </a>
-              </td>
-            </tr>
-            {% endif %}
-
-            <tr class="text-dark-3">
-              <th scope="row">Status</th>
-              <td>{{deal.status}}</td>
-            </tr>
-
-            <tr class="text-dark-3">
-              <th scope="row">Signing Date</th>
-              <td>{{deal.signing_date}}</td>
-            </tr>
-
-            {% if deal.amount_per_installment %}
-            <tr class="text-dark-3">
-              <th scope="row">Amount Per Installment</th>
-              <td>{{deal.amount_per_installment}}</td>
-            </tr>
-            {% endif %}
-
-            {% if installment_frequency %}
-            <tr class="text-dark-3">
-              <th scope="row">Installment Frequency</th>
-              <td>{{deal.installment_frequency}}</td>
-            </tr>
-            {% endif %}
-
-            {% if commission_rate %}
-            <tr class="text-dark-3">
-              <th scope="row">Commission Rate</th>
-              <td>{{deal.commission_rate}}</td>
-            </tr>
-            {% endif %}
-
-            {% if comments %}
-            <tr class="text-dark-3">
-              <th scope="row">Comments</th>
-              <td>{{deal.comments}}</td>
-            </tr>
-            {% endif %}
-
-            {% if deal.files[0] %}
-            <tr class="text-dark-3">
-              <th scope="row">Attachments</th>
-              <td>
-              {% for file in deal.files %}
-                <a href="{{ url_for('download', id=file.id) }}">
-                  {{ file.filename }}
-                </a><br>
-              {% endfor %}
-              </td>
-            </tr>
-            {% endif %}
-
           </tbody>
         </table>
       </div>
@@ -124,7 +46,7 @@
               <th scope="col" colspan="4">
                 <h1 class="text-orange-1 text-center">Transaction Summary</h1>
                 <p class="text-dark-3 text-center">The details of the transactions are listed here</p>
-                <p class="text-orange-3 text-center">Deal Id: {{ transaction["deal_id"] }}</p>
+                <p class="text-orange-3 text-center">expenditure Id: {{ transaction["expenditure_id"] }}</p>
                 <p class="text-orange-3 text-center">Number of Installments: {{
                   transaction["total_installments"] }}</p>
               </th>

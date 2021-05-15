@@ -445,11 +445,22 @@ def noteinfo_(note_id):
 
 
 def buyerinfo_(buyer_id):
-    pass
+    buyerinfo = True
+    buyer     = Buyer.query.filter_by(id=int(buyer_id) ).first()
 
+    if buyer is None:
+        flash('ERROR: NO Such buyer exists', 'danger')
+        
+    return render_template('agentandbuyerinfo.html', entity=buyer, buyerinfo=buyerinfo)
 
 def agentinfo_(agent_id):
-    pass
+    agentinfo = True
+    agent     = CommissionAgent.query.filter_by(person_id=int(agent_id)).first()
+
+    if agent is None:
+        flash('ERROR: NO Such agent exists', 'danger')
+        
+    return render_template('agentandbuyerinfo.html', entity=agent, agentinfo=agentinfo)
 
 def plotinfo_(plot_id):
     plot = Plot.query.get(int(plot_id))
@@ -461,7 +472,42 @@ def plotinfo_(plot_id):
 
 
 def dealinfo_(deal_id):
-    pass
+
+    deal = Deal.query.filter_by(id=deal_id).first()
+    if deal is None:
+        flash('ERROR: NO Such deal exists', 'danger')
+        return redirect(url_for('display', active='deal'))
+
+    plot        = Plot.query.filter_by(id=deal.plot_id).first()
+    transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
+    
+    if not transaction:
+        transaction_data = None
+        return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
+
+    else:
+        transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
+        return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
+
+
+def expenditureinfo_(expenditure_id):
+
+    expenditure = Expenditure.query.filter_by(id=expenditure_id).first()
+    if expenditure is None:
+        flash('ERROR: NO Such expenditure exists', 'danger')
+        return redirect(url_for('display', active='expenditure'))
+
+    transaction = Transaction.query.filter_by(expenditure_id=expenditure_id).order_by(Transaction.date_time).all()
+    
+    if not transaction:
+        transaction_data = None
+        return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
+
+    else:
+        transaction_data = calc_transaction_analytics(expenditure_id, transaction, plot)
+        return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
+
+
 
 
 def employeeinfo_(employee_id):
@@ -536,32 +582,40 @@ def editbuyeroragent_(id, entity):
     
 def deletebuyer_(buyer):
 
+    #Checking Authorization
+    Middleware.authorizeSuperUser(current_user)
+
+    buyer = Buyer.query.filter_by(id=buyer_id).first()
+
+    # if no record of buyer with entered id is found
+    if buyer is None:
+        flash(f'No such buyer exists!', 'danger')
+        return redirect(url_for("display"))
+
     db.session.delete(buyer)
     db.session.commit()
 
     flash('Buyer Record Deleted!', 'danger')
+    return redirect(url_for('display', active='buyer'))
 
 
 def deleteagent_(agent):
+
+    #Checking Authorization
+    Middleware.authorizeSuperUser(current_user)
+
+    agent = CommissionAgent.query.filter_by(person_id=agent_id).first()
+
+    # if no record of buyer with entered id is found
+    if agent is None:
+        flash(f'No such agent exists!', 'danger')
+        return redirect(url_for('display', active='CA'))
+
     db.session.delete(agent)
     db.session.commit()
 
     flash('Agent Record Deleted!', 'danger')
-
-
-   
-def dealanalytics_(deal_id):
-
-    deal        = Deal.query.filter_by(id=deal_id).first()
-    transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
-    plot        = Plot.query.filter_by(id=deal.plot_id).first()
-
-    if not transaction:
-        return
-
-    else:
-        transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
-        return transaction_data
+    return redirect(url_for('display'))
 
 
 ###------------------------START REST ROUTES------------------------###

@@ -137,28 +137,12 @@ def noteinfo(note_id): return noteinfo_(note_id)
 
 @app.route('/buyer/<buyer_id>')
 @login_required
-def buyerinfo(buyer_id):
+def buyerinfo(buyer_id): return buyerinfo_(buyer_id)
    
-    buyerinfo = True
-    buyer     = Buyer.query.filter_by(id=int(buyer_id) ).first()
-
-    if buyer is None:
-        flash('ERROR: NO Such buyer exists', 'danger')
-        
-    return render_template('agentandbuyerinfo.html', entity=buyer, buyerinfo=buyerinfo)
-
-
+    
 @app.route('/agent/<agent_id>')
 @login_required
-def agentinfo(agent_id):
-
-    agentinfo = True
-    agent     = CommissionAgent.query.filter_by(person_id=int(agent_id)).first()
-
-    if agent is None:
-        flash('ERROR: NO Such agent exists', 'danger')
-        
-    return render_template('agentandbuyerinfo.html', entity=agent, agentinfo=agentinfo)
+def agentinfo(agent_id): return agentinfo_(agent_id)
 
 
 @app.route('/plot/<plot_id>')
@@ -168,24 +152,19 @@ def plotinfo(plot_id): return plotinfo_(plot_id)
 
 @app.route('/deal/<deal_id>')
 @login_required
-def dealinfo(deal_id):
+def dealinfo(deal_id): return dealinfo_(deal_id)
 
-    deal_id = int(deal_id) 
-    deal = Deal.query.filter_by(id=deal_id).first()
 
-    transaction_data = dealanalytics_(deal_id)
+@app.route('/expenditure/<expenditure_id>')
+@login_required
+def expenditureinfo(expenditure_id): return expenditureinfo_(expenditure_id)
 
-    if deal is None:
-        flash('ERROR: NO Such deal exists', 'danger')
-
-    return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
 
 @app.route('/employee/<employee_id>')
 @login_required
 def employeeinfo(employee_id): return employeeinfo_(employee_id)
+
 ###------------------------END INFO ROUTES------------------------###
-
-
 
 @app.route('/notes/all', methods=[GET])
 @login_required
@@ -218,54 +197,12 @@ def displayagents():
 
 @app.route("/delete/buyer/<buyer_id>", methods=[POST, GET])
 @login_required
-def deletebuyer(buyer_id):
-
-    #Checking Authorization
-    Middleware.authorizeSuperUser(current_user)
-
-    buyer = Buyer.query.filter_by(id=buyer_id).first()
-
-    # if no record of buyer with entered id is found
-    if buyer is None:
-        flash(f'No such buyer exists!', 'danger')
-        return redirect(url_for("display"))
-
-    deletebuyer_(buyer)
-    return redirect(url_for('display', active='buyer'))
+def deletebuyer(buyer_id): return deletebuyer_(buyer_id)
 
 
 @app.route("/delete/agent/<agent_id>", methods=[POST, GET])
 @login_required
-def deleteagent(agent_id):
-
-    #Checking Authorization
-    Middleware.authorizeSuperUser(current_user)
-
-    agent = CommissionAgent.query.filter_by(person_id=agent_id).first()
-
-    # if no record of buyer with entered id is found
-    if agent is None:
-        flash(f'No such agent exists!', 'danger')
-        return redirect(url_for('display', active='CA'))
-
-    deleteagent_(agent)
-    return redirect(url_for('display'))
-
-
-
-'''@app.route('/deal/analytics/<deal_id>')
-@login_required
-def dealanalytics(deal_id):
-
-    deal_id = int(deal_id)
-    transaction_data = dealanalytics_(deal_id)
-
-    if transaction_data is None:
-        flash(f'No Transaction for Deal with Id {deal_id}', 'danger')
-        return render_template('dealanalytics.html')
-
-    return render_template('dealanalytics.html', transaction=transaction_data)'''
-
+def deleteagent(agent_id): return deleteagent_(agent_id)
 
 
 @app.route('/test')
