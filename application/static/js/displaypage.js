@@ -175,17 +175,14 @@ function make_ET_card(ET) {
     "</button></h2></div><div id='collapseBuyer" +
     ET.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
-    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td><a href='" +
+    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Id</th><td><a href='expenditure/" +
     ET.id +
     "'>" +
     ET.id +
     "</a></td></tr><tr class='text-dark-3'><th scope='row'>Type</th><td>" +
     ET.name +
-    "</td></tr><tr class='text-dark-3'><th scope='row'>Add</th><td>" +
-    "<a href='/add/transaction/expense/" +
-    ET.id +
-    "'>Add Expense of this type</a>" +
-    '</td></tr></tbody></table></div></div></div></section>' +
+    "</td></tr></tbody></table><a href='/expenditure/" +
+    ET.id + "'>Show Details</a></div></div></div></section>" +
     '</div></div></div></div>';
 
   return str;

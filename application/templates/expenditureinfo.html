@@ -31,6 +31,11 @@
                   Expense Type - {{ expenditure.name }}
                 </h2>
             </tr>
+            {% if not transaction["transactions"] %}
+            <tr><td>
+            <h5>No transaction record for this expense type</h5>
+            </td></tr>
+            {% else %}
             <tr>
             <th>Transaction No.</th>
             <th>Date</th>
@@ -62,6 +67,7 @@
               </h4>
             </td>
           </tr>
+          {% endif %}
         </tbody>
         </table>
         </div>
