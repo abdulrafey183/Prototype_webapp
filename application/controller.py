@@ -115,7 +115,7 @@ def addbuyeroragent_():
 
         try:
             entity = form.entity.data
-            person_id = addperson(form)
+            person_id = create_person(form)
 
             if entity == 'Buyer':
                 active = 'buyer'
@@ -133,8 +133,8 @@ def addbuyeroragent_():
             db.session.add(db_entity)
             db.session.commit()
 
-            addfile(person_id, form.cnic.data, form.cnic_front.data, 'front')
-            addfile(person_id, form.cnic.data, form.cnic_back.data, 'back')
+            file1 = create_file(person_id, form.cnic.data, form.cnic_front.data, 'front')
+            file2 = create_file(person_id, form.cnic.data, form.cnic_back.data, 'back')
 
             if entity == 'Commission Agent':
                 id = db_entity.person.id
@@ -486,7 +486,7 @@ def dealinfo_(deal_id):
         return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
 
     else:
-        transaction_data = calc_transaction_analytics(deal_id, transaction, plot)
+        transaction_data = calc_deal_transaction_data(deal_id, transaction, plot)
         return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
 
 
@@ -498,13 +498,13 @@ def expenditureinfo_(expenditure_id):
         return redirect(url_for('display', active='expenditure'))
 
     transaction = Transaction.query.filter_by(expenditure_id=expenditure_id).order_by(Transaction.date_time).all()
-    
+    print(transaction)
     if not transaction:
         transaction_data = None
         return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
 
     else:
-        transaction_data = calc_transaction_analytics(expenditure_id, transaction, plot)
+        transaction_data = calc_expense_transaction_data(expenditure_id, transaction)
         return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
 
 
