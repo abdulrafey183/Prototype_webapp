@@ -9,8 +9,7 @@ from .utility           import *
 from .forms             import *
 from .middleware        import Middleware
 
-
-from io       import  BytesIO
+from io         import  BytesIO
 
 
 defualt_choice  = (None, 'Not Selected')
@@ -76,7 +75,21 @@ def download_(id):
 
     file = File.query.filter_by(id=id).first()
     return send_file(BytesIO(file.data), attachment_filename=file.filename, as_attachment=True)
-    
+
+
+def analytics_():
+
+    form = AnalyticsForm()
+    if form.validate_on_submit():
+        start_date = str(form.start.data) + ' 00:00:00'
+        end_date   = str(form.end.data)   + ' 23:59:59'
+
+        total_expenses     = expenses(start_date, end_date)
+        expenses_pie_chart = get_expenses_chart(total_expenses)
+        
+        return render_template('analytics.html', form=form, expenses_pie_chart=expenses_pie_chart)
+
+    return render_template('analytics.html', form=form)
 
 ###------------------------END NORMAL ROUTES------------------------###
 
@@ -317,7 +330,7 @@ def add_user_or_employee_():
 
         data = {
             'type'      : int(form.type.data),
-            'name'  : form.name.data,
+            'name'      : form.name.data,
             'email'     : form.email.data,
             'password'  : form.password.data or '12345',
             'cnic'      : form.cnic.data,
@@ -326,6 +339,11 @@ def add_user_or_employee_():
             'cnic_back' : form.cnic_back.data,
             'comments'  : form.comments.data or db.null()
         }
+
+        print(type(form.cnic_front.data))
+        print(type(form.cnic_back.data))
+        print(form.cnic_front.data)
+        print(form.cnic_back.data)
 
 
         #Adding user to the Database
@@ -348,6 +366,22 @@ def add_user_or_employee_():
             )
             db.session.add(user)
             db.session.commit()
+
+            create_file(
+                    filename  = data['name'] + "_cnic_front." + data['cnic_back'].filename.split('.')[-1],
+                    format    = data['cnic_front'].filename.split('.')[-1],
+                    data      = data['cnic_front'].read(),
+                    deal_id   = db.null(),
+                    person_id = person.id
+                )
+
+            create_file(
+                    filename  = data['name'] + "_cnic_back." + data['cnic_back'].filename.split('.')[-1],
+                    format    = data['cnic_back'].filename.split('.')[-1],
+                    data      = data['cnic_back'].read(),
+                    deal_id   = db.null(),
+                    person_id = person.id
+                )
 
             data['type'] == 1 and flash(f'User Successfully Added to the System'    , 'success')
             data['type'] == 2 and flash(f'Employee Successfully Added to the System', 'success')
@@ -508,15 +542,15 @@ def expenditureinfo_(expenditure_id):
         return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
 
 
-
-
 def employeeinfo_(employee_id):
     employee = User.query.get(int(employee_id))
     if employee is None:
         flash('No Such Employee exists', 'danger')
         return redirect(url_for('display', active='employee'))
 
-    return render_template('employeeinfo.html', employee=employee)
+    total_salaries = len(employee.salaries) and sum(salary.transaction.amount for salary in employee.salaries)
+
+    return render_template('employeeinfo.html', employee=employee, total_salaries=len(employee.salaries), total_salaries_amount=total_salaries)
 
 
 ###------------------------END INFO ROUTES------------------------###

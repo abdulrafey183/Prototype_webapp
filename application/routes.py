@@ -63,6 +63,11 @@ def display(): return display_()
 @app.route('/download/<id>', methods=[GET])
 def download(id): return download_(id)  
 
+
+@app.route('/analytics', methods=[GET, POST])
+@login_required
+def analytics(): return analytics_()
+
 ###------------------------END NORMAL ROUTES------------------------###
 
 
@@ -166,34 +171,9 @@ def employeeinfo(employee_id): return employeeinfo_(employee_id)
 
 ###------------------------END INFO ROUTES------------------------###
 
-@app.route('/notes/all', methods=[GET])
-@login_required
-def allnotes():
-    notes = Notes.query.filter_by(user_id=current_user.id).order_by(Notes.date_time.desc())
-    return render_template('allnotes.html', notes=notes)
 
 
-
-@app.route('/analytics')
-@login_required
-def analytics():
-
-    form = MacroAnalyticsForm()
-
-    return render_template('analytics.html', form=form)
-   
-    
-
-@app.route("/display/agents")
-@login_required
-def displayagents():
-
-    form = SearchAgentForm()
-    #delete_form = DeleteBuyerForm()
-
-    agents = CommissionAgent.query.all()
-    return render_template('displayagent.html', agents=agents, form=form)
-
+###------------------------START DELETE ROUTES------------------------###
 
 @app.route("/delete/buyer/<buyer_id>", methods=[POST, GET])
 @login_required
@@ -203,6 +183,27 @@ def deletebuyer(buyer_id): return deletebuyer_(buyer_id)
 @app.route("/delete/agent/<agent_id>", methods=[POST, GET])
 @login_required
 def deleteagent(agent_id): return deleteagent_(agent_id)
+
+###------------------------END DELETE ROUTES------------------------###
+
+
+@app.route('/notes/all', methods=[GET])
+@login_required
+def allnotes():
+    notes = Notes.query.filter_by(user_id=current_user.id).order_by(Notes.date_time.desc())
+    return render_template('allnotes.html', notes=notes)
+
+    
+###-----WHAT IS THIS DOING???-------###
+@app.route("/display/agents")
+@login_required
+def displayagents():
+
+    form = SearchAgentForm()
+    #delete_form = DeleteBuyerForm()
+
+    agents = CommissionAgent.query.all()
+    return render_template('displayagent.html', agents=agents, form=form)
 
 
 @app.route('/test')

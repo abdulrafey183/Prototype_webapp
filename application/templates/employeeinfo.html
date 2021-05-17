@@ -24,6 +24,33 @@
               <td>{{ employee.person.name }}</td>
             </tr>
 
+            <tr class="text-dark-3">
+              <th scope="row">Phone</th>
+              <td>{{ employee.person.phone }}</td>
+            </tr>
+
+            <tr class="text-dark-3">
+              <th scope="row">CNIC</th>
+              <td>
+                {{ employee.person.cnic }}
+
+                {% if employee.person.files[0] %}
+                  <br> 
+                  <a href="{{ url_for('download', id=employee.person.files[0].id) }}">
+                    {{ employee.person.files[0].filename }}
+                  </a>
+                {% endif %}
+
+                {% if employee.person.files[1] %}
+                <br>
+                <a href="{{ url_for('download', id=employee.person.files[1].id) }}">
+                  {{ employee.person.files[1].filename }}
+                </a>
+                {% endif %}
+
+              </td>
+            </tr>
+
             {% if employee.rank == 1 %}
             <tr class="text-dark-3">
               <th scope="row">Type</th>
@@ -39,6 +66,18 @@
             <tr class="text-dark-3">
               <th scope="row">Type</th>
               <td>Employee</td>
+            </tr>
+            {% endif %}
+
+            {% if employee.salaries[-1] %}
+            <tr class="text-dark-3">
+              <th scope="row">Last Salary Paid</th>
+              <td>{{ employee.salaries[-1].transaction.amount }}Rs</td>
+            </tr>
+
+             <tr class="text-dark-3">
+              <th scope="row">Total Salaries Paid</th>
+              <td>{{ total_salaries_amount }}Rs ({{ total_salaries }})</td>
             </tr>
             {% endif %}
 

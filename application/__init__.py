@@ -34,15 +34,15 @@ def create_app():
 
         from . import model
 
-        # Creating tables in the database
-        db.drop_all()
-        db.create_all()
+        # # Creating tables in the database
+        # db.drop_all()
+        # db.create_all()
 
-        # inserting dummy data
-        sql = open('dump.sql').read()
-        db.engine.execute(sql)
+        # # inserting dummy data
+        # sql = open('dump.sql').read()
+        # db.engine.execute(sql)
 
-        db.session.commit()
+        # db.session.commit()
 
         #Addning Databse Viewss to Admin Panel
         admin.add_view(ProtectedModelView(model.User,  db.session, category='Databases', name="Users" ))

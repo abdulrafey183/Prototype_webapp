@@ -182,6 +182,7 @@ class Deal(db.Model):
     #Relationships:
     transactions = db.relationship("Transaction", backref="deal", lazy=True)
     files        = db.relationship("File"       , backref="deal", lazy=True)
+    commissions  = db.relationship("Commission" , backref="deal", lazy=True)
 
     @property
     def serialize(self):
@@ -218,14 +219,17 @@ class Transaction(db.Model):
 
 
 class Salary(db.Model):
+    __tablename__  = 'salary' 
 
-    id             = db.Column(db.Integer , primary_key=True)
+    id             = db.Column(db.Integer, primary_key=True)
     employee_id    = db.Column(db.Integer, db.ForeignKey('user.id'))
     transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'))
 
 class Commission(db.Model):
+    __tablename__  = 'commission' 
 
-    id                  = db.Column(db.Integer , primary_key=True)
+    id                  = db.Column(db.Integer, primary_key=True)
+    deal_id             = db.Column(db.Integer, db.ForeignKey('deal.id'))
     commission_agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.person_id'))
     transaction_id      = db.Column(db.Integer, db.ForeignKey('transaction.id'))
 
