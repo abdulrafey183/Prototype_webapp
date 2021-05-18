@@ -11,6 +11,7 @@ from .middleware        import Middleware
 
 from io         import  BytesIO
 
+import datetime
 
 defualt_choice  = (None, 'Not Selected')
 
@@ -79,15 +80,44 @@ def download_(id):
 
 def analytics_():
 
+    today = datetime.date.today()
+    date_shortcuts = {
+            1: today - datetime.timedelta(days=7),
+            2: today - datetime.timedelta(days=14),
+            3: today - datetime.timedelta(days=30),
+            4: today - datetime.timedelta(days=90),
+            5: today - datetime.timedelta(days=180),
+            7: None,
+        }
+
     form = AnalyticsForm()
     if form.validate_on_submit():
-        start_date = str(form.start.data) + ' 00:00:00'
-        end_date   = str(form.end.data)   + ' 23:59:59'
 
-        total_expenses     = expenses(start_date, end_date)
-        expenses_pie_chart = get_expenses_chart(total_expenses)
+        if int(form.shortcuts.data) == 8:    #If Custom date range is selected
+            start_date = str(form.start.data) + ' 00:00:00'
+            end_date   = str(form.end.data)   + ' 23:59:59'
+
+        else:
+            start_date = date_shortcuts[int(form.shortcuts.data)]
+            start_date = (start_date is not None and start_date.strftime('%Y-%m-%d') + ' 00:00:00') or start_date
+            end_date   = today.strftime('%Y-%m-%d') + ' 23:59:59'
+
+                
+        expenses_title = (int(form.shortcuts.data)==7 and "All Time Expenses") or f'Expenses from {start_date[:-9]} to {end_date[:-9]}'
+        revenue_title   = (int(form.shortcuts.data)==7 and "All Time Revenue")  or f'Revenues from {start_date[:-9]} to {end_date[:-9]}'
+
+        total_expenses = str(expenses(start_date, end_date))
+        total_revenue  = revenue(start_date, end_date)
         
-        return render_template('analytics.html', form=form, expenses_pie_chart=expenses_pie_chart)
+        #expenses_pie_chart = get_expenses_chart(total_expenses)
+        
+        return render_template('analytics.html', 
+                                form            = form, 
+                                total_expenses  = total_expenses, 
+                                expenses_title  = expenses_title,
+                                total_revenue   = total_revenue,
+                                revenue_title    = revenue_title
+                              )
 
     return render_template('analytics.html', form=form)
 
@@ -231,7 +261,7 @@ def adddeal_():
         # Creating Deal and adding to Database
         deal = Deal(
             status                  = deal_status,
-            signing_date            = datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
+            signing_date            = datetime.now().strftime('%d-%m-%Y %H:%M:%S'),
             amount_per_installment  = form.amount_per_installment.data  or db.null(),
             installment_frequency   = form.installment_frequency.data   or db.null(),
             commission_rate         = form.c_rate.data                  or db.null(),
@@ -527,14 +557,27 @@ def dealinfo_(deal_id):
 
     plot        = Plot.query.filter_by(id=deal.plot_id).first()
     transaction = Transaction.query.filter_by(deal_id=deal_id).order_by(Transaction.date_time).all()
+
+    total_commission      = len(deal.commissions)
+    total_commission_paid = sum([commission.transaction.amount for commission in deal.commissions])
     
     if not transaction:
         transaction_data = None
-        return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
-
     else:
+
+        transaction_data = calc_transaction_analytics(deal_id, transaction, plot)        
+
+
+    return render_template('dealinfo.html', 
+                            deal                    = deal,
+                            transaction             = transaction_data, 
+                            total_commission        = total_commission, 
+                            total_commission_paid   = total_commission_paid
+                          )
+
         transaction_data = calc_deal_transaction_data(deal_id, transaction, plot)
         return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
+
 
 
 def expenditureinfo_(expenditure_id):
