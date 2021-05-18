@@ -5,6 +5,8 @@ from sqlalchemy.exc     import IntegrityError
 from sqlalchemy.orm     import session
 from sqlalchemy         import func
 
+from sqlalchemy.sql.expression import cast
+
 from .model     import *
 
 from datetime   import datetime
@@ -15,6 +17,7 @@ from io         import  BytesIO
 import math
 import re
 import base64
+import sqlalchemy
 
 
 
@@ -174,9 +177,9 @@ def calc_transaction_analytics(deal_id, transaction, plot):
     amount_left          = plot.price - amount_paid                  # the total amount left to be paid
     avg_amount_paid      = math.ceil(mean([t.amount for t in transaction]))     # average amount paid per installment
 
-    installment_left     = math.ceil(amount_left // avg_amount_paid)  # expected number of installments left 
-    predicted_amount     = math.ceil(amount_left // installment_left) # predicted amount paid for the next installments left
-    expected_time_left   = calc_expected_time_left(avg_installment_freq, installment_left)
+    installment_left     = 0#math.ceil(amount_left // avg_amount_paid)  # expected number of installments left 
+    predicted_amount     = 0#math.ceil(amount_left // installment_left) # predicted amount paid for the next installments left
+    expected_time_left   = 0#calc_expected_time_left(avg_installment_freq, installment_left)
 
     transaction_data = {    "deal_id"              : deal_id,
                             "transactions"         : transaction,
@@ -259,7 +262,7 @@ def aggregate(start= None, end= None):
 
     return db.session                      \
         .query(
-            Transaction.date_time,
+            cast(Transaction.date_time, sqlalchemy.Date),
             func.sum(Transaction.amount)
         )                                   \
         .filter(
@@ -271,17 +274,16 @@ def aggregate(start= None, end= None):
 def revenue(start= None, end= None):
 
     res = aggregate(start, end)                     \
-        .filter(Transaction.deal_id != db.null()) \
-        .group_by(Transaction.date_time)            \
+        .filter(Transaction.deal_id != db.null())   \
+        .group_by(cast(Transaction.date_time, sqlalchemy.Date))            \
         .all()
+
+    return res and { str(date): int(amount) for (date, amount) in res }
 
 
 def expenses(start= None, end= None):
 
-    # res = aggregate(start, end)                     \
-    #     .filter(Transaction.expenditure_id != db.null()) \
-    #     .group_by(Transaction.date_time)            \
-    #     .all()    
+    start = start or db.session.query(func.min(Transaction.date_time)).one()[0] # if no start date provided, selecting oldest date in table
 
     res = db.session                      \
         .query(

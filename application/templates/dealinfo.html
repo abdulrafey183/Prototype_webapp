@@ -37,14 +37,6 @@
             </tr>
             {% endif %}
 
-            {% if deal.commission_agent_id %}
-            <tr class="text-dark-3">
-              <th scope="row">Commission Agent Id</th>
-              <td>{{deal.commission_agent_id}}</td>
-            </tr>
-            {% endif %}
-
-            {% if deal.plot_id %}
             <tr class="text-dark-3">
               <th scope="row">Plot Address</th>
               <td>
@@ -52,6 +44,35 @@
                   Plot# {{deal.plot.id}} - {{deal.plot.address}}
                 </a>
               </td>
+            </tr>
+
+            <tr class="text-dark-3">
+              <th scope="row">Plot Price</th>
+              <td>{{ deal.plot.price }}Rs</td>
+            </tr>
+
+            {% if deal.commission_agent_id %}
+            <tr class="text-dark-3">
+              <th scope="row">Commission Agent</th>
+              <td>
+                <a href="{{ url_for('agentinfo', agent_id=deal.commissionagent.person_id) }}">
+                  {{ deal.commissionagent.person.name }}
+                </a>
+              </td>
+            </tr>
+
+             <tr class="text-dark-3">
+              <th scope="row">Commission</th>
+              <td>
+               {{ deal.plot.price*deal.commission_rate }}Rs ({{ deal.commission_rate*100 }}%)
+              </td>
+            </tr>
+            {% endif %}
+
+            {% if deal.commissions[0] %}
+            <tr class="text-dark-3">
+              <th scope="row">Commission Paid</th>
+              <td>{{ total_commission_paid }} ({{ total_commission }})</td>
             </tr>
             {% endif %}
 
@@ -76,13 +97,6 @@
             <tr class="text-dark-3">
               <th scope="row">Installment Frequency</th>
               <td>{{deal.installment_frequency}}</td>
-            </tr>
-            {% endif %}
-
-            {% if commission_rate %}
-            <tr class="text-dark-3">
-              <th scope="row">Commission Rate</th>
-              <td>{{deal.commission_rate}}</td>
             </tr>
             {% endif %}
 

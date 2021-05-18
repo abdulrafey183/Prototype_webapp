@@ -55,12 +55,36 @@
 					
 	</form>
 
+	<script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-core.min.js"></script>
+	<script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-bundle.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-pie.min.js"></script>
 
-	{% if expenses_pie_chart %}
-	<h1>Expenses in X time</h1>
 
-	<img src="data:image/jpg;base64,{{ expenses_pie_chart }}"/>
-	{% endif %}
+    <div class="row">  
+		{% if total_expenses %}
+		<div id="expenses-chart" style="width: 100%; height: 100%"></div>
+		{% endif %}
+		<br><br><br><br>
+	</div>
+
+	<div class="row">
+		{% if total_revenue %}
+		<select id="typeSelect" onchange="switchType()" style="margin: 10px 0 0 10px">
+		    <option value="area">Area</option>
+		    <option value="column">Column</option>
+		    <option value="jump-line">Jump Line</option>
+		    <option value="line">Line</option>
+		    <option value="marker">Marker</option>  
+		    <option value="spline-area">Spline Area</option>  
+		    <option value="spline">Spline</option>
+		    <option value="step-area">Step Area</option>
+		    <option value="step-line">Step Line</option>
+		    <option value="stick">Stick</option>
+		</select>
+		<div id="revenue-chart" style="width: 100%; height: 100%"></div>
+		{% endif %}
+		
+	</div>
 	
 
 {% endblock %}
@@ -93,6 +117,58 @@
 			$('#end').prop(  'required'  , false);
 		}
 	})
+
+	
+	
+
+	{% if total_expenses %}
+
+	var series;
+
+	anychart.onDocumentReady(function() {
+
+		// Creating Expense Pie Chart
+		let expenses_json_text  = "{{ total_expenses }}".replace(/&#39;/g, '"');
+		let expenses_json_data  =  JSON.parse(expenses_json_text);
+		var expenses_data       = []
+
+		for (let [name, amount] of Object.entries(expenses_json_data)) {
+		  expenses_data.push({x: name, value: amount});
+		}
+		
+	    var pie_chart = anychart.pie();
+	    pie_chart.title("{{ expenses_title }}");
+	    pie_chart.data(expenses_data); 
+		pie_chart.sort("desc");   
+		pie_chart.legend().position("right");		
+		pie_chart.legend().itemsLayout("vertical");	    	
+	    pie_chart.container('expenses-chart');
+	    pie_chart.draw();
+
+
+	    // Creating Revenue Chart
+		let revenue_json_text  = "{{ total_revenue }}".replace(/&#39;/g, '"');
+		let revenue_json_data  =  JSON.parse(revenue_json_text);
+		var revenue_data       = []
+
+		console.log(revenue_json_data)
+		for (let [date, amount] of Object.entries(revenue_json_data)) {		  
+		  revenue_data.push([date, amount]);
+		}
+
+		var revenue_chart = anychart.area();
+		series   		  = revenue_chart.area(revenue_data);
+		revenue_chart.title("{{ revenue_title }}");
+		revenue_chart.container('revenue-chart');
+	    revenue_chart.draw();	    
+	});	
+	{% endif %}
+
+	// switch the series type
+	function switchType() {
+	  var select = document.getElementById("typeSelect");
+	  series.seriesType(select.value);
+	}
 
 </script>
 {% endblock %}
