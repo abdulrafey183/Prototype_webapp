@@ -21,7 +21,11 @@ import sqlalchemy
 
 
 
-def addperson(person_data):
+def create_person(person_data):
+    """
+    Utility Function that adds a row to the Person Table and returns the 
+    primary key of that row
+    """
 
     person = Person(
                 name    = person_data.name.data,
@@ -36,6 +40,11 @@ def addperson(person_data):
 
     return person.id
 
+
+    """
+    Utility Function that adds a row to the File Table and returns the 
+    primary key of that row
+    """
 def create_file(filename, format, data, deal_id, person_id):
 
     file = File(    
@@ -168,7 +177,7 @@ def get_cnic_file_data(id, cnic, data, fileformat, side, entity):
     return cnic_file_data
 
 
-def calc_transaction_analytics(deal_id, transaction, plot):
+def calc_deal_transaction_data(deal_id, transaction, plot):
 
     no_of_installments   = len(transaction)    # total number of transactios made
     avg_installment_freq = calc_avg_installment_freq(transaction)    # average time between each transaction
@@ -194,6 +203,22 @@ def calc_transaction_analytics(deal_id, transaction, plot):
                         }
 
     return transaction_data
+
+
+def calc_expense_transaction_data(expenditure_id, transaction):
+
+    no_of_transactions = len(transaction)
+    total_amount       = sum(t.amount for t in transaction)
+
+    expense_data = { 
+                        "no_of_transactions" : no_of_transactions,
+                        "total_amount"       : total_amount,
+                        "transactions"        : transaction
+                   }
+
+    return expense_data
+
+
 
 
 def calc_expected_time_left(avg_installment_freq, installment_left):
