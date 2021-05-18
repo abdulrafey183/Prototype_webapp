@@ -2,14 +2,19 @@ from flask              import current_app as app
 from flask              import flash
 from wtforms            import ValidationError
 from sqlalchemy.exc     import IntegrityError
+from sqlalchemy.orm     import session
+from sqlalchemy         import func
 
 from .model     import *
 
 from datetime   import datetime
 from statistics import mean
+from matplotlib import pyplot as plt
+from io         import  BytesIO
 
 import math
 import re
+import base64
 
 
 
@@ -32,22 +37,26 @@ def create_person(person_data):
 
     return person.id
 
-def create_file(id, cnic, file, side):
+
     """
     Utility Function that adds a row to the File Table and returns the 
     primary key of that row
     """
+def create_file(filename, format, data, deal_id, person_id):
 
-    filename   = cnic + '_' + side
-
-    file = File(    filename=filename,
-                    format=file.filename.split('.')[-1],
-                    data=file.read(),
-                    person_id=id,
-                )
+    file = File(    
+            filename    = filename,
+            #format      = file.filename.split('.')[-1],
+            format      = format,
+            #data        = file.read(),
+            data        = data,
+            deal_id     = deal_id,
+            person_id   = person_id,
+           )
 
     db.session.add(file)
     db.session.commit()
+    db.session.refresh(file)
 
     return file.id
 
@@ -262,3 +271,72 @@ def calc_time_in_minutes(transaction):
 def validate_phone_and_cnic(form, field):
     if not re.match(r'^([\s\d]+)$', field.data):
         raise ValidationError('Enter Numbers Only!')
+
+
+
+###-------------START ANALYTICS FUCNTIONS-------------###
+
+def aggregate(start= None, end= None):
+    
+    # will throw an error if table is empty
+    start = start or db.session.query(func.min(Transaction.date_time)).one()[0] # if no start date provided, selecting oldest date in table
+    end   = end   or datetime.now()                                    # if no end date provided, selecting today's date
+
+    return db.session                      \
+        .query(
+            Transaction.date_time,
+            func.sum(Transaction.amount)
+        )                                   \
+        .filter(
+            Transaction.date_time >= start,
+            Transaction.date_time <= end,
+        )               
+
+
+def revenue(start= None, end= None):
+
+    res = aggregate(start, end)                     \
+        .filter(Transaction.deal_id != db.null()) \
+        .group_by(Transaction.date_time)            \
+        .all()
+
+
+def expenses(start= None, end= None):
+
+    # res = aggregate(start, end)                     \
+    #     .filter(Transaction.expenditure_id != db.null()) \
+    #     .group_by(Transaction.date_time)            \
+    #     .all()    
+
+    res = db.session                      \
+        .query(
+            Transaction.expenditure_id,
+            func.sum(Transaction.amount)
+        ).filter(
+            Transaction.date_time >= start,
+            Transaction.date_time <= end,
+            Transaction.expenditure_id != db.null()
+        ).group_by(
+            Transaction.expenditure_id
+        ).all()
+
+    return res and { Expenditure.query.get(id).name: int(amount) for (id, amount) in res}
+
+
+def net_profits(): pass
+
+###-------------END ANALYTICS FUCNTIONS-------------###
+
+
+###-------------START PLOTTING FUNCTIONS-------------###
+
+def get_expenses_chart(expenses):
+
+    plt.pie(expenses.values(), labels=expenses.keys())
+        
+    graph_IObytes = BytesIO()
+    plt.savefig(graph_IObytes, format='jpg')
+    graph_IObytes.seek(0)
+
+    return str(base64.b64encode(graph_IObytes.read()))[2:-1]
+

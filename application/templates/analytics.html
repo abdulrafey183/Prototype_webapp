@@ -2,7 +2,7 @@
 
 {% block content %}
 
-	<form method="POST" action="{{ url_for('expenditure_macro_analytics') }}">
+	<form method="POST" action="{{ url_for('analytics') }}">
 
 		{{ form.csrf_token }}
 						
@@ -54,15 +54,30 @@
 		</div>
 					
 	</form>
+
+
+	{% if expenses_pie_chart %}
+	<h1>Expenses in X time</h1>
+
+	<img src="data:image/jpg;base64,{{ expenses_pie_chart }}"/>
+	{% endif %}
 	
 
 {% endblock %}
 
 {% block script %}
 <script type="text/javascript">
+
+	$(function() {
+    	if($('#shortcuts').val() == 8){
+    		$('#start-div').show();
+			$('#end-div').show();
+			$('#start').prop('required', true);
+			$('#end').prop(  'required', true);
+    	}
+	});
 	
 	$('#shortcuts').on('change', function(){
-		console.log('popopopo');
 		if (this.value == 8){
 			$('#start-div').show();
 			$('#end-div').show();
