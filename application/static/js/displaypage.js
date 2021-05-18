@@ -1,4 +1,4 @@
-let tabs = ['buyer', 'plot', 'CA', 'ET', 'deal'];
+let tabs = ['buyer', 'plot', 'CA', 'ET', 'deal',  'employee'];
 
 function clicked(name) {
   //Turning on the cliked div
@@ -188,8 +188,45 @@ function make_ET_card(ET) {
   return str;
 }
 
+function make_employee_card(employee) {
+  let str =
+    "<div class='accordion' id='accordionExample'><div class='card'><div class='card-header' id='headingOne'><h2 class='mb-0'><button class='btn btn-link btn-block text-left' type='button' data-toggle='collapse' data-target='#collapseBuyer" +
+    employee.id +
+    "' aria-expanded='true' aria-controls='collapseBuyer" +
+    employee.id +
+    "'>" +
+    employee.person.name +
+    "</button></h2></div><div id='collapseBuyer" +
+    employee.id +
+    "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
+    "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody>" +
+    "<tr class='text-dark-3'>" + 
+      "<th scope='row'>Name</th>" + 
+      "<td><a href='/employee/" + employee.id +"'>" + employee.person.name + "</a></td>" + 
+    "</tr>";
+
+  if(employee.rank == 1){
+    str +=  "<tr class='text-dark-3'>" + 
+              "<th scope='row'>Type</th>" + 
+              "<td>User</td>" + 
+            "</tr>" +
+            "<tr class='text-dark-3'>" + 
+              "<th scope='row'>Email ID</th>" + 
+              "<td>" + employee.person.email + "</td>" + 
+            "</tr>";
+  }
+  else if(employee.rank == 2){
+    str +=  "<tr class='text-dark-3'>" + 
+              "<th scope='row'>Type</th>" + 
+              "<td>Employee</td>" + 
+            "</tr>";
+  }
+
+  return str + "</tbody></table></div></div></div></section></div></div></div></div>";
+}
+
+
 function inject_div(name, list) {
-  console.log(list);
   let str = '';
   let make_card = window['make_' + name + '_card'];
   for (let element of list) {
@@ -202,7 +239,6 @@ function getall(name) {
   clicked(name || 'buyer');
   $.post('/rest/' + name + '/all', function (data) {
     inject_div(name, data.json_list);
-    console.log(data.json_list);
   });
 }
 

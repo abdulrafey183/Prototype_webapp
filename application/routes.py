@@ -159,6 +159,11 @@ def dealinfo(deal_id): return dealinfo_(deal_id)
 @login_required
 def expenditureinfo(expenditure_id): return expenditureinfo_(expenditure_id)
 
+
+@app.route('/employee/<employee_id>')
+@login_required
+def employeeinfo(employee_id): return employeeinfo_(employee_id)
+
 ###------------------------END INFO ROUTES------------------------###
 
 @app.route('/notes/all', methods=[GET])
@@ -257,6 +262,11 @@ def allCAs(): return allCAs_()
 @app.route('/rest/ET/all', methods=[POST])
 @login_required
 def allETs(): return allETs_()
+
+
+@app.route('/rest/employee/all', methods=[GET, POST])
+@login_required
+def allEmployees(): return allEmployees_()
 
 
 @app.route('/rest/<table>/<id>', methods=[GET, POST])

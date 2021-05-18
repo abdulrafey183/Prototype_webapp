@@ -1,8 +1,8 @@
 INSERT INTO `person` VALUES (1 , 'Faisal Rasool'  , '1111111111111', '03207047670', 'faisal@example.com'    , NULL);
 INSERT INTO `person` VALUES (2 , 'Abdul Rafey'    , '2222222222222', '03207047691', 'rafey@example.com'     , NULL);
 INSERT INTO `person` VALUES (3 , 'Manager 1'      , '3333333333333', '03207047692', 'manager@example.com'   , NULL);
-INSERT INTO `person` VALUES (10, 'Employee 1'     , '4444444444444', '03207047695', 'employee1@example.com' , NULL);
-INSERT INTO `person` VALUES (11, 'Employee 1'     , '5555555555555', '03207047623', 'employee2@example.com' , NULL);
+INSERT INTO `person` VALUES (10, 'Employee 1'     , '4444444444444', '03207047695', NULL                    , NULL);
+INSERT INTO `person` VALUES (11, 'Employee 2'     , '5555555555555', '03207047623', NULL                    , NULL);
 INSERT INTO `person` VALUES (4 , 'Laraib Arjamand', '3840188588576', '03018109402', 'laraib@example.com'    , NULL);
 INSERT INTO `person` VALUES (5 , 'Bushra Arjamand', '3840188888576', '03018109420', 'bushra@example.com'    , NULL);
 INSERT INTO `person` VALUES (6 , 'Haider Ali'     , '3840188588571', '03018109401', 'haider@example.com'    , NULL);

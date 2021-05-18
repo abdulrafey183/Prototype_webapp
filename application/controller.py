@@ -463,7 +463,7 @@ def agentinfo_(agent_id):
     return render_template('agentandbuyerinfo.html', entity=agent, agentinfo=agentinfo)
 
 def plotinfo_(plot_id):
-    plot = Plot.query.filter_by(id=int(plot_id) ).first()
+    plot = Plot.query.get(int(plot_id))
     if plot is None:
         flash('No Such plot exists', 'danger')
         return redirect(url_for('display', active='plot'))
@@ -507,6 +507,16 @@ def expenditureinfo_(expenditure_id):
         transaction_data = calc_expense_transaction_data(expenditure_id, transaction)
         return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
 
+
+
+
+def employeeinfo_(employee_id):
+    employee = User.query.get(int(employee_id))
+    if employee is None:
+        flash('No Such Employee exists', 'danger')
+        return redirect(url_for('display', active='employee'))
+
+    return render_template('employeeinfo.html', employee=employee)
 
 
 ###------------------------END INFO ROUTES------------------------###
@@ -639,6 +649,12 @@ def allCAs_():
 def allETs_():
 
     return jsonify(json_list=[ET.serialize for ET in Expenditure.query.all()])
+
+
+def allEmployees_():
+
+    return jsonify(json_list=[user.serialize for user in User.query.filter(User.rank>0).all()])
+
 
 
 def getIDfromTable_(table, id):

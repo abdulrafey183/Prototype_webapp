@@ -27,6 +27,15 @@ class User(db.Model, UserMixin):
     def __repr__(self):
     	return f'Email: {self.email}, Username: {self.username}, Password: {self.password}'
 
+    @property
+    def serialize(self):
+        return {
+            'id'        : self.id,
+            'rank'      : self.rank,
+            'person'    : self.person.serialize,
+            #'salaries'  :
+        }
+
 
 class Person(db.Model):
     __tablename__ = 'person'
