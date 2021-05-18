@@ -38,11 +38,11 @@ def create_person(person_data):
     return person.id
 
 
+def create_file(filename, format, data, deal_id, person_id):
     """
     Utility Function that adds a row to the File Table and returns the 
     primary key of that row
     """
-def create_file(filename, format, data, deal_id, person_id):
 
     file = File(    
             filename    = filename,
@@ -161,19 +161,6 @@ def addexpendituretype_utility(data):
         flash(f'Expenditure Type \'{ data["name"] }\' Already Exists', 'danger')
 
 
-
-def get_cnic_file_data(id, cnic, data, fileformat, side, entity):
-
-
-    cnic_file_data = { 'format'   : fileformat, 
-                       'filename' : filename, 
-                       'data'     : data, 
-                       'person_id': id
-                     }
-
-    return cnic_file_data
-
-
 def calc_deal_transaction_data(deal_id, transaction, plot):
 
     no_of_installments   = len(transaction)    # total number of transactios made
@@ -184,7 +171,6 @@ def calc_deal_transaction_data(deal_id, transaction, plot):
     avg_amount_paid      = math.ceil(mean([t.amount for t in transaction]))     # average amount paid per installment
 
     installment_left     = math.ceil(amount_left // avg_amount_paid)  # expected number of installments left 
-    predicted_amount     = math.ceil(amount_left // installment_left) # predicted amount paid for the next installments left
     expected_time_left   = calc_expected_time_left(avg_installment_freq, installment_left)
 
     transaction_data = {    "deal_id"              : deal_id,
@@ -194,7 +180,6 @@ def calc_deal_transaction_data(deal_id, transaction, plot):
                             "amount_paid"          : amount_paid,
                             "amount_left"          : amount_left,
                             "avg_amount_paid"      : avg_amount_paid,
-                            "predicted_amount"     : predicted_amount,
                             "installment_left"     : installment_left,
                             "expected_time_left"   : expected_time_left
                         }
@@ -214,8 +199,6 @@ def calc_expense_transaction_data(expenditure_id, transaction):
                    }
 
     return expense_data
-
-
 
 
 def calc_expected_time_left(avg_installment_freq, installment_left):
