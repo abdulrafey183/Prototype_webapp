@@ -565,7 +565,7 @@ def dealinfo_(deal_id):
         transaction_data = None
     else:
 
-        transaction_data = calc_transaction_analytics(deal_id, transaction, plot)        
+        transaction_data = calc_deal_transaction_data(deal_id, transaction, plot)        
 
 
     return render_template('dealinfo.html', 
@@ -600,6 +600,7 @@ def expenditureinfo_(expenditure_id):
 
 def employeeinfo_(employee_id):
     employee = User.query.get(int(employee_id))
+    
     if employee is None:
         flash('No Such Employee exists', 'danger')
         return redirect(url_for('display', active='employee'))
