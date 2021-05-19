@@ -564,8 +564,7 @@ def dealinfo_(deal_id):
     if not transaction:
         transaction_data = None
     else:
-
-        transaction_data = calc_transaction_analytics(deal_id, transaction, plot)        
+        transaction_data = calc_deal_transaction_data(deal_id, transaction, plot)        
 
 
     return render_template('dealinfo.html', 
@@ -574,10 +573,6 @@ def dealinfo_(deal_id):
                             total_commission        = total_commission, 
                             total_commission_paid   = total_commission_paid
                           )
-
-        transaction_data = calc_deal_transaction_data(deal_id, transaction, plot)
-        return render_template('dealinfo.html', deal=deal, transaction=transaction_data)
-
 
 
 def expenditureinfo_(expenditure_id):
@@ -591,11 +586,11 @@ def expenditureinfo_(expenditure_id):
     print(transaction)
     if not transaction:
         transaction_data = None
-        return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
-
+        #return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
     else:
         transaction_data = calc_expense_transaction_data(expenditure_id, transaction)
-        return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
+        
+    return render_template('expenditureinfo.html', expenditure=expenditure, transaction=transaction_data)
 
 
 def employeeinfo_(employee_id):

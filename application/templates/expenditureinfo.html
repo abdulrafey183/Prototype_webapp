@@ -14,29 +14,61 @@
                 <h1 id="title" class="text-orange-1 text-center">
                   Expenditure Information
                 </h1>
-                <p id="sub-title" class="text-dark-3 text-center">
-                  All the expenditure information is listed here
-                </p>
                 <br>
                 <h2 id="sub-title" class="text-orange-2 text-center">
-                  Expenditure# {{ expenditure.id }}
+                 {{ expenditure.name }}
                 </h2>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td scope="col" colspan="2">
-                <h2 id="sub-title" class="text-orange-2 text-center">
-                  Expense Type - {{ expenditure.name }}
-                </h2>
+            
+            <tr class="text-dark-3">
+              <th scope="row">Expenditure Type</th>
+              <td>
+                {{ expenditure.name }}
+              </td>
             </tr>
-            {% if not transaction["transactions"] %}
-            <tr><td>
-            <h5>No transaction record for this expense type</h5>
-            </td></tr>
-            {% else %}
+
+            <tr class="text-dark-3">
+              <th scope="row">Expense Till Date</th>
+              <td>
+                {{ transaction['total_amount'] }}Rs ({{ transaction['no_of_transactions'] }})
+              </td>
+            </tr>
+
+            <tr class="text-dark-3">
+              <th scope="row">Headaing 3</th>
+              <td>
+                Row 3
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if transaction %}
+<section class="my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <table class="table mt-4">
+          <thead>
             <tr>
+              <th scope="col" colspan="4">
+                <h1 class="text-orange-1 text-center">Transaction Summary</h1>
+                <p class="text-dark-3 text-center">The details of the transactions are listed here</p>
+                <p class="text-orange-3 text-center">
+                  Number of Installments: {{ transaction["no_of_transactions"] }}
+                </p>
+              </th>
+            </tr>
+          </thead>
+          <tr>
             <th>Transaction No.</th>
             <th>Date</th>
             <th>Transaction Amount</th>
@@ -55,24 +87,11 @@
             {% endif %}
           </tr>
           {% endfor %}
-          <tr>
-            <td>
-              <h4>Total Expenses - {{ transaction.no_of_transactions }}</h4>
-            </td>
-          </tr>      
-          <tr>      
-            <td>
-              <h4>
-              Total Amount Spent - {{ transaction.total_amount }} RS
-              </h4>
-            </td>
-          </tr>
-          {% endif %}
-        </tbody>
         </table>
-        </div>
+      </div>
     </div>
   </div>
 </section>
+{% endif %}
 
 {% endblock %}
