@@ -46,15 +46,15 @@ VALUES
 INSERT INTO plot 
     (`id`, `type`, `address`, `status`,`price`, `size`, `comments`)
 VALUES 
-    (1 , "residential", "first"   , "in a deal", 100000, "7", "This is Plot# 1"),
-    (2 , "residential", "second"  , "in a deal", 100000, "2", "This is Plot# 2"),
-    (3 , "residential", "third"   , "in a deal", 100000, "5", "This is Plot# 3"),
-    (4 , "residential", "fouth"   , "in a deal", 100000, "5", "This is Plot# 4"),
+    (1 , "residential", "first"   , "sold"     , 100000, "7", "This is Plot# 1"),
+    (2 , "residential", "second"  , "sold"     , 100000, "2", "This is Plot# 2"),
+    (3 , "residential", "third"   , "sold"     , 100000, "5", "This is Plot# 3"),
+    (4 , "residential", "fouth"   , "sold"     , 100000, "5", "This is Plot# 4"),
     (5 , "residential", "fifth"   , "in a deal", 100000, "7", "This is Plot# 5"),
     (6 , "residential", "sixth"   , "in a deal", 100000, "5", "This is Plot# 6"),
     (7 , "residential", "seventh" , "not sold" , NULL  , "7", "This is Plot# 7"),
-    (11, "commercial" , "eleven"  , "in a deal", 100000, "5", "This is Plot# 11"),
-    (12, "commercial" , "twelve"  , "in a deal", 100000, "5", "This is Plot# 12"),
+    (11, "commercial" , "eleven"  , "sold"     , 100000, "5", "This is Plot# 11"),
+    (12, "commercial" , "twelve"  , "sold"     , 100000, "5", "This is Plot# 12"),
     (13, "commercial" , "thirteen", "in a deal", 100000, "5", "This is Plot# 13"),
     (14, "commercial" , "fourteen", "in a deal", 100000, "5", "This is Plot# 14"),
     (15, "commercial" , "fifteen" , "in a deal", 100000, "5", "This is Plot# 15"),

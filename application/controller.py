@@ -561,12 +561,8 @@ def dealinfo_(deal_id):
     total_commission      = len(deal.commissions)
     total_commission_paid = sum([commission.transaction.amount for commission in deal.commissions])
     
-    if not transaction:
-        transaction_data = None
-    else:
-        transaction_data = calc_deal_transaction_data(deal_id, transaction, plot)        
-
-
+    transaction_data = (len(transaction) and calc_deal_transaction_data(deal_id, transaction, plot)) or None
+    
     return render_template('dealinfo.html', 
                             deal                    = deal,
                             transaction             = transaction_data, 
@@ -595,6 +591,7 @@ def expenditureinfo_(expenditure_id):
 
 def employeeinfo_(employee_id):
     employee = User.query.get(int(employee_id))
+    
     if employee is None:
         flash('No Such Employee exists', 'danger')
         return redirect(url_for('display', active='employee'))

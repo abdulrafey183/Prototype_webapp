@@ -107,6 +107,21 @@
             </tr>
             {% endif %}
 
+            {% if deal.commission_agent_id %}
+            <tr class="text-dark-3">
+              <th scope="row">Commission Agent</th>
+              <td>
+                <a href='/agent/{{deal.commission_agent_id}}'>
+                {{deal.commissionagent.person.name}}
+                </a>
+              </td>
+            </tr>
+            <tr class="text-dark-3">
+              <th scope="row">Commission Rate</th>
+              <td>{{deal.commission_rate}}</td>
+            </tr>
+            {% endif %}
+
             {% if deal.files[0] %}
             <tr class="text-dark-3">
               <th scope="row">Attachments</th>
@@ -137,8 +152,7 @@
             <tr>
               <th scope="col" colspan="4">
                 <h1 class="text-orange-1 text-center">Transaction Summary</h1>
-                <p class="text-dark-3 text-center">The details of the transactions are listed here</p>
-                <p class="text-orange-3 text-center">Deal Id: {{ transaction["deal_id"] }}</p>
+                <p class="text-dark-3 text-center">The summary of the transactions are listed here</p>
                 <p class="text-orange-3 text-center">Number of Installments: {{
                   transaction["total_installments"] }}</p>
               </th>
@@ -159,7 +173,7 @@
             {% if transaction.comments %}
             <td>{{ transaction.comments }}</td>
             {% else %}
-            <td>No Comments</td>
+            <td align="center"> ------- </td>
             {% endif %}
           </tr>
           {% endfor %}
@@ -177,8 +191,8 @@
           <thead>
             <tr>
               <th scope="col" colspan="2">
-                <h1 class="text-orange-1 text-center">Transaction Analytics</h1>
-                <p class="text-dark-3 text-center">The summary of the transactions are listed here</p>
+                <h1 class="text-orange-1 text-center">Transaction Details</h1>
+                <p class="text-dark-3 text-center">The details of the transactions are listed here</p>
               </th>
             </tr>
           </thead>
@@ -208,14 +222,6 @@
               <td>{{ transaction["expected_amount"] }}</td>
             </tr>
             {% endif %}
-            <tr class="text-dark-3">
-              <th scope="row">Predicted Amount for Next Installments</th>
-              <td>{{ transaction["predicted_amount"] }} per installment</td>
-            </tr>
-            <tr class="text-dark-3">
-              <th scope="row">Predicted Number of Installments Left</th>
-              <td>{{ transaction["installment_left"] }}</td>
-            </tr>
             {% if transaction["expected_time_left"] %}
             <tr class="text-dark-3">
               <th scope="row">Expected Time Left</th>
