@@ -82,8 +82,9 @@ function make_buyer_card(buyer) {
     buyer.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
     "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody<tr class='text-dark-3'><th scope='row'>Name</th><td>" +
+    "<a href='/buyer/" + buyer.id + "'>" +
     buyer.person.name +
-    "</td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
+    "</a></td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
     buyer.person.cnic +
     '</td></tr><tr class="text-dark-3"><th scope="row">Phone</th><td>' +
     buyer.person.phone +
@@ -94,8 +95,7 @@ function make_buyer_card(buyer) {
     if(deal_ids != 'None'){
       str += '<tr class="text-dark-3"><th scope="row">Deals</th><td>' + deal_ids + '</td></tr>';
     }
-    str += '</tbody></table><a href="/buyer/' +
-    buyer.id + '">Show Details</a></div></div></div></section>' +
+    str += '</tbody></table></div></div></div></section>' +
     '</div></div></div></div>';
 
   return str;
@@ -119,7 +119,9 @@ function make_deal_card(deal) {
     "</td></tr><tr class='text-dark-3'><th scope='row'>Respective Plot</th><td>" +
     deal.plot_id +
     "</td></tr><tr class='text-dark-3'><th scope='row'>Respective Buyer</th><td>" +
+    "<a href='/buyer/" + deal.buyer_id + "'>" +
     deal.buyer_id +
+    "</a>"
     "</td></tr><tr class='text-dark-3'><td><a href='/deal/" +
     deal.id +
     "'>Show Details</a></td><td></td></tr></tbody></table></div></div></div></section>";
@@ -145,8 +147,9 @@ function make_CA_card(CA) {
     CA.person.id +
     "' class='collapse' aria-labelledby='headingOne' data-parent='#accordionExample'><div class='card-body'>" +
     "<section class='my-3'><div class='container'><div class='row'><div class='col-12'><table class='table mt-4'><tbody><tr class='text-dark-3'><th scope='row'>Name</th><td>" +
+    "<a href='/agent/" + CA.person.id + "'>" +
     CA.person.name +
-    "</td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
+    "</a></td></tr><tr class='text-dark-3'><th scope='row'>CNIC</th><td>" +
     CA.person.cnic +
     "</td></tr><tr class='text-dark-3'><th scope='row'>Phone</th><td>" +
     CA.person.phone +
@@ -157,8 +160,7 @@ function make_CA_card(CA) {
     str += "<tr class='text-dark-3'><th scope='row'>Deals</th><td>" + deal_ids + "</td></tr>";
   }
   str +=
-    '</tbody></table><a href="/agent/' +
-    CA.person.id + '">Show Details</a></div></div></div></section>' +
+    '</tbody></table></div></div></div></section>' +
     '</div></div></div></div>';
 
   return str;

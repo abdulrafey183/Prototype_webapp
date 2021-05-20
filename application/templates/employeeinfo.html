@@ -1,4 +1,4 @@
-//{% extends 'layout.html' %}
+{% extends 'layout.html' %}
 
 {% block content %}
 
@@ -85,7 +85,46 @@
         </table>
       </div>
     </div>
-  </div>
+  </div> 
 </section>
 
+{% if transactions %}
+<section class="my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th scope="col" colspan="4">
+                <h1 class="text-orange-1 text-center">Salary Transaction Summary</h1>
+                <p class="text-dark-3 text-center">The detail of the transactions are listed here</p>
+              </th>
+            </tr>
+          </thead>
+          <tr>
+            <th>Transaction No.</th>
+            <th>Date</th>
+            <th>Transaction Amount</th>
+            <th>Comments</th>
+          </tr>
+
+          {% for transaction in transactions %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ transaction.date_time }}</td>
+            <td>{{ transaction.amount }}</td>
+            {% if transaction.comments %}
+            <td>{{ transaction.comments }}</td>
+            {% else %}
+            <td align="center"> ------- </td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
 {% endblock %}

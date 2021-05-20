@@ -590,15 +590,16 @@ def expenditureinfo_(expenditure_id):
 
 
 def employeeinfo_(employee_id):
-    employee = User.query.get(int(employee_id))
-    
+    employee      = User.query.get(int(employee_id))
+
     if employee is None:
         flash('No Such Employee exists', 'danger')
         return redirect(url_for('display', active='employee'))
 
     total_salaries = len(employee.salaries) and sum(salary.transaction.amount for salary in employee.salaries)
-
-    return render_template('employeeinfo.html', employee=employee, total_salaries=len(employee.salaries), total_salaries_amount=total_salaries)
+    transactions   = [salary.transaction for salary in employee.salaries]
+    print(transactions)
+    return render_template('employeeinfo.html', employee=employee, total_salaries=len(employee.salaries), total_salaries_amount=total_salaries, transactions=transactions)
 
 
 ###------------------------END INFO ROUTES------------------------###
