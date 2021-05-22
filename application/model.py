@@ -195,7 +195,7 @@ class Deal(db.Model):
             'commission_agent_id'    : self.commission_agent_id if self.commission_agent_id else None,
             'buyer_id'               : self.buyer_id,
             'plot_id'                : self.plot_id,
-            'comments'               : self.comments
+            'comments'               : self.comments,
         }
 
 

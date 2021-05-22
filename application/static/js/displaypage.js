@@ -102,6 +102,7 @@ function make_buyer_card(buyer) {
 }
 
 function make_deal_card(deal) {
+  
   let str =
     "<div class='accordion' id='accordionExample'><div class='card'><div class='card-header' id='headingOne'><h2 class='mb-0'><button class='btn btn-link btn-block text-left' type='button' data-toggle='collapse' data-target='#collapseBuyer" +
     deal.id +
@@ -119,9 +120,8 @@ function make_deal_card(deal) {
     "</td></tr><tr class='text-dark-3'><th scope='row'>Respective Plot</th><td>" +
     deal.plot_id +
     "</td></tr><tr class='text-dark-3'><th scope='row'>Respective Buyer</th><td>" +
-    "<a href='/buyer/" + deal.buyer_id + "'>" +
-    deal.buyer_id +
-    "</a>"
+    "<a href='/buyer/" + deal.buyer_id + "'><div class='buyer-" + deal.buyer_id + "'>" +
+    "</div></a>" +
     "</td></tr><tr class='text-dark-3'><td><a href='/deal/" +
     deal.id +
     "'>Show Details</a></td><td></td></tr></tbody></table></div></div></div></section>";
@@ -189,7 +189,7 @@ function make_ET_card(ET) {
 
   return str;
 }
-
+ 
 function make_employee_card(employee) {
   let str =
     "<div class='accordion' id='accordionExample'><div class='card'><div class='card-header' id='headingOne'><h2 class='mb-0'><button class='btn btn-link btn-block text-left' type='button' data-toggle='collapse' data-target='#collapseBuyer" +
@@ -234,6 +234,8 @@ function inject_div(name, list) {
   for (let element of list) {
     str = make_card(element);
     $('#' + name + '-info').append(str);
+    if(name=='deal')
+      getbuyer(element.buyer_id);
   }
 }
 
@@ -241,6 +243,14 @@ function getall(name) {
   clicked(name || 'buyer');
   $.post('/rest/' + name + '/all', function (data) {
     inject_div(name, data.json_list);
+  });
+}
+
+function getbuyer(id) {
+  $.post('/rest/' + 'Buyer' + '/' + id, function (data) {
+    for (let element of data.json_list) {
+        $('.buyer-' + id).text(element.person.name);
+      }
   });
 }
 

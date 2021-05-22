@@ -272,6 +272,6 @@ def allEmployees(): return allEmployees_()
 
 @app.route('/rest/<table>/<id>', methods=[GET, POST])
 @login_required
-def getIDfromTable(table, id): return getIDfromTable_(table, id)
+def getIDfromTable(table, id): return getIDfromTable_(table, id) 
 
 ###------------------------END REST ROUTES------------------------###
