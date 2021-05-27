@@ -32,16 +32,20 @@
       <a class="navbar-brand" href="#"><i class="fas fa-home"></i> BUILD GUILD</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+        <span class="navbar-toggler-icon">
+          <i class="fas fa-bars" class="navbar-toggler-bars" style="color:#fff; font-size:28px;"></i>
+        </span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav text-right">
           <li class="nav-item active">
             <a class="nav-link" href="/">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('about') }}">About</a>
           </li>
+        </ul>
+        <ul class="navbar-nav ml-auto text-right">
           {% if current_user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
@@ -59,17 +63,14 @@
           {% endif %}
         </ul>
       </div>
+
     </div>
   </nav>
-
   <!-- NAVBAR ENDS -->
 
   <!-- MAIN CONTENT SECTION -->
 
   <div class="row">
-
-
-
     <div class="col-12">
       {% for category, message in get_flashed_messages(with_categories=true) %}
       {% if message %}
@@ -78,92 +79,65 @@
       </div>
       {% endif %}
       {% endfor %}
-
-      {% block content %} {% endblock %}
-
+      <div style="min-height: 100vh;">
+        {% block content %} {% endblock %}
+      </div>
     </div>
-
-
-
   </div>
 
   <!-- MAIN CONTENT SECTION ENDS -->
-
-  <!-- footer section -->
-  <!-- <footer class="footer">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-12 text-center">
-          <div class="social-icon">
-            <a href=""><i class="fab fa-facebook-f"></i></a>
-            <a href=""><i class="fab fa-twitter"></i></a>
-            <a href=""><i class="fab fa-instagram"></i></a>
-            <a href=""><i class="fab fa-pinterest"></i></a>
-            <a href=""><i class="fab fa-linkedin-in"></i></a>
-            <a href=""><i class="fab fa-youtube"></i></a>
-          </div><br>
-          <div class="copyright">
-            <p class="text-dark-2">BUILD GUILD &copy;</p>
-            <div class="bordernow"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer> -->
   <footer class="footer">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-12 col-md-4 mb-md-0 mb-5">
-          <div class="d-flex flex-column align-items-center footer-logo">
-            <i class="fas fa-home"></i><br>
-            <p>BUILD GUILD</p>
-          </div>
-        </div>
-        <div class="col-12 col-md-3 mb-md-0 mb-5">
-          <ul>
-            <li>
-              <p><a href="/" class="text-dark-3">Home</a></p>
-            </li>
-            <li>
-              <p><a href="{{ url_for('about') }}" class="text-dark-3">About Us</a></p>
-            </li>
-            {% if current_user.is_authenticated %}
-            <li>
-              <p><a href="{{ url_for('profile') }}" class="text-dark-3">Profile</a></p>
-            </li>
-            <li>
-              <p><a href="{{ url_for('logout') }}" class="text-dark-3">Logout</a></p>
-            </li>
-            {% else %}
-            <li>
-              <p><a href="#" class="text-dark-3">Map</a></p>
-            </li>
-            <li>
-              <p><a href="{{ url_for('login') }}" class="text-dark-3">Login</a></p>
-            </li>
-            {% endif %}
-          </ul>
-        </div>
-        <div class="col-12 col-md-5">
-          <ul>
-            <li>
-              <p><i class="fas fa-map-marker-alt mr-2"></i><a href="#" class="text-dark-3">H-12 Nust
-                  Islamabad
-                  Pakistan</a></p>
-            </li>
-            <li>
-              <p><i class="fas fa-phone-alt mr-2"></i><a href="#" class="text-dark-3">+92-321-7657664</a></p>
-            </li>
-            <li>
-              <p><i class="far fa-envelope mr-2"></i><a href="#" class="text-dark-3">buildguild@gmail.com</a></p>
-            </li>
-            <li>
-              <p><i class="fas fa-globe mr-2"></i><a href="#" class="text-dark-3">www.buildguild.com</a></p>
-            </li>
-          </ul>
-        </div>
+    <div class="row align-items-center">
+      <div class="col-12 col-md-6 mb-md-0 mb-5 text-center">
+        <!-- <div class="d-flex flex-column align-items-center footer-logo">
+          <i class="fas fa-home"></i><br>
+          <p>BUILD GUILD</p>
+        </div> -->
+        <ul>
+          <li>
+            <p><a href="/" class="text-light-3">Home</a></p>
+          </li>
+          <li>
+            <p><a href="{{ url_for('about') }}" class="text-light-3">About Us</a></p>
+          </li>
+          {% if current_user.is_authenticated %}
+          <li>
+            <p><a href="{{ url_for('profile') }}" class="text-light-3">Profile</a></p>
+          </li>
+          <li>
+            <p><a href="{{ url_for('logout') }}" class="text-light-3">Logout</a></p>
+          </li>
+          {% else %}
+          <li>
+            <p><a href="#" class="text-light-3">Map</a></p>
+          </li>
+          <li>
+            <p><a href="{{ url_for('login') }}" class="text-light-3">Login</a></p>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="col-12 col-md-6 text-center">
+        <ul>
+          <li>
+            <p><i class="fas fa-map-marker-alt mr-2"></i><a href="#" class="text-light-3">H-12 Nust
+                Islamabad
+                Pakistan</a></p>
+          </li>
+          <li>
+            <p><i class="fas fa-phone-alt mr-2"></i><a href="#" class="text-light-3">+92-321-7657664</a></p>
+          </li>
+          <li>
+            <p><i class="far fa-envelope mr-2"></i><a href="#" class="text-light-3">buildguild@gmail.com</a></p>
+          </li>
+          <li>
+            <p><i class="fas fa-globe mr-2"></i><a href="#" class="text-light-3">www.buildguild.com</a></p>
+          </li>
+        </ul>
       </div>
     </div>
+
   </footer>
 
   <!-- SCRIPTS -->

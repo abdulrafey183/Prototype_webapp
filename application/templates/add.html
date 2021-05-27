@@ -15,33 +15,33 @@
 		<br><br>
 		<div class="row">
 
-			<div class="col-12 col-md-6 col-xl-4">
+			<div class="col-12 col-md-6 col-xl-3 px-3">
 				<a href="{{ url_for('addbuyeroragent') }}">
 					<div class="service-wrap text-center">
 						<div class="service-icon">
 							<i class="fas fa-user-tie"></i>
 						</div>
-						<h3>Add Buyer<br>OR<br> Commission Agent</h3>
+						<h3>Add Buyer / Commission Agent</h3>
 						<p>Add new buyer/agent record</p>
 					</div>
 				</a>
 			</div>
 
 			{% if not current_user.rank %}
-			<div class="col-12 col-md-6 col-xl-4">
+			<div class="col-12 col-md-6 col-xl-3 px-3">
 				<a href="{{ url_for('add_user_or_employee') }}">
 					<div class="service-wrap text-center">
 						<div class="service-icon">
 							<i class="fas fa-user"></i>
 						</div>
-						<h3>Register User<br>or<br>Employee</h3>
+						<h3>Register User / Employee</h3>
 						<p>Register a new User or Employee to the System</p>
 					</div>
 				</a>
 			</div>
 			{% endif %}
 
-			<div class="col-12 col-md-6 col-xl-4">
+			<div class="col-12 col-md-6 col-xl-3 px-3">
 				<a href="{{ url_for('adddeal') }}">
 					<div class="service-wrap text-center">
 						<div class="service-icon">
@@ -53,7 +53,7 @@
 				</a>
 			</div>
 
-			<div class="col-12 col-md-6 col-xl-4">
+			<div class="col-12 col-md-6 col-xl-3 px-3">
 				<a href="{{ url_for('addnotes') }}">
 					<div class="service-wrap text-center">
 						<div class="service-icon">
@@ -65,7 +65,7 @@
 				</a>
 			</div>
 
-			<div class="col-12 col-md-6 col-xl-4">
+			<div class="col-12 col-md-6 col-xl-3 px-3">
 				<a href="{{ url_for('display', active='deal+') }}">
 					<div class="service-wrap text-center">
 						<div class="service-icon">
@@ -77,18 +77,18 @@
 				</a>
 			</div>
 
-			<div class="col-12 col-md-6 col-xl-4">
+			<div class="col-12 col-md-6 col-xl-3 px-3">
 				<a href="{{ url_for('addexpense') }}">
 					<div class="service-wrap text-center">
 						<div class="service-icon">
-							<i class="far fa-credit-card"></i>
+							<i class="fas fa-hand-holding-usd"></i>
 						</div>
 						<h3>Add New Expense</h3>
 						<p>Add Expenses</p>
 					</div>
 				</a>
 			</div>
-		
+
 		</div>
 	</div>
 </section>

@@ -1,21 +1,30 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<div class="container mt-5">
 
 	<form method="POST" action="{{ url_for('analytics') }}">
 
 		{{ form.csrf_token }}
-						
-		<legend class="text-orange-1 text-center">
-			Expenditure Macro Anaytics
-		</legend>
-		<p class="text-dark-3 text-center">
-			Choose A Time Period
-		</p>
+		<div class="container">
 
-		<div id="shortcuts-div">
-			{{ form.shortcuts.label }}
-			{{ form.shortcuts(class='form-control') }}
+			<legend class="text-orange-1 text-center">
+				Expenditure Macro Anaytics
+			</legend>
+			<p class="text-dark-3 text-center">Choose A Time Period</p>
+		</div>
+
+		<div class="container">
+			<div class="d-flex align-items-end">
+
+				<div id="shortcuts-div" style="flex: 0.9;">
+					{{ form.shortcuts.label(class='text-dark-3') }}
+					{{ form.shortcuts(class='form-control') }}
+				</div>
+				<div class="btn-center" style="flex: 0.1;">
+					{{ form.show(class='btn btn-outline-dark') }}
+				</div>
+			</div>
 		</div>
 
 		<br>
@@ -47,128 +56,130 @@
 			{{ form.end(class='form-control', type='date') }}
 			{% endif %}
 		</div>
-
-		<br>
-		<div class="btn-center">
-			{{ form.show(class='btn btn-outline-dark') }}
-		</div>
-					
 	</form>
+</div>
 
-	<script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-core.min.js"></script>
-	<script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-bundle.min.js"></script>
-    <script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-pie.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-bundle.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.0.1/js/anychart-pie.min.js"></script>
 
 
-    <div class="row">  
+<div class="container my-5">
+	<div class="row">
 		{% if total_expenses %}
-		<div id="expenses-chart" style="width: 100%; height: 100%"></div>
+		<div id="expenses-chart"></div>
 		{% endif %}
 		<br><br><br><br>
 	</div>
+</div>
 
+<div class="container mb-5">
+	{% if total_revenue %}
+	<p class="text-dark-3">Select type of graph</p>
+	{% endif %}
 	<div class="row">
 		{% if total_revenue %}
 		<select id="typeSelect" onchange="switchType()" style="margin: 10px 0 0 10px">
-		    <option value="area">Area</option>
-		    <option value="column">Column</option>
-		    <option value="jump-line">Jump Line</option>
-		    <option value="line">Line</option>
-		    <option value="marker">Marker</option>  
-		    <option value="spline-area">Spline Area</option>  
-		    <option value="spline">Spline</option>
-		    <option value="step-area">Step Area</option>
-		    <option value="step-line">Step Line</option>
-		    <option value="stick">Stick</option>
+			<option value="area">Area</option>
+			<option value="column">Column</option>
+			<option value="jump-line">Jump Line</option>
+			<option value="line">Line</option>
+			<option value="marker">Marker</option>
+			<option value="spline-area">Spline Area</option>
+			<option value="spline">Spline</option>
+			<option value="step-area">Step Area</option>
+			<option value="step-line">Step Line</option>
+			<option value="stick">Stick</option>
 		</select>
-		<div id="revenue-chart" style="width: 100%; height: 100%"></div>
+		<div id="revenue-chart"></div>
 		{% endif %}
-		
 	</div>
-	
+</div>
+
 
 {% endblock %}
 
 {% block script %}
 <script type="text/javascript">
 
-	$(function() {
-    	if($('#shortcuts').val() == 8){
-    		$('#start-div').show();
-			$('#end-div').show();
-			$('#start').prop('required', true);
-			$('#end').prop(  'required', true);
-    	}
-	});
-	
-	$('#shortcuts').on('change', function(){
-		if (this.value == 8){
+	$(function () {
+		if ($('#shortcuts').val() == 8) {
 			$('#start-div').show();
 			$('#end-div').show();
 			$('#start').prop('required', true);
-			$('#end').prop(  'required'  , true);
+			$('#end').prop('required', true);
 		}
-		else{
+	});
+
+	$('#shortcuts').on('change', function () {
+		if (this.value == 8) {
+			$('#start-div').show();
+			$('#end-div').show();
+			$('#start').prop('required', true);
+			$('#end').prop('required', true);
+		}
+		else {
 			$('#start-div').hide();
 			$('#end-div').hide();
 			$('#start').val('');
 			$('#end').val('');
 			$('#start').prop('required', false);
-			$('#end').prop(  'required'  , false);
+			$('#end').prop('required', false);
 		}
 	})
 
-	
-	
+
+
 
 	{% if total_expenses %}
 
 	var series;
 
-	anychart.onDocumentReady(function() {
+	anychart.onDocumentReady(function () {
 
 		// Creating Expense Pie Chart
-		let expenses_json_text  = "{{ total_expenses }}".replace(/&#39;/g, '"');
-		let expenses_json_data  =  JSON.parse(expenses_json_text);
-		var expenses_data       = []
+		let expenses_json_text = "{{ total_expenses }}".replace(/&#39;/g, '"');
+		let expenses_json_data = JSON.parse(expenses_json_text);
+		var expenses_data = []
 
 		for (let [name, amount] of Object.entries(expenses_json_data)) {
-		  expenses_data.push({x: name, value: amount});
+			expenses_data.push({ x: name, value: amount });
 		}
-		
-	    var pie_chart = anychart.pie();
-	    pie_chart.title("{{ expenses_title }}");
-	    pie_chart.data(expenses_data); 
-		pie_chart.sort("desc");   
-		pie_chart.legend().position("right");		
-		pie_chart.legend().itemsLayout("vertical");	    	
-	    pie_chart.container('expenses-chart');
-	    pie_chart.draw();
+
+		var pie_chart = anychart.pie();
+		pie_chart.title("{{ expenses_title }}");
+		pie_chart.data(expenses_data);
+		pie_chart.sort("desc");
+		pie_chart.legend().position("right");
+		pie_chart.legend().itemsLayout("vertical");
+		pie_chart.container('expenses-chart');
+		pie_chart.draw();
 
 
-	    // Creating Revenue Chart
-		let revenue_json_text  = "{{ total_revenue }}".replace(/&#39;/g, '"');
-		let revenue_json_data  =  JSON.parse(revenue_json_text);
-		var revenue_data       = []
+		// Creating Revenue Chart
+		let revenue_json_text = "{{ total_revenue }}".replace(/&#39;/g, '"');
+		let revenue_json_data = JSON.parse(revenue_json_text);
+		var revenue_data = []
 
 		console.log(revenue_json_data)
-		for (let [date, amount] of Object.entries(revenue_json_data)) {		  
-		  revenue_data.push([date, amount]);
+		for (let [date, amount] of Object.entries(revenue_json_data)) {
+			revenue_data.push([date, amount]);
 		}
 
 		var revenue_chart = anychart.area();
-		series   		  = revenue_chart.area(revenue_data);
+		series = revenue_chart.area(revenue_data);
 		revenue_chart.title("{{ revenue_title }}");
 		revenue_chart.container('revenue-chart');
-	    revenue_chart.draw();	    
-	});	
+		revenue_chart.draw();
+	});
 	{% endif %}
 
 	// switch the series type
 	function switchType() {
-	  var select = document.getElementById("typeSelect");
-	  series.seriesType(select.value);
+		var select = document.getElementById("typeSelect");
+		series.seriesType(select.value);
 	}
 
 </script>
+
 {% endblock %}

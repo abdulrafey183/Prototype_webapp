@@ -1,27 +1,29 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-
-<div class="row">
-	<div class="container d-flex justify-content-center">
-		<button id="buyer-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('buyer')">
-			<div class="d-flex flex-column"><i class="fas fa-user-tie mb-1"></i><small>Buyers</small></div>
-		</button>
-		<button id="plot-button" class="btn mx-1 py-2 px-2" onclick="getall('plot')">
-			<div class="d-flex flex-column"><i class="fas fa-map-pin mb-1"></i><small>Plots</small></div>
-		</button>
-		<button id="deal-button" class="btn mx-1 py-2 px-2" onclick="getall('deal')">
-			<div class="d-flex flex-column"><i class="far fa-handshake mb-1"></i><small>Deals</small></div>
-		</button>
-		<button id="CA-button" class="btn mx-1 py-2 px-2" onclick="getall('CA')">
-			<div class="d-flex flex-column"><i class="fas fa-user-tie mb-1"></i><small>Agents</small></div>
-		</button>
-		<button id="ET-button" class="btn mx-1 py-2 px-2" onclick="getall('ET')">
-			<div class="d-flex flex-column"><i class="far fa-credit-card mb-1"></i><small>Expenditure Types</small></div>
-		</button>
-		<button id="employee-button" class="btn mx-1 py-2 px-2" onclick="getall('employee')">
-			Employees
-		</button>
+<div class="row pt-3">
+	<div class="container">
+		<div class="display-page d-flex justify-content-around">
+			<a id="buyer-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('buyer')">
+				<div class="d-flex flex-column"><i class="fas fa-user-tie mb-1"></i><small>Buyers</small></div>
+			</a>
+			<a id="plot-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('plot')">
+				<div class="d-flex flex-column"><i class="fas fa-map-pin mb-1"></i><small>Plots</small></div>
+			</a>
+			<a id="deal-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('deal')">
+				<div class="d-flex flex-column"><i class="far fa-handshake mb-1"></i><small>Deals</small></div>
+			</a>
+			<a id="CA-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('CA')">
+				<div class="d-flex flex-column"><i class="fas fa-user-tie mb-1"></i><small>Agents</small></div>
+			</a>
+			<a id="ET-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('ET')">
+				<div class="d-flex flex-column"><i class="far fa-credit-card mb-1"></i><small>Expenditure Types</small>
+				</div>
+			</a>
+			<a id="employee-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('employee'); active()">
+				<div class="d-flex flex-column"><i class="far fa-user mb-1"></i><small>Employees</small></div>
+			</a>
+		</div>
 	</div>
 </div>
 
@@ -34,16 +36,14 @@
 
 	<!-- Div to display Plots -->
 	<div id="plot-div">
-
-		<div class="row pl-4 my-3">
-			<div class="col-2">
-				{{ filterPlotForm.status.label }}
-			</div>
-			<div class="col-6">
+		{{ filterPlotForm.status.label(class='text-dark-3') }}
+		<br>
+		<div class="d-flex justify-content-between my-3">
+			<div style="flex:0.9">
 				{{ filterPlotForm.status(class='form-control') }}
 			</div>
-			<div class="col-4">
-				{{ filterPlotForm.filter(class='btn btn-outline-primary', id='filterPlot-btn') }}
+			<div style="flex:0.1">
+				{{ filterPlotForm.filter(class='btn btn-outline-primary mx-4', id='filterPlot-btn') }}
 			</div>
 		</div>
 
