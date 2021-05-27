@@ -1,187 +1,186 @@
 {% extends 'layout.html' %}
- 
+
 {% block content %}
 <!-- new -->
 <div class="container my-5">
   <div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-12 col-md-6">    
+    <div class="col-md-2"></div>
+    <div class="col-12 col-md-8">
       <form method="POST" action="{{ url_for('addbuyeroragent') }}" enctype="multipart/form-data" class="form-style">
         <fieldset class="form-group">
           {{ form.csrf_token }}
-          <legend class="text-orange-1 text-center" id="title">Add Buyer<br>OR<br>Commission Agent
+          <legend class="text-orange-1 text-center" id="title">Add Buyer / Commission Agent
           </legend>
           <p id="sub-text" class="text-dark-3 text-center">Add new Buyer or Commission Agent Record</p>
-          <br> 
+          <br>
           {{form.errors}}
           <div id="ET_id-div">
-              {{ form.entity.label }}
-              {{ form.entity(class='form-control', id='record-type') }}
-              <a class="span-link" id="new">
-                Select Entity to Add
-              </a>
-              <br>
-          </div>            
-
-    		  <div class="form-group">
-            	{{ form.name.label }}
-              
-            	{% if form.name.errors %}
-            	{{ form.name(class='form-control is-invalid') }}
-          	  <div class="invalid-feedback">
-                {% for error in form.name.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-          	  </div>
-              {% else %}
-              {{ form.name(class='form-control') }}
-              {% endif %}
+            {{ form.entity.label }}
+            {{ form.entity(class='form-control', id='record-type') }}
+            <a class="span-link" id="new">
+              Select Entity to Add
+            </a>
+            <br>
           </div>
 
           <div class="form-group">
-              {{ form.phone.label(class='phone-label') }}
+            {{ form.name.label }}
 
-              {% if form.phone.errors %}
-              {{ form.phone(class='form-control is-invalid') }}
-              <div class="invalid-feedback">
-                {% for error in form.phone.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-              </div>
-                {% else %}
-                {{ form.phone(class='form-control') }}
-                {% endif %}     
+            {% if form.name.errors %}
+            {{ form.name(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.name.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
             </div>
+            {% else %}
+            {{ form.name(class='form-control') }}
+            {% endif %}
+          </div>
 
-            <div class="form-group">
-              {{ form.email.label }}
+          <div class="form-group">
+            {{ form.phone.label(class='phone-label') }}
 
-              {% if form.email.errors %}
-              {{ form.email(class='form-control is-invalid') }}
-              <div class="invalid-feedback">
-                {% for error in form.email.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-              </div>
-                {% else %}
-                {{ form.email(class='form-control') }}
-                {% endif %}
+            {% if form.phone.errors %}
+            {{ form.phone(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.phone.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
             </div>
+            {% else %}
+            {{ form.phone(class='form-control') }}
+            {% endif %}
+          </div>
 
-            <div id="buyer-address" class="form-group">
-                {{ form.address.label }}
+          <div class="form-group">
+            {{ form.email.label }}
 
-                {% if form.address.errors %}
-                {{ form.address(class='form-control is-invalid') }}
-              <div class="invalid-feedback">
-                {% for error in form.address.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-              </div>
-                {% else %}
-                {{ form.address(class='form-control') }}
-                {% endif %}       
+            {% if form.email.errors %}
+            {{ form.email(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.email.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
             </div>
-	      
-      		  <div class="form-group">
-              	{{ form.cnic.label(class='cnic-label') }}
+            {% else %}
+            {{ form.email(class='form-control') }}
+            {% endif %}
+          </div>
 
-                {% if form.cnic.errors %}
-              	{{ form.cnic(class='form-control is-invalid') }}
-              <div class="invalid-feedback">
-                {% for error in form.cnic.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-              </div>
-                {% else %}
-                {{ form.cnic(placeholder="Enter numbers only", class='form-control') }}
-                {% endif %}       
+          <div id="buyer-address" class="form-group">
+            {{ form.address.label }}
+
+            {% if form.address.errors %}
+            {{ form.address(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.address.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
             </div>
+            {% else %}
+            {{ form.address(class='form-control') }}
+            {% endif %}
+          </div>
 
-            <div class="form-group">
-                {{ form.cnic_front.label }}  
+          <div class="form-group">
+            {{ form.cnic.label(class='cnic-label') }}
 
-                {% if form.cnic_front.errors %}
-                {{ form.cnic_front(class="form-control-file") }}
-              <div>
-                {% for error in form.cnic_front.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-                  {% else %}
-                  {{ form.cnic_front(class="form-control-file") }}
-                  {% endif %}       
-              </div>
-
-            <div class="form-group">
-                {{ form.cnic_back.label }} 
-
-                {% if form.cnic_back.errors %}
-                {{ form.cnic_back(class="form-control-file") }}
-              <div>
-                {% for error in form.cnic_back.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-                {% else %}
-                {{ form.cnic_back(class="form-control-file") }}
-                {% endif %}
+            {% if form.cnic.errors %}
+            {{ form.cnic(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.cnic.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
             </div>
+            {% else %}
+            {{ form.cnic(placeholder="Enter numbers only", class='form-control') }}
+            {% endif %}
+          </div>
 
-		        <div class="form-group">
-        	     {{ form.comments.label }}
-     	
-        	     {% if form.comments.errors %}
-        	     {{ form.comments(class='form-control is-invalid') }}
-          	<div class="invalid-feedback">
-                {% for error in form.comments.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-          	</div>
-          	   {% else %}
-               {{ form.comments(placeholder="Leave empty if no comments", class='form-control') }}
-               {% endif %}
+          <div class="form-group">
+            {{ form.cnic_front.label }}
+
+            {% if form.cnic_front.errors %}
+            {{ form.cnic_front(class="form-control-file") }}
+            <div>
+              {% for error in form.cnic_front.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
             </div>
+            {% else %}
+            {{ form.cnic_front(class="form-control-file") }}
+            {% endif %}
+          </div>
 
-            <div class="form-group btn-center">
+          <div class="form-group">
+            {{ form.cnic_back.label }}
+
+            {% if form.cnic_back.errors %}
+            {{ form.cnic_back(class="form-control-file") }}
+            <div>
+              {% for error in form.cnic_back.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %}
+            {{ form.cnic_back(class="form-control-file") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.comments.label }}
+
+            {% if form.comments.errors %}
+            {{ form.comments(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+              {% for error in form.comments.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %}
+            {{ form.comments(placeholder="Leave empty if no comments", class='form-control') }}
+            {% endif %}
+          </div>
+
+          <div class="form-group btn-center">
             <button type="submit" class="btn btn-outline-dark">Submit</button>
-            </div>
-	        </fieldset>
-	      </form>
-      </div>
-      <div class="col-md-3"></div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="col-md-2"></div>
   </div>
 </div>
 {% endblock %}
 
 {% block script %}
 <script type="text/javascript">
-  
+
   /** Setting Form Input based on the Dropdown Value **/
 
   $('.form-control-file').prop('required', true)
 
-  $('#record-type').on('change', function(){
-    var select =  $('#record-type').find(":selected").val();
+  $('#record-type').on('change', function () {
+    var select = $('#record-type').find(":selected").val();
     console.log(select);
-  
-    if(select == 'Buyer'){
+
+    if (select == 'Buyer') {
       $('#address').prop('required', true)
       $('#buyer-address').show();
     }
-    else if(select == 'Commission Agent'){
+    else if (select == 'Commission Agent') {
       $('#address').prop('required', false)
       $('#buyer-address').hide();
     }
   });
 
-  if($('#record-type').find(":selected").val() == 'Commission Agent'){
-      $('#address').prop('required', false)
-      $('#buyer-address').hide();
-    }
+  if ($('#record-type').find(":selected").val() == 'Commission Agent') {
+    $('#address').prop('required', false)
+    $('#buyer-address').hide();
+  }
 
 
 </script>
 
 {% endblock %}
-
