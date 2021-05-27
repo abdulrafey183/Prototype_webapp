@@ -4,7 +4,8 @@
 <div class="row pt-3">
 	<div class="container">
 		<div class="display-page d-flex justify-content-around">
-			<a id="buyer-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('buyer')">
+			<a id="buyer-button" class="btn mx-1 py-2 px-2 display-button display-button-active"
+				onclick="getall('buyer')">
 				<div class="d-flex flex-column"><i class="fas fa-user-tie mb-1"></i><small>Buyers</small></div>
 			</a>
 			<a id="plot-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('plot')">
@@ -70,9 +71,10 @@
 	<div id="ET-div">
 		<div id="ET-info">
 		</div>
-		<br><br>
+		<br>
 		<span>
-			<a href="{{ url_for('addexpendituretype') }}">Add New Expenditure Type</a>
+			<a href="{{ url_for('addexpendituretype') }}" style='color: #7c91df; text-decoration: none;'>Add New
+				Expenditure Type</a>
 		</span>
 	</div>
 
@@ -88,4 +90,10 @@
 {% block script %}
 <script src="{{ url_for('static', filename='js/displaypage.js') }}"></script>
 <script type="text/javascript">getall("{{ active }}")</script>
+<script>
+	$("a").click(function () {
+		$("a.display-button-active").removeClass("display-button-active");
+		$(this).addClass("display-button-active");
+	});
+</script>
 {% endblock %}

@@ -17,45 +17,49 @@
 		<div class="container">
 			<div class="d-flex align-items-end">
 
-				<div id="shortcuts-div" style="flex: 0.9;">
+				<div id="shortcuts-div" style="flex: 0.925;">
 					{{ form.shortcuts.label(class='text-dark-3') }}
 					{{ form.shortcuts(class='form-control') }}
 				</div>
-				<div class="btn-center" style="flex: 0.1;">
+				<div class="btn-center" style="flex: 0.075;">
 					{{ form.show(class='btn btn-outline-dark') }}
 				</div>
 			</div>
 		</div>
 
 		<br>
-		<div id='start-div' style="display: none">
-			{{ form.start.label }}
-			{% if form.start.errors %}
-			{{ form.start(class='form-control is-invalid', type='date') }}
-			<div class="invalid-feedback">
-				{% for error in form.start.errors %}
-				<span>{{ error }}</span>
-				{% endfor %}
+		<div class="container">
+			<div class="d-flex">
+
+				<div id='start-div' style="display: none; flex: 0.5;" class='pr-2'>
+					{{ form.start.label(class='text-dark-3') }}
+					{% if form.start.errors %}
+					{{ form.start(class='form-control is-invalid', type='date') }}
+					<div class="invalid-feedback">
+						{% for error in form.start.errors %}
+						<span>{{ error }}</span>
+						{% endfor %}
+					</div>
+					{% else %}
+					{{ form.start(class='form-control', type='date') }}
+					{% endif %}
+				</div>
+				<div id='end-div' style="display: none; flex: 0.5;" class='pl-2'>
+					{{ form.end.label(class='text-dark-3') }}
+					{% if form.end.errors %}
+					{{ form.end(class='form-control is-invalid', type='date') }}
+					<div class="invalid-feedback">
+						{% for error in form.end.errors %}
+						<span>{{ error }}</span>
+						{% endfor %}
+					</div>
+					{% else %}
+					{{ form.end(class='form-control', type='date') }}
+					{% endif %}
+				</div>
 			</div>
-			{% else %}
-			{{ form.start(class='form-control', type='date') }}
-			{% endif %}
 		</div>
 
-		<br>
-		<div id='end-div' style="display: none">
-			{{ form.end.label }}
-			{% if form.end.errors %}
-			{{ form.end(class='form-control is-invalid', type='date') }}
-			<div class="invalid-feedback">
-				{% for error in form.end.errors %}
-				<span>{{ error }}</span>
-				{% endfor %}
-			</div>
-			{% else %}
-			{{ form.end(class='form-control', type='date') }}
-			{% endif %}
-		</div>
 	</form>
 </div>
 
@@ -74,12 +78,10 @@
 </div>
 
 <div class="container mb-5">
-	{% if total_revenue %}
-	<p class="text-dark-3">Select type of graph</p>
-	{% endif %}
 	<div class="row">
 		{% if total_revenue %}
-		<select id="typeSelect" onchange="switchType()" style="margin: 10px 0 0 10px">
+		<p class="text-dark-3">Select type of graph</p>
+		<select class='col-12' id="typeSelect" onchange="switchType()" style="margin: 10px 0 0 10px">
 			<option value="area">Area</option>
 			<option value="column">Column</option>
 			<option value="jump-line">Jump Line</option>
@@ -91,7 +93,8 @@
 			<option value="step-line">Step Line</option>
 			<option value="stick">Stick</option>
 		</select>
-		<div id="revenue-chart"></div>
+
+		<div class='col-12' id="revenue-chart"></div>
 		{% endif %}
 	</div>
 </div>

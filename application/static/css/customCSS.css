@@ -40,7 +40,7 @@ body {
 }
 
 .color-2 {
-  background-color: #2f4858;
+  color: #7c91df;
 }
 
 .text-dark-1 {
@@ -545,8 +545,10 @@ ul {
   font-weight: 600;
   text-transform: initial;
 }
-.accordion .card .card-header .btn:hover {
+.accordion .card .card-header .btn:hover,
+.accordion .card .card-header .btn:focus {
   text-decoration: none;
+  box-shadow: none;
 }
 
 #expenses-chart {
@@ -599,7 +601,7 @@ a.text-light-3:hover {
   width: 200px;
 }
 
-.display-button:active {
+.display-button-active {
   color: #7c91df !important;
   border-bottom: 5px solid #7c91df !important;
 }
