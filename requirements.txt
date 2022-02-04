@@ -4,4 +4,4 @@ Flask-SQLAlchemy
 Flask-Login
 flask-cors
 mysqlclient
-flask_wtf
+flask-wtf
