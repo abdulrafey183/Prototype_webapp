@@ -161,14 +161,14 @@ def addbuyeroragent_():
             person_id = create_person(form)
 
             if entity == 'Buyer':
-                active = 'buyer'
+                active    = 'buyer'
                 db_entity = Buyer(
                     address    = form.address.data,
                     person_id  = person_id                
                 )
 
             elif entity == 'Commission Agent':
-                active = 'CA'
+                active    = 'CA'
                 db_entity = CommissionAgent(
                     person_id = person_id
                 )
@@ -176,21 +176,23 @@ def addbuyeroragent_():
             db.session.add(db_entity)
             db.session.commit()
 
-            file1 = create_file(
-                    filename  = form.cnic.data + 'front',
-                    format    = form.cnic_front.filename.split('.')[-1],
-                    data      = form.cnic_front.data.read(),
-                    deal_id   = db.null(),
-                    person_id = person_id
-                )
+            # file1 = create_file(
+            #         filename  = form.cnic.data + 'front',
+            #         format    = form.cnic_front.filename.split('.')[-1],
+            #         data      = form.cnic_front.data.read(),
+            #         deal_id   = db.null(),
+            #         person_id = person_id
+            #     )
 
-            file2 = create_file(
-                    filename  = form.cnic.data + 'back',
-                    format    = form.cnic_back.filename.split('.')[-1],
-                    data      = form.cnic_back.data.read(),
-                    deal_id   = db.null(),
-                    person_id = person_id
-                )
+            # file2 = create_file(
+            #         filename  = form.cnic.data + 'back',
+            #         format    = form.cnic_back.filename.split('.')[-1],
+            #         data      = form.cnic_back.data.read(),
+            #         deal_id   = db.null(),
+            #         person_id = person_id
+            #     )
+
+            ###---ADD FILES TO DATABASE---###
 
             if entity == 'Commission Agent':
                 id = db_entity.person.id
@@ -200,7 +202,11 @@ def addbuyeroragent_():
             flash(f'SUCCESS: {entity} "{form.name.data}" added to record', 'success')
             return redirect(url_for('display', active=active))
         
-        except sqlalchemy.exc.IntegrityError:
+        except sqlalchemy.exc.IntegrityError as ie:
+            
+            ###---GENERATE RELEVANT ERROR MSG, WHICH FEILD IS DUPLICATE---###
+            print(ie)
+            ###------###s
             db.session.rollback()
             flash(f'ERROR: A {entity} with the entered credentials already exists!', 'danger')
     
