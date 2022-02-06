@@ -20,6 +20,7 @@ import base64
 import sqlalchemy
 
 
+######------------START UTILITY FUNCTIONS FOR DATABASE ENTRY------------######
 
 def create_person(person_data):
     """
@@ -163,6 +164,8 @@ def addexpendituretype_utility(data):
     except IntegrityError as ie:
         flash(f'Expenditure Type \'{ data["name"] }\' Already Exists', 'danger')
 
+
+######------------END UTILITY FUNCTIONS FOR DATABASE ENTRY------------######
 
 def calc_deal_transaction_data(deal_id, transaction, plot):
 

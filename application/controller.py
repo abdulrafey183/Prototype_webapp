@@ -10,8 +10,7 @@ from .forms             import *
 from .middleware        import Middleware
 
 from io         import  BytesIO
-
-import datetime
+from datetime   import datetime
 
 defualt_choice  = (None, 'Not Selected')
 
@@ -202,7 +201,7 @@ def addbuyeroragent_():
             flash(f'SUCCESS: {entity} "{form.name.data}" added to record', 'success')
             return redirect(url_for('display', active=active))
         
-        except sqlalchemy.exc.IntegrityError as ie:
+        except IntegrityError as ie:
             
             ###---GENERATE RELEVANT ERROR MSG, WHICH FEILD IS DUPLICATE---###
             print(ie)
@@ -367,7 +366,6 @@ def addexpense_():
 
 def add_user_or_employee_():
 
-    #####  CURRENTLY NOT ADDING USER CNIC FILES, WILL DO IT LATER
 
     #Checking Authorization
     Middleware.authorizeSuperUser(current_user)
@@ -388,12 +386,6 @@ def add_user_or_employee_():
             'cnic_back' : form.cnic_back.data,
             'comments'  : form.comments.data or db.null()
         }
-
-        print(type(form.cnic_front.data))
-        print(type(form.cnic_back.data))
-        print(form.cnic_front.data)
-        print(form.cnic_back.data)
-
 
         #Adding user to the Database
         try:
@@ -416,27 +408,32 @@ def add_user_or_employee_():
             db.session.add(user)
             db.session.commit()
 
-            create_file(
-                    filename  = data['name'] + "_cnic_front." + data['cnic_back'].filename.split('.')[-1],
-                    format    = data['cnic_front'].filename.split('.')[-1],
-                    data      = data['cnic_front'].read(),
-                    deal_id   = db.null(),
-                    person_id = person.id
-                )
+            #Adding CNIC Front file to the database
+            if form.cnic_front.data:
+                create_file(
+                        filename  = data['name'] + "_cnic_front." + data['cnic_back'].filename.split('.')[-1],
+                        format    = data['cnic_front'].filename.split('.')[-1],
+                        data      = data['cnic_front'].read(),
+                        deal_id   = db.null(),
+                        person_id = person.id
+                    )
 
-            create_file(
-                    filename  = data['name'] + "_cnic_back." + data['cnic_back'].filename.split('.')[-1],
-                    format    = data['cnic_back'].filename.split('.')[-1],
-                    data      = data['cnic_back'].read(),
-                    deal_id   = db.null(),
-                    person_id = person.id
-                )
+            #Adding CNIC Back file to the database
+            if form.cnic_front.data:
+                create_file(
+                        filename  = data['name'] + "_cnic_back." + data['cnic_back'].filename.split('.')[-1],
+                        format    = data['cnic_back'].filename.split('.')[-1],
+                        data      = data['cnic_back'].read(),
+                        deal_id   = db.null(),
+                        person_id = person.id
+                    )
 
+            #Displaying Success Flash Message
             data['type'] == 1 and flash(f'User Successfully Added to the System'    , 'success')
             data['type'] == 2 and flash(f'Employee Successfully Added to the System', 'success')
             return redirect(url_for('profile'))
 
-        except sqlalchemy.exc.IntegrityError as ie:
+        except IntegrityError as ie:
             if str(ie).find('person.email') > 0:
                flash(f"User with email {data['email']} already exists", 'danger')
             elif str(ie).find('person.cnic') > 0:

@@ -35,8 +35,8 @@ class AddUserOrEmployeeForm(AddPersonForm):
 	cnic_back  = FileField    ('CNIC Back' ,  validators=[Optional(), FileAllowed(['jpeg','png', 'jpg', 'pdf'], 'File Format Not Allowed')])
 
 	type       = SelectField  ('Chose Type',  choices=[(1, 'User'), (2, 'Employee')], default=1)
-	password = PasswordField('Password'  , validators=[Length(max=100)], default='12345')
-	create 	 = SubmitField  ('Add')
+	password   = PasswordField('Password'  , validators=[Length(max=100)], default='12345')
+	create 	   = SubmitField  ('Add')
 
 #Add and Edit Buyer or Commission Agent Form
 class AddandEditBuyerorAgentForm(AddPersonForm):
