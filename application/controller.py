@@ -234,15 +234,15 @@ def adddeal_():
 
     if form.validate_on_submit():
 
-        plot  = Plot.query.filter_by(id=form.plot_id.data).first()
         buyer = Buyer.query.filter_by(id=form.buyer_id.data).first()
+        plot  = Plot.query.filter_by(id=form.plot_id.data).first()
         CA    = CommissionAgent.query.filter_by(person_id=form.CA_id.data).first()
 
-        if plot is None:
-            flash('No Plot Selected', 'danger')
-            return render_template('adddeal.html', form= form)
-        elif buyer is None:
+        if buyer is None:
             flash('No Buyer Selected', 'danger')
+            return render_template('adddeal.html', form= form)
+        elif plot is None:
+            flash('No Plot Selected', 'danger')
             return render_template('adddeal.html', form= form)
 
 
