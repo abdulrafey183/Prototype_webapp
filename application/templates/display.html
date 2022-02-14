@@ -5,23 +5,23 @@
 	<div class="container">
 		<div class="display-page d-flex justify-content-around">
 			<a id="buyer-button" class="btn mx-1 py-2 px-2 display-button display-button-active"
-				onclick="getall('buyer')">
+				onclick="get_all('buyer')">
 				<div class="d-flex flex-column"><i class="fas fa-user-tie mb-1"></i><small>Buyers</small></div>
 			</a>
-			<a id="plot-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('plot')">
+			<a id="plot-button" class="btn mx-1 py-2 px-2 display-button" onclick="get_all('plot')">
 				<div class="d-flex flex-column"><i class="fas fa-map-pin mb-1"></i><small>Plots</small></div>
 			</a>
-			<a id="deal-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('deal')">
+			<a id="deal-button" class="btn mx-1 py-2 px-2 display-button" onclick="get_all('deal')">
 				<div class="d-flex flex-column"><i class="far fa-handshake mb-1"></i><small>Deals</small></div>
 			</a>
-			<a id="CA-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('CA')">
+			<a id="CA-button" class="btn mx-1 py-2 px-2 display-button" onclick="get_all('CA')">
 				<div class="d-flex flex-column"><i class="fas fa-user-tie mb-1"></i><small>Agents</small></div>
 			</a>
-			<a id="ET-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('ET')">
+			<a id="ET-button" class="btn mx-1 py-2 px-2 display-button" onclick="get_all('ET')">
 				<div class="d-flex flex-column"><i class="far fa-credit-card mb-1"></i><small>Expenditure Types</small>
 				</div>
 			</a>
-			<a id="employee-button" class="btn mx-1 py-2 px-2 display-button" onclick="getall('employee'); active()">
+			<a id="employee-button" class="btn mx-1 py-2 px-2 display-button" onclick="get_all('employee'); active()">
 				<div class="d-flex flex-column"><i class="far fa-user mb-1"></i><small>Employees</small></div>
 			</a>
 		</div>
@@ -89,7 +89,7 @@
 
 {% block script %}
 <script src="{{ url_for('static', filename='js/displaypage.js') }}"></script>
-<script type="text/javascript">getall("{{ active }}")</script>
+<script type="text/javascript">get_all("{{ active }}")</script>
 <script>
 	$("a").click(function () {
 		$("a.display-button-active").removeClass("display-button-active");
