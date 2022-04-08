@@ -108,17 +108,17 @@
             {% endif %}
 
             {% if deal.commission_agent_id %}
-            <tr class="text-dark-3">
+            <!-- <tr class="text-dark-3">
               <th scope="row">Commission Agent</th>
               <td>
                 <a href='/agent/{{deal.commission_agent_id}}'>
                 {{deal.commissionagent.person.name}}
                 </a>
               </td>
-            </tr>
+            </tr> -->
             <tr class="text-dark-3">
               <th scope="row">Commission Rate</th>
-              <td>{{deal.commission_rate}}</td>
+              <td>{{ deal.commission_rate*100 }}%</td>
             </tr>
             {% endif %}
 
@@ -133,6 +133,41 @@
               {% endfor %}
               </td>
             </tr>
+            {% endif %}
+            
+            {% if transaction %}
+              {% if transaction["avg_installment_freq"] %}
+              <tr class="text-dark-3">
+                <th scope="row">Installment Frequency</th>
+                <td>{{ transaction["avg_installment_freq"] }}</td>
+              </tr>
+              {% endif %}
+              <tr class="text-dark-3">
+                <th scope="row">Amount Paid</th>
+                <td>{{ transaction["amount_paid"] }}</td>
+              </tr>
+              <tr class="text-dark-3">
+                <th scope="row">Amount Left</th>
+                <td>{{ transaction["amount_left"] }}</td>
+              </tr>
+              {% if transaction["total_installments"] > 1 %}
+              <tr class="text-dark-3">
+                <th scope="row">Average Amount Paid per Installment</th>
+                <td>{{ transaction["avg_amount_paid"] }}</td>
+              </tr>
+              {% if transaction["expected_amount"] %}
+              <tr class="text-dark-3">
+                <th scope="row">Expected Amount Paid per Installment</th>
+                <td>{{ transaction["expected_amount"] }}</td>
+              </tr>
+              {% endif %}
+              {% if transaction["expected_time_left"] %}
+              <tr class="text-dark-3">
+                <th scope="row">Expected Time Left</th>
+                <td>{{ transaction["expected_time_left"] }}</td>
+              </tr>
+              {% endif %}
+              {% endif %}
             {% endif %}
 
           </tbody>
@@ -182,62 +217,10 @@
     </div>
   </div>
 </section>
-
-<section class="my-5">
-  <div class="container">
-    <div class="row">
-      <div class="col-12 col-md-9">
-        <table class="table mt-4">
-          <thead>
-            <tr>
-              <th scope="col" colspan="2">
-                <h1 class="text-orange-1 text-center">Transaction Details</h1>
-                <p class="text-dark-3 text-center">The details of the transactions are listed here</p>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {% if transaction["avg_installment_freq"] %}
-            <tr class="text-dark-3">
-              <th scope="row">Installment Frequency</th>
-              <td>{{ transaction["avg_installment_freq"] }}</td>
-            </tr>
-            {% endif %}
-            <tr class="text-dark-3">
-              <th scope="row">Amount Paid</th>
-              <td>{{ transaction["amount_paid"] }}</td>
-            </tr>
-            <tr class="text-dark-3">
-              <th scope="row">Amount Left</th>
-              <td>{{ transaction["amount_left"] }}</td>
-            </tr>
-            {% if transaction["total_installments"] > 1 %}
-            <tr class="text-dark-3">
-              <th scope="row">Average Amount Paid per Installment</th>
-              <td>{{ transaction["avg_amount_paid"] }}</td>
-            </tr>
-            {% if transaction["expected_amount"] %}
-            <tr class="text-dark-3">
-              <th scope="row">Expected Amount Paid per Installment</th>
-              <td>{{ transaction["expected_amount"] }}</td>
-            </tr>
-            {% endif %}
-            {% if transaction["expected_time_left"] %}
-            <tr class="text-dark-3">
-              <th scope="row">Expected Time Left</th>
-              <td>{{ transaction["expected_time_left"] }}</td>
-            </tr>
-            {% endif %}
-            {% endif %}
-          </tbody>
-        </table>
-      </div>
-      <div class="col-12 col-md-3 notes-icon"><i class="fas fa-coins"></i></div>
-    </div>
-  </div>
-</section>
 {% endif %}
 
-<!-- new -->
+
+
+
 {% endblock %}
 

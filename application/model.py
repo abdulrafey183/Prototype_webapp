@@ -54,6 +54,12 @@ class Person(db.Model):
     user            = db.relationship('User'            , backref='person', lazy=True)
     files           = db.relationship('File'            , backref='person', lazy=True)
 
+    def __unicode__(self):
+        return f'{self.name} {self.cnic}'
+
+    def __repr__(self):
+        return f'{self.name} {self.cnic}'
+
     @property
     def serialize(self):
         return {
@@ -87,6 +93,9 @@ class Buyer(db.Model):
 
     #Relationships:
     deals = db.relationship("Deal", backref='buyer', lazy=True)
+
+    def __unicode__(self):
+        return 'buyer'
 
     @property
     def serialize(self):

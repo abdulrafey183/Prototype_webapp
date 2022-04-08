@@ -21,7 +21,7 @@ POST            = 'POST'
 
 @app.route('/'    , methods= [GET])
 @app.route('/home', methods= [GET])
-def home(): return render_template('home.html')
+def home(): return redirect(url_for('login')) #render_template('home.html')
 
 
 @app.route('/about', methods= [GET])

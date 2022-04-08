@@ -1,6 +1,6 @@
-/*************** START MAIN SECTION ***************/
-
-let tabs = ['buyer', 'plot', 'CA', 'ET', 'deal', 'employee'];
+var tabs              = ['buyer', 'plot', 'CA', 'ET', 'deal', 'employee'];
+var default_selection = 'buyer'
+var active_tab        = null
 
 function clicked(tab) {
   /**
@@ -10,7 +10,7 @@ function clicked(tab) {
    * @param
    * tab: Name of the div, can be one of [buyer, CA, deal, plot, ET, employee]
    */
-
+  
 
   //Making the clicked div visible
   document.getElementById(tab + '-div').style.display = 'block';
@@ -52,9 +52,11 @@ function get_all(tab) {
    * @param
    * tab: Name of the div, can be one of [buyer, CA, deal, plot, ET, employee]
    */
+  
 
-
-  default_selection = 'buyer'
+  //Checking is the clicked div is already active
+  if (tab == active_tab) { return }
+  else { active_tab = tab }
 
   //Configuring visibility of divs
   clicked(tab || default_selection);
@@ -81,9 +83,8 @@ $(document).ready(function () {
     });
   });
 
+
   //Filter function for deal div
   // YET TO IMPLEMENT
 
 });
-
-/*************** END MAIN SECTION ***************/

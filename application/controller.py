@@ -79,7 +79,7 @@ def download_(id):
 
 def analytics_():
 
-    today = datetime.date.today()
+    today = datetime.today()
     date_shortcuts = {
             1: today - datetime.timedelta(days=7),
             2: today - datetime.timedelta(days=14),

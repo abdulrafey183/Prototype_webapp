@@ -30,6 +30,7 @@ class AdminPanel(AdminIndexView):
 
 class ProtectedModelView(ModelView):
 
+
 	#Overriding Parent method
 	def is_accessible(self):
 

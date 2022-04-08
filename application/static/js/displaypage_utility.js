@@ -127,11 +127,23 @@ function generate_plot_table_row_html(plot) {
     //     deal_buyer = data.json_list[0]
     //   }
     // });
+
+    //Only show link to receive payment is deal status is 'on going'
+    //IMPLEMENT: Fetch the status value from te database and not hardcode it
+    if (deal.status == 'on going'){
+        reciece_payment = '<a href="/add/transaction/receivepayment/'+ deal.id + '">Recieve Payment</a><br>'
+    }
+    else{
+      reciece_payment = ""
+    }
   
     //Generating deal table row html
     let deal_table_row_html;
   
     deal_table_row_html = '<tr>'    +
+                            '<td>'  +
+                                deal.id                                                                     +
+                            '</td>' +
                             '<td>'  +
                             //   '<a href="buyer/'+ deal.buyer_id + '">'      + 'Buyer' +'</a>' +
                                 '<div id="buyer-name-of-deal' + deal.id + '"></div>' +
@@ -143,9 +155,8 @@ function generate_plot_table_row_html(plot) {
                               deal.signing_date                                                             +
                             '</td>' +
                             '<td>'  +
-                              //IMPLEMENT: Only show link to receive payment is deal status is 'on going'
-                              '<a href="/add/transaction/receivepayment/'+ deal.id + '">Recieve Payment</a><br>' + 
-                              '<a href="/deal/'                          + deal.id + '">Show Detials</a>'        +
+                              reciece_payment                                                               + 
+                              '<a href="/deal/' + deal.id + '">Show Detials</a>'                            + 
                             '</td>' +
                           '</tr>'
   
@@ -343,6 +354,7 @@ function generate_plot_table_row_html(plot) {
   
     deal_table_head_html =  '<table class="table mt-4">' +
                               '<tr>'                     +
+                                '<th>Deal #</th>'        +
                                 '<th>Buyer</th>'         +
                                 '<th>Plot</th>'          +
                                 '<th>Signing Date</th>'  +
