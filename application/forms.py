@@ -91,12 +91,14 @@ class AddExpenseForm(AddTransactionForm):
 	ET_name  = StringField('Create New Expenditure Type', validators=[Length(max=100)])
 
 
-# Add Notes Form
+# Add Notice Form
 class AddNotesForm(FlaskForm):
 
-	title   = StringField  ('Title',  validators=[DataRequired()])
-	content = TextAreaField('Content')
-	add 	= SubmitField  ('Add Note')
+	title   	= StringField  ('Title',  validators=[DataRequired()])
+	content 	= TextAreaField('Content')
+	attachments = MultipleFileField	('Attachments', validators=[FileAllowed(['jpeg','png', 'jpg', 'pdf', 'txt', 'doc', 'docx', 'csv', 'xls', 'xlsx'], 'File Format Not Allowed')])
+
+	add 		= SubmitField  ('Add Notice')
 
 
 #Set Plot Price Form

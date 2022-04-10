@@ -1,4 +1,4 @@
-from flask              import flash, send_file, render_template, redirect, url_for, request, jsonify
+from flask              import flash, send_file, render_template, redirect, url_for, request, jsonify, abort
 from flask              import current_app as app 
 from flask_login        import login_user, current_user, logout_user
 from flask_sqlalchemy   import sqlalchemy
@@ -53,8 +53,9 @@ def logout_():
 
 
 def profile_():
-    user_notes = Notes.query.filter_by(user_id=current_user.id).order_by(Notes.date_time.desc()).limit(4)
-    return render_template('profile.html', current_user=current_user, user_notes=user_notes)
+    # user_notes = Notes.query.filter_by(user_id=current_user.id).order_by(Notes.date_time.desc()).limit(4)
+    notices = Notes.query.order_by(Notes.date_time.desc()).all()[:10]
+    return render_template('profile.html', current_user=current_user, notices=notices)
 
 
 def display_():
@@ -282,15 +283,25 @@ def adddeal_():
 
         # Adding Deal Attachments to the Database
         for attachment in form.attachments.data:
-            file = File(
+
+            create_file(
                 filename    = attachment.filename,
                 format      = attachment.filename.split('.')[-1],
                 data        = attachment.read(),
                 deal_id     = deal.id,
-                person_id   = db.null()
+                person_id   = db.null(),
+                note_id     = db.null(),
             )
-            db.session.add(file)
+            # file = File(
+            #     filename    = attachment.filename,
+            #     format      = attachment.filename.split('.')[-1],
+            #     data        = attachment.read(),
+            #     deal_id     = deal.id,
+            #     person_id   = db.null()
+            # )
+            # db.session.add(file)
 
+        ###------REPLACE THIS WITH UTILITY FUCNTION------###
         # Creating corresponding transaction and adding to Database
         transaction = Transaction(
             amount          = form.first_amount_recieved.data,
@@ -482,6 +493,29 @@ def addnotes_():
 
         db.session.add(note)
         db.session.commit()
+        db.session.refresh(note)
+
+        # Adding Notice Attachments to the Database
+        for attachment in form.attachments.data:
+
+            create_file(
+                filename    = attachment.filename, 
+                format      = attachment.filename.split('.')[-1], 
+                data        = attachment.read(), 
+                deal_id     = db.null(), 
+                person_id   = db.null(), 
+                note_id     = note.id
+            )
+
+            # file = File(
+            #     filename    = attachment.filename,
+            #     format      = attachment.filename.split('.')[-1],
+            #     data        = attachment.read(),
+            #     deal_id     = db.null(),
+            #     person_id   = db.null(),
+            #     note_id     = note.id
+            # )
+            # db.session.add(file)
 
         flash(f'Note Added!', 'success')
         return redirect(url_for('profile'))
@@ -512,16 +546,16 @@ def addexpendituretype_():
 
 def noteinfo_(note_id):
     
-    note = Notes.query.filter_by(id=note_id).first()
+    notice = Notes.query.filter_by(id=note_id).first()
 
-    if note is None:
-        flash(f'No such note exists!', 'danger')
+    if notice is None:
+        flash(f'No such notice exists!', 'danger')
         return redirect(url_for('profile'))
 
-    if note.user_id != current_user.id:
-        abort(403)
+    # if note.user_id != current_user.id:
+    #     abort(403)
 
-    return render_template('noteinfo.html', note=note)
+    return render_template('noteinfo.html', note=notice, current_user=current_user)
 
 
 def buyerinfo_(buyer_id):

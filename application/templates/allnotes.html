@@ -11,16 +11,16 @@
           <thead>
             <tr>
               <th scope="col" colspan="2">
-                <h1 class="text-orange-1 text-center">Notes</h1>
-                <p class="text-dark-3 text-center">All notes are listed below</p>
+                <h1 class="text-orange-1 text-center">Notices</h1>
+                <p class="text-dark-3 text-center">All noties are listed below</p>
               </th>
             </tr>
           </thead>
           <tbody>
-            {% for note in notes %}
+            {% for notice in notices %}
             <tr>
               <th scope="row"></th>
-              <td><a href="{{ url_for('noteinfo', note_id=note.id) }}" class="noteLink">{{ note.title }}</a>
+              <td><a href="{{ url_for('noteinfo', note_id=notice.id) }}" class="noteLink">{{ notice.title }}</a>
               </td>
             </tr>
             {% endfor %}

@@ -289,6 +289,7 @@ class File(db.Model):
     # buyer_id = db.Column(db.Integer, db.ForeignKey('buyer.id'))
     # agent_id = db.Column(db.Integer, db.ForeignKey('commissionagent.id'))
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    note_id   = db.Column(db.Integer, db.ForeignKey('notes.id'))
 
     @property
     def serialize(self):
@@ -298,4 +299,5 @@ class File(db.Model):
             'format'   : self.format,
             'deal_id'  : self.deal_id,
             'person_id': self.person_id,
+            'note_id'  : self.note_id, 
         }

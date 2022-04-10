@@ -6,11 +6,11 @@
 	<div class="row">
 		<div class="col-md-2"></div>
 		<div class="col-12 col-md-8">
-			<form method="POST" action="{{ url_for('addnotes') }}" class="form-style">
+			<form method="POST" action="{{ url_for('addnotes') }}" class="form-style" enctype='multipart/form-data'>
 				<fieldset class="form-group">
 					{{ form.csrf_token }}
-					<legend class="text-orange-1 text-center">Add Note</legend>
-					<p class="text-dark-3 text-center">Add new note</p>
+					<legend class="text-orange-1 text-center">Publish Notice</legend>
+					<p class="text-dark-3 text-center">Publish new notice</p>
 					<br>
 					<div class="form-group">
 						{{ form.title.label }}
@@ -40,7 +40,14 @@
 						{{ form.content(class='form-control') }}
 						{% endif %}
 					</div>
+
+					<div class="form-group">
+						{{ form.attachments.label }}
+						<br>
+						{{ form.attachments(class='m-1') }}
+					  </div>
 					<br>
+
 					<div class="form-group btn-center">
 						{{ form.add(class='btn btn-outline-dark') }}
 					</div>

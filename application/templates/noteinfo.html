@@ -10,8 +10,8 @@
                     <thead>
                         <tr>
                             <th scope="col" colspan="2">
-                                <h1 class="text-orange-1 text-center">Note</h1>
-                                <p class="text-dark-3 text-center">The details of the note are listed here</p>
+                                <h1 class="text-orange-1 text-center">Notice</h1>
+                                <p class="text-dark-3 text-center">The details of the notice are listed here</p>
                             </th>
                         </tr>
                     </thead>
@@ -24,6 +24,11 @@
                             <th scope="row">Content</th>
                             <td>{{note.content}}</td>
                         </tr>
+
+                        {% if current_user.rank == 0 or note.user_id == current_user.id %}
+                        <!-- Providing modification rights if the current user is a super user 
+                            or publisher of the notice
+                        -->
                         <tr>
                             <th scope="row">Edit / Delete</th>
                             <td>
@@ -33,6 +38,8 @@
                                         class="fas fa-trash-alt"></i></button>
                             </td>
                         </tr>
+                        {% endif %}
+
                     </tbody>
                 </table>
             </div>

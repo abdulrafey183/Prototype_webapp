@@ -190,8 +190,9 @@ def deleteagent(agent_id): return deleteagent_(agent_id)
 @app.route('/notes/all', methods=[GET])
 @login_required
 def allnotes():
-    notes = Notes.query.filter_by(user_id=current_user.id).order_by(Notes.date_time.desc())
-    return render_template('allnotes.html', notes=notes)
+    # notes = Notes.query.filter_by(user_id=current_user.id).order_by(Notes.date_time.desc())
+    notices = Notes.query.order_by(Notes.date_time.desc()).all()
+    return render_template('allnotes.html', notices=notices)
 
     
 ###-----WHAT IS THIS DOING???-------###

@@ -42,7 +42,7 @@ def create_person(person_data):
     return person.id
 
 
-def create_file(filename, format, data, deal_id, person_id):
+def create_file(filename, format, data, deal_id, person_id, note_id):
     """
     Utility Function that adds a row to the File Table and returns the 
     primary key of that row
@@ -56,6 +56,7 @@ def create_file(filename, format, data, deal_id, person_id):
             data        = data,
             deal_id     = deal_id,
             person_id   = person_id,
+            note_id     = note_id
            )
 
     db.session.add(file)
@@ -130,7 +131,6 @@ def addtransaction_utility(data):
         ((data['type'] == 'deal') and data['id']) or db.null(),
         ((data['type'] == 'ET')   and data['id']) or db.null()
     )
-
 
     #If transaction is a Salary
     if (data['type'] == 'ET') and data['employee_id']:
