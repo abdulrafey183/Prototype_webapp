@@ -14,7 +14,7 @@ class DevelopmentConfig(Config):
     ENV                     = environ.get('FLASK_PROTOTYPE_DEV_ENV')
     DEBUG                   = True
     TESTING                 = True
-    # SQLALCHEMY_DATABASE_URI = "mysql://deens_valley:Cforcat.001@dvms-db.c5syasvy5ra6.us-east-1.rds.amazonaws.com:3306/dvms-db" #.get('FLASK_PROTOTYPE_DEV_DB')
+    # SQLALCHEMY_DATABASE_URI = #.get('FLASK_PROTOTYPE_DEV_DB')
     SQLALCHEMY_DATABASE_URI = 'mysql://root:root@localhost/build_guild' 
 
 
